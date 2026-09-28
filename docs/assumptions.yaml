@@ -565,7 +565,12 @@
     size that matters for WP (Δlog-loss ≥ 0.002) with ≥ 80% power at the corpus sizes we expect.
   type: method
   source: "project design (ADR-0007); selection bias of repeated keep/revert decisions on one validation set"
-  status: open
+  status: supported
+  evidence: [reports/experiments/20260928-1720_mv14_false_keep/report.md]
+  note: >-
+    2026-09-28 (MV.14, F-09, simulation): 15-variant loops, 200 per cell. Corrected FKR 0.045 [0.016, 0.074] and
+    power 0.94 at 6,900 training matches; pooled FKR 0.050 [0.033, 0.067]; uncorrected FKR 0.31-0.37. Power < 80%
+    below ~5,000 training matches (0.73 at 4,000) -> loop.min_train_matches 5,000.
   test: [MV.14]
-  parameters: [loop.budget / alpha / n_resamples]
+  parameters: [loop.budget / alpha / n_resamples, loop.min_train_matches]
   blocks: [wp_timeline, xk]

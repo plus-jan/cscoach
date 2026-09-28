@@ -183,3 +183,17 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: refresh after the top-up, finish M2.3, re-run this audit; then plan M2.5/M3 — rationale: the state
   table is the input of the WP baseline.
 - supersedes: —
+
+### F-09 — The budget-corrected keep rule holds its 5 % false-keep rate; loops need ≥ 5,000 training matches
+- date: 2026-09-28 · task: MV.14 · decision: —
+- question: Does the gated keep rule (docs/specs/07 §2) keep ≤ 5 % of null loops and find a Δlog-loss 0.002
+  improvement with ≥ 80 % power at our corpus size (A-42)? Pre-registered; simulation with known truth (A-33).
+- result: 200 loops of 15 variants per cell. Corrected: FKR 0.030 / 0.075 / 0.045 at 2,000 / 4,000 / 6,900 training
+  matches (pooled 0.050 [0.033, 0.067]); power 0.40 / 0.73 / 0.94. Uncorrected: FKR 0.31–0.37, power 0.62–0.99.
+- evidence: `reports/experiments/20260928-1720_mv14_false_keep/` (report.md, summary.json, loops.jsonl); code `cscoach.verify.mv14`.
+- confidence: medium (one error model; pooled FKR at the 5 % boundary).
+- changes: A-42 → supported (at ~6,900 training matches); `loop.*` confirmed; new `loop.min_train_matches` 5,000;
+  docs/specs/07 note.
+- next step: after the top-up refresh, M2.3 and the M2.4 re-run, then M3.1 — rationale: the loop harness is ready and
+  valid at the expected size, so M3.2 tuning can use it once the baseline exists.
+- supersedes: —

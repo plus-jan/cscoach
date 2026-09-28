@@ -98,3 +98,6 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   gated_verify (one-sided cluster-bootstrap lower bound of Δlog-loss at 1 − α/budget), guard (split hash, sealed reads,
   ECE gates, leakage tests). Synthetic loop (A-33): 5 variants, 1 kept, all as expected. ECE small-sample bias noted
   for MV.5 (A-07) · reports/experiments/20260928-1711_m2.5_synthetic_loop/report.md
+- 2026-09-28 · MV.14 · Gated loop false-keep simulation (A-33, known truth; 200 loops × 15 variants per cell):
+  corrected FKR 0.045 [0.016, 0.074] and power 0.94 at 6,900 training matches (pooled FKR 0.050); uncorrected FKR
+  ≈ 0.3; power < 80% below ~5,000 matches. A-42 supported; `loop.min_train_matches` 5,000. F-09 · reports/experiments/20260928-1720_mv14_false_keep/report.md

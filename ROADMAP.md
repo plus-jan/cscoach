@@ -194,13 +194,15 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   model's ΔWP, per decision type? Also check sensitivity to features that don't cause outcomes.
   **DoD:** A-04 status per decision type; D2 decided.
 
-- [ ] **MV.14 — False-keep rate of the gated loop.**
+- [x] **MV.14 — False-keep rate of the gated loop.**
   deps: M2.5. Refs: [A-42], [brill_yurko_wp_difficulty].
   Simulation with known truth (A-33 permits this: it tests a method property, not a CS2 fact): run the
   loop with (a) only no-effect variants and (b) variants with a planted improvement, at the match counts
   and cluster sizes of the CSDS training split. Measure the loop-level false-keep rate and the power;
   compare the budget-corrected level with the uncorrected one.
-  **DoD:** A-42 supported/refuted; `loop.*` parameters confirmed or changed (docs/specs/06).
+  **DoD:** A-42 supported/refuted; `loop.*` parameters confirmed or changed (docs/specs/06). Done: A-42 supported at
+  ~6,900 training matches (FKR 0.045, power 0.94; uncorrected FKR ≈ 0.3); `loop.*` confirmed; new
+  `loop.min_train_matches` 5,000; F-09. Report `reports/experiments/20260928-1720_mv14_false_keep/`.
 
 ---
 

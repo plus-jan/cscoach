@@ -27,7 +27,8 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | model-uncertainty bootstrap: B / fraction φ (fractional randomized cluster, refit) | 101 / tuned in MV.4 (football reference 0.35) | A-24 |
 | split train/calibration/test (by match) | 0.70 / 0.10 / 0.20 | A-28 |
 | leakage_audit.auc_threshold (single feature vs round winner at freeze end) | 0.99 | A-46 |
-| loop.budget / alpha / n_resamples (gated autoresearch loop, docs/specs/07 §2) | 15 iterations / 0.05 (one-sided level 1 − 0.05/15 per keep) / 2000 | A-42 |
+| loop.budget / alpha / n_resamples (gated autoresearch loop, docs/specs/07 §2) | 15 iterations / 0.05 (one-sided level 1 − 0.05/15 per keep) / 2000 (confirmed in MV.14) | A-42 |
+| loop.min_train_matches (power ≥ 80% for Δlog-loss 0.002) | 5000 (MV.14) | A-42 |
 
 ## Tiers (canonical: low, mid, high, semipro)
 

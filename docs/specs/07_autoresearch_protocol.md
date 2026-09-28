@@ -59,8 +59,9 @@ Iterations: 15
 
 (`cscoach.loops.*` was built in M2.5. The task config has a `loop` block — task, data, work_dir, alpha, budget,
 n_resamples, seed, gates — and a `model` block; the champion is the `model` block at `HEAD~1`, so loops compare
-config-driven variants only. The split is written once with `cscoach.loops.sealed.make_split`. Loops on CSDS still wait
-for MV.14.)
+config-driven variants only. The split is written once with `cscoach.loops.sealed.make_split`. MV.14 confirmed the keep
+rule: false-keep rate ≈ 5 % per 15-variant loop and 94 % power for Δlog-loss 0.002 at ~6,900 training matches; loops
+need ≥ `loop.min_train_matches` (5,000) training matches.)
 
 ## 3. Budget, ledger and the sealed test
 
