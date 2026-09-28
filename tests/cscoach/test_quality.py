@@ -103,6 +103,7 @@ def test_channel_flags_clean():
         "n_round_end": 3, "final_hi": 2, "final_lo": 1, "q_no_round_end": False, "q_rounds_vs_score": False,
         "q_warmup_after_start": False,
         "max_tick_gap_s": pytest.approx(1 / 64), "q_tick_gap": False, "q_abandonment": False,
+        "n_disconnect_unknown_id": 0,
     }
 
 
@@ -141,3 +142,17 @@ def test_round_state_scores_override_header_final_state():
     assert out.loc["a", "final_state"] == "regulation" and not out.loc["a", "q_incomplete"]
     assert out.loc["a", "final_state_source"] == "round_state"
     assert out.loc["b", "final_state"] == "regulation" and out.loc["b", "final_state_source"] == "header"
+
+
+def test_disconnect_without_player_id_is_counted_not_flagged():
+    fr = frames(disconnects=[(1500, np.nan, False)])
+    f = channel_flags(fr, tick_rate=64, cfg=CFG)
+    assert not f["q_abandonment"] and f["n_disconnect_unknown_id"] == 1
+
+
+def test_clean_ignores_abandonment():
+    from cscoach.data.quality import CHANNEL_DEFECTS, HEADER_DEFECTS, add_clean
+
+    row = {"match_id": "a", "is_canonical": True, "format": "5v5", "channel_error": None, "q_abandonment": True,
+           **{c: False for c in HEADER_DEFECTS + CHANNEL_DEFECTS}}
+    assert add_clean(pd.DataFrame([row]))["clean"].iloc[0]

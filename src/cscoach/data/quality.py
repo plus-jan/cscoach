@@ -109,13 +109,15 @@ def channel_flags(ch: dict[str, pd.DataFrame], *, tick_rate: int, cfg: dict) -> 
     max_gap = float(np.diff(ticks).max()) / tick_rate if len(ticks) > 1 else float("nan")
 
     # abandonment: a human leaves, at least one later round is played, and they never spawn again
-    # (leaving during the final round, once the match is decided, is normal)
-    abandon = False
+    # (leaving during the final round, once the match is decided, is normal). Disconnects without a
+    # player_id_fixed cannot be followed; they are counted, never flagged (conservative).
+    abandon, unknown = False, 0
     if last_end is not None and len(dc):
         last_round = re_["round"].max()
-        humans = dc[~dc["is_bot"].astype(bool)]
-        for t, r, pid in zip(humans["tick"], humans["round"], humans["player_id_fixed"]):
-            if r < last_round and not ((sp["player_id_fixed"] == pid) & (sp["tick"] > t)).any():
+        humans = dc[~dc["is_bot"].astype(bool) & (dc["round"] < last_round)]
+        unknown = int(humans["player_id_fixed"].isna().sum())
+        for t, pid in zip(humans["tick"], humans["player_id_fixed"]):
+            if pd.notna(pid) and not ((sp["player_id_fixed"] == pid) & (sp["tick"] > t)).any():
                 abandon = True
                 break
     return {
@@ -128,6 +130,7 @@ def channel_flags(ch: dict[str, pd.DataFrame], *, tick_rate: int, cfg: dict) -> 
         "max_tick_gap_s": max_gap,
         "q_tick_gap": bool(max_gap > cfg["max_tick_gap_s"]),
         "q_abandonment": abandon,
+        "n_disconnect_unknown_id": unknown,
     }
 
 
@@ -203,11 +206,13 @@ def build(cfg: dict) -> pd.DataFrame:
 
 
 HEADER_DEFECTS = ["q_platform_unknown", "q_player_count", "q_incomplete"]
-CHANNEL_DEFECTS = ["q_no_round_end", "q_rounds_vs_score", "q_warmup_after_start", "q_tick_gap", "q_abandonment"]
+# data defects; q_abandonment is a game situation (4v5), kept as a flag/stratum but not a defect
+CHANNEL_DEFECTS = ["q_no_round_end", "q_rounds_vs_score", "q_warmup_after_start", "q_tick_gap"]
 
 
 def add_clean(q: pd.DataFrame) -> pd.DataFrame:
-    """``clean``: canonical 5v5 copy without header defects; channel defects count where known."""
+    """``clean``: canonical 5v5 copy without header or channel data defects (channel checks where known).
+    Abandonment does not make a match unclean (game situation, not a data defect)."""
     q = q.copy()
     ch_bad = q[CHANNEL_DEFECTS].fillna(False).astype(bool).any(axis=1) | q["channel_error"].notna()
     q["clean"] = q["is_canonical"] & (q["format"] == "5v5") & ~q[HEADER_DEFECTS].any(axis=1) & ~ch_bad
@@ -250,9 +255,10 @@ def report(q: pd.DataFrame, out_dir: Path, meta: dict, sub_counts: dict) -> None
               .reset_index())
     counts.to_csv(out_dir / "counts_platform_map_month_channelset.csv", index=False)
     flag_cols = ["q_platform_unknown", "q_upload_date", "q_player_count", "q_incomplete", *CHANNEL_DEFECTS,
-                 "q_header_loser_score"]
+                 "q_abandonment", "q_header_loser_score"]
     flags = {c: int(q[c].fillna(False).astype(bool).sum()) for c in flag_cols}
     flags["channel_error"] = int(q["channel_error"].notna().sum())
+    flags["matches_with_unknown_id_disconnect"] = int((q["n_disconnect_unknown_id"].fillna(0) > 0).sum())
     summary = {
         **meta,
         "matches": int(len(q)),
