@@ -1,0 +1,12 @@
+# Data volume check (M1.5). Targets: docs/specs/06 (A-32 volume, A-07 min rounds, A-28 split).
+export_config: configs/export.yaml
+targets:
+  min_matches_per_bucket: 300        # A-32
+  min_test_rounds_per_stratum: 500   # A-07 (gates.wp.min_rounds_per_stratum)
+  test_share: 0.20                   # A-28 (split train/calibration/test)
+strata:
+  tier: [tier]
+  tier_platform: [platform, tier]
+  tier_scale: [platform, tier_source, tier]
+  map: [map_name]
+candidate_fractions: [0.15, 0.25, 0.35, 0.5, 0.75, 1.0]
