@@ -16,7 +16,8 @@ Decoding (M2.1 report, A-15):
 - ``decided_tick`` (MV.1): the tick the round was decided. v42 ``round_end.tick`` is that tick (explosion/defuse
   gap 0; ``round_officially_ended`` a constant 448 ticks later). The v30 ``round_end.tick`` is 19–20 ticks before
   ``round_officially_ended``, i.e. ~6.7 s after the decision; there ``decided_tick`` = min(end − 429 ticks at 64 Hz,
-  deciding event: explosion, defuse, or the death that eliminated the losing side). Snapshots end here.
+  deciding event: explosion, defuse, or the death that eliminated the losing side — except a T elimination after
+  the plant, where the round runs on to the defuse or explosion, F-15). Snapshots end here.
 - ``is_overtime``: rounds after ``regulation_rounds`` (the ``pop_overtime`` rule, max_rounds_csgo = 24).
 
 Data provided by PureSkill.gg.
@@ -100,7 +101,11 @@ def decided_ticks(r: pd.DataFrame, *, deaths: pd.DataFrame, bomb: pd.DataFrame, 
         n = players.get(rnd, {}).get(loser, 0)
         dl = deaths[(deaths["round"] == rnd) & (deaths["player_team_code"] == side_code[loser])]["tick"].sort_values()
         if n > 0 and len(dl) >= n:
-            cand.append(int(dl.iloc[n - 1]))
+            elim = int(dl.iloc[n - 1])
+            plants = bomb[(bomb["round"] == rnd) & (bomb["event_type"] == "bomb_planted")]["tick"]
+            # after a plant, eliminating the T side does not end the round: the defuse or explosion does (F-15)
+            if not (loser == "T" and len(plants) and int(plants.min()) <= elim):
+                cand.append(elim)
         out.append(min(cand))
     return pd.Series(out, index=r.index, name="decided_tick", dtype="int64")
 

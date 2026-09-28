@@ -31,7 +31,9 @@ losing side), else time.
 
 **Round-end tick:** v42 `round_end.tick` is the deciding tick (explosion/defuse gap 0 ticks; `round_officially_ended`
 448 or 544 ticks later). v30 `round_end.tick` is 19–20 ticks before `round_officially_ended`, i.e. **~6.7 s after the
-decision** → use `rounds.decided_tick` = min(end − 429 ticks, deciding event).
+decision** → use `rounds.decided_tick` = min(end − 429 ticks, deciding event). Deciding events: explosion, defuse, or the
+elimination of the losing side — **not** a T elimination after the plant, which leaves the round running until the
+defuse or explosion (fixed in M3.6, F-15).
 
 ## Bomb sites
 `site_code` is **not** a stable site id: it is a per-server entity index (e.g. de_train 100 = B in v30, A in v42). Use

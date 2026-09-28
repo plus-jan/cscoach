@@ -146,3 +146,23 @@ def test_decided_tick_v30_uses_event_or_constant_offset():
     d = decided_ticks(r, deaths=deaths, bomb=bomb, players={1: {"T": 5, "CT": 5}, 2: {"T": 5, "CT": 5}, 3: {"T": 5, "CT": 5}},
                       channel_set="v30", tick_rate=64, cfg={**CFG, "v30_end_offset_ticks_64": 429})
     assert list(d) == [5000, 9000, 20000 - 429]  # explosion; 5th T death (event earlier than end - 429); time-out
+
+
+def test_decided_tick_v30_t_elimination_after_plant_does_not_decide():
+    # F-15: after a plant the round goes on until the defuse (or explosion); only a pre-plant T elimination decides
+    from cscoach.data.rounds import decided_ticks
+
+    r = pd.DataFrame({"round": [1, 2, 3], "end_tick": [7600 + 429, 9525, 30000], "winner_side": ["CT", "CT", "T"],
+                      "freeze_end_tick": [1000, 6000, 20000]})
+    bomb = pd.DataFrame({"round": [1, 1, 2, 3], "tick": [6000, 7600, 9400, 22000],
+                         "event_type": ["bomb_planted", "bomb_defused", "bomb_planted", "bomb_planted"]})
+    deaths = pd.DataFrame({"round": [1] * 5 + [2] * 5 + [3] * 5,
+                           "tick": [6100, 6200, 6300, 6400, 7000, 7000, 7100, 7200, 7300, 9000,
+                                    22100, 22200, 22300, 22400, 22500],
+                           "player_team_code": [2] * 10 + [3] * 5})
+    d = decided_ticks(r, deaths=deaths, bomb=bomb, players={k: {"T": 5, "CT": 5} for k in (1, 2, 3)},
+                      channel_set="v30", tick_rate=64, cfg={**CFG, "v30_end_offset_ticks_64": 429})
+    # 1: T wiped at 7000 after the plant at 6000 → the defuse at 7600 decides
+    # 2: T wiped at 9000 before the plant at 9400 → the elimination decides
+    # 3: CT wiped after the plant → the CT elimination decides (T win)
+    assert list(d) == [7600, 9000, 22500]
