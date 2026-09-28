@@ -438,6 +438,19 @@
   test: [MV.1]
   blocks: [xk]
 
+- id: A-43
+  statement: >-
+    The match format and completion can be derived from the header: wingman = `is_wingman`, or
+    `unique_steamids` <= 5 where `is_wingman` is null (older ppp versions); a 5v5 match is complete when
+    its final score is a regulation win (13), a 12-12 draw, or a valid MR3 overtime result/draw; wingman
+    needs 9 wins or an 8-8 draw. Other scores (surrender, abandonment, partial demos) are incomplete.
+  type: data
+  source: M1.3 header exploration (docs/FINDINGS.md F-02)
+  status: open
+  test: [M1.3, M2.1]
+  parameters: [quality.wingman_max_unique_steamids, quality.wins_needed]
+  blocks: [wp_timeline, wpa]
+
 - id: A-40
   statement: >-
     Missing ticks/events are rare and non-disruptive (per CSDS docs); matches failing quality checks can

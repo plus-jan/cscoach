@@ -47,6 +47,15 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | export.full_channel_fraction (seeded sample of matches exported with all channels; headers for all) | 0.15 | A-32 |
 | export.sample_seed | 20260928 | A-32 |
 
+## Data quality (`configs/quality.yaml`, M1.3)
+
+| Key | Initial value | Assumption |
+|---|---|---|
+| quality.dedup_key (header columns) | map_name, server_name, number_of_points, final scores (no date) | A-36 |
+| quality.wingman_max_unique_steamids (when `is_wingman` is null) | 5 | A-43 |
+| quality.wins_needed (5v5 / wingman) | 13 / 9 | A-43 |
+| quality.max_tick_gap_s | 1.0 | A-40 |
+
 ## Game rules (verify on CSDS: `player_status.money`, `tick`/`round_state` phases)
 
 | Key | Initial value | Assumption |
