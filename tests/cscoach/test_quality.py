@@ -82,19 +82,26 @@ def test_header_quality_flags():
     assert f.loc["ok", "month"] == "2026-08"
 
 
-def frames(n_rounds=3, disconnects=(), spawns=(), ticks=None, warmup_ticks=()):
+def frames(n_rounds=3, disconnects=(), spawns=(), ticks=None, warmup_ticks=(), final=(2, 1)):
     re_ = pd.DataFrame({"round": range(1, n_rounds + 1), "tick": [1000 * r for r in range(1, n_rounds + 1)]})
-    rs = pd.DataFrame({"tick": [10, *warmup_ticks], "is_warmup": [True] + [True] * len(warmup_ticks)})
+    rs = pd.DataFrame({
+        "tick": [10, *warmup_ticks, 1000 * n_rounds + 5],
+        "is_warmup": [True] + [True] * len(warmup_ticks) + [False],
+        "t_score": [0] * (1 + len(warmup_ticks)) + [final[0]],
+        "ct_score": [0] * (1 + len(warmup_ticks)) + [final[1]],
+    })
     tk = pd.DataFrame({"tick": ticks if ticks is not None else np.arange(0, 1000 * n_rounds + 1)})
     dc = pd.DataFrame(disconnects, columns=["tick", "player_id_fixed", "is_bot"])
+    dc["round"] = dc["tick"] // 1000 + 1  # round r ends at tick 1000 * r
     sp = pd.DataFrame(spawns, columns=["tick", "player_id_fixed"])
     return {"round_end": re_, "round_state": rs, "tick": tk, "player_disconnect": dc, "player_spawn": sp}
 
 
 def test_channel_flags_clean():
-    f = channel_flags(frames(), final_score_sum=3, tick_rate=64, cfg=CFG)
+    f = channel_flags(frames(), tick_rate=64, cfg=CFG)
     assert f == {
-        "n_round_end": 3, "q_no_round_end": False, "q_rounds_vs_score": False, "q_warmup_after_start": False,
+        "n_round_end": 3, "final_hi": 2, "final_lo": 1, "q_no_round_end": False, "q_rounds_vs_score": False,
+        "q_warmup_after_start": False,
         "max_tick_gap_s": pytest.approx(1 / 64), "q_tick_gap": False, "q_abandonment": False,
     }
 
@@ -102,19 +109,35 @@ def test_channel_flags_clean():
 def test_channel_flags_defects():
     ticks = np.r_[np.arange(0, 1000), np.arange(1200, 3001)]  # 999 → 1200: 201-tick hole ≈ 3.1 s
     fr = frames(disconnects=[(1500, 4, False), (2990, 5, False), (1500, 9, True)], spawns=[(1400, 4)],
-                ticks=ticks, warmup_ticks=(1500,))
-    f = channel_flags(fr, final_score_sum=2, tick_rate=64, cfg=CFG)
+                ticks=ticks, warmup_ticks=(1500,), final=(1, 1))
+    f = channel_flags(fr, tick_rate=64, cfg=CFG)
     assert f["q_rounds_vs_score"] and f["q_warmup_after_start"] and f["q_tick_gap"]
     assert f["max_tick_gap_s"] == pytest.approx(201 / 64)
-    assert f["q_abandonment"]  # player 4 left at 1500 < last round end 3000, never respawned
+    assert f["q_abandonment"]  # player 4 left in round 2, round 3 was played, never respawned
+
+
+def test_leaving_in_the_last_round_is_not_abandonment():
+    fr = frames(disconnects=[(2990, 5, False)])  # round 3 of 3, just before the final round end
+    assert not channel_flags(fr, tick_rate=64, cfg=CFG)["q_abandonment"]
 
 
 def test_reconnect_is_not_abandonment():
     fr = frames(disconnects=[(1500, 4, False)], spawns=[(2100, 4)])
-    assert not channel_flags(fr, final_score_sum=3, tick_rate=64, cfg=CFG)["q_abandonment"]
+    assert not channel_flags(fr, tick_rate=64, cfg=CFG)["q_abandonment"]
 
 
 def test_missing_round_end():
-    fr = frames(n_rounds=0, ticks=np.arange(0, 100))
-    f = channel_flags(fr, final_score_sum=0, tick_rate=64, cfg=CFG)
+    fr = frames(n_rounds=0, ticks=np.arange(0, 100), final=(0, 0))
+    f = channel_flags(fr, tick_rate=64, cfg=CFG)
     assert f["q_no_round_end"] and f["n_round_end"] == 0 and not f["q_abandonment"]
+
+
+def test_round_state_scores_override_header_final_state():
+    from cscoach.data.quality import apply_round_state_scores
+
+    q = pd.DataFrame({"match_id": ["a", "b"], "format": ["5v5", "5v5"], "final_state": ["incomplete", "regulation"],
+                      "q_incomplete": [True, False], "final_hi": [13.0, np.nan], "final_lo": [5.0, np.nan]})
+    out = apply_round_state_scores(q, CFG).set_index("match_id")
+    assert out.loc["a", "final_state"] == "regulation" and not out.loc["a", "q_incomplete"]
+    assert out.loc["a", "final_state_source"] == "round_state"
+    assert out.loc["b", "final_state"] == "regulation" and out.loc["b", "final_state_source"] == "header"

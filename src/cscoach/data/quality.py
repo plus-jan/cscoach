@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import logging
+import shutil
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
@@ -92,27 +93,37 @@ def header_flags(h: pd.DataFrame, complete: dict[str, bool], cfg: dict) -> pd.Da
     return out
 
 
-def channel_flags(ch: dict[str, pd.DataFrame], *, final_score_sum: int, tick_rate: int, cfg: dict) -> dict:
+def channel_flags(ch: dict[str, pd.DataFrame], *, tick_rate: int, cfg: dict) -> dict:
+    """Flags from the channels. Final scores come from the last ``round_state`` row, because the header's
+    loser score is unreliable (F-02)."""
     re_, rs, tk = ch["round_end"], ch["round_state"], ch["tick"]
     dc, sp = ch["player_disconnect"], ch["player_spawn"]
     n_re = int(re_["round"].nunique()) if len(re_) else 0
     first_end = re_["tick"].min() if len(re_) else None
     last_end = re_["tick"].max() if len(re_) else None
     warm = rs.loc[rs["is_warmup"].astype(bool), "tick"]
+    last = rs.sort_values("tick").iloc[-1] if len(rs) else None
+    hi = int(max(last["t_score"], last["ct_score"])) if last is not None else 0
+    lo = int(min(last["t_score"], last["ct_score"])) if last is not None else 0
     ticks = np.sort(tk["tick"].unique())
     max_gap = float(np.diff(ticks).max()) / tick_rate if len(ticks) > 1 else float("nan")
 
+    # abandonment: a human leaves, at least one later round is played, and they never spawn again
+    # (leaving during the final round, once the match is decided, is normal)
     abandon = False
     if last_end is not None and len(dc):
+        last_round = re_["round"].max()
         humans = dc[~dc["is_bot"].astype(bool)]
-        for t, pid in zip(humans["tick"], humans["player_id_fixed"]):
-            if t < last_end and not ((sp["player_id_fixed"] == pid) & (sp["tick"] > t)).any():
+        for t, r, pid in zip(humans["tick"], humans["round"], humans["player_id_fixed"]):
+            if r < last_round and not ((sp["player_id_fixed"] == pid) & (sp["tick"] > t)).any():
                 abandon = True
                 break
     return {
         "n_round_end": n_re,
+        "final_hi": hi,
+        "final_lo": lo,
         "q_no_round_end": n_re == 0,
-        "q_rounds_vs_score": n_re != final_score_sum,
+        "q_rounds_vs_score": n_re != hi + lo,
         "q_warmup_after_start": bool(first_end is not None and (warm > first_end).any()),
         "max_tick_gap_s": max_gap,
         "q_tick_gap": bool(max_gap > cfg["max_tick_gap_s"]),
@@ -128,8 +139,20 @@ def _quiet_logs():
     structlog.configure(wrapper_class=structlog.make_filtering_bound_logger(logging.WARNING))
 
 
+def apply_round_state_scores(q: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Where channel scores exist, recompute ``final_state`` from them; record the source."""
+    q = q.copy()
+    has = q["final_hi"].notna()
+    q["final_state_source"] = np.where(has, "round_state", "header")
+    q.loc[has, "final_state"] = [
+        final_state(int(a), int(b), f, cfg) for a, b, f in zip(q.loc[has, "final_hi"], q.loc[has, "final_lo"], q.loc[has, "format"])
+    ]
+    q["q_incomplete"] = q["final_state"] == "incomplete"
+    return q
+
+
 def _load_match(args):
-    root, key, final_sum, tick_rate, cfg = args
+    root, key, tick_rate, cfg = args
     _quiet_logs()
     from pureskillgg_dsdk.ds_io import DsReaderFs, GameDsLoader
 
@@ -145,7 +168,7 @@ def _load_match(args):
     for c, cols in (("player_spawn", ["tick", "player_id_fixed"]), ("tick", ["tick"])):
         ch.setdefault(c, pd.DataFrame(columns=cols))
     return {"key": key, "channel_error": None,
-            **channel_flags(ch, final_score_sum=final_sum, tick_rate=tick_rate, cfg=cfg)}
+            **channel_flags(ch, tick_rate=tick_rate, cfg=cfg)}
 
 
 def curator(cfg):
@@ -169,14 +192,14 @@ def build(cfg: dict) -> pd.DataFrame:
         on="match_id", how="left",
     )
     full = h[h["match_id"].map(complete).fillna(False).astype(bool)]
-    jobs = [
-        (cfg["root"], k, int(a + b), int(tr), cfg)
-        for k, a, b, tr in zip(full["key"], full["t_starters_score_final"], full["ct_starters_score_final"], full["tick_rate"])
-    ]
+    jobs = [(cfg["root"], k, int(tr), cfg) for k, tr in zip(full["key"], full["tick_rate"])]
     with ProcessPoolExecutor(cfg.get("workers", 12)) as pool:
         rows = list(pool.map(_load_match, jobs, chunksize=16))
     ch = pd.DataFrame(rows).merge(h[["key", "match_id"]], on="key").drop(columns="key")
-    return flags.merge(ch, on="match_id", how="left")
+    q = flags.merge(ch, on="match_id", how="left")
+    hdr_lo = h.set_index("match_id")[["t_starters_score_final", "ct_starters_score_final"]].min(axis=1)
+    q["q_header_loser_score"] = q["final_lo"].notna() & (q["match_id"].map(hdr_lo) != q["final_lo"])
+    return apply_round_state_scores(q, cfg)
 
 
 HEADER_DEFECTS = ["q_platform_unknown", "q_player_count", "q_incomplete"]
@@ -210,6 +233,9 @@ def write_subheaders(cfg: dict, q: pd.DataFrame) -> dict[str, int]:
     for suffix, sel in SUBHEADERS.items():
         ids = set(q.loc[sel(q), "match_id"])
         name = f"subheader.{base}.{suffix}"
+        old = Path(cfg["tome_root"]) / "tome" / "csds" / name
+        if old.is_dir():  # derived tome: rebuild from scratch so no stale pages remain
+            shutil.rmtree(old)
         c.create_subheader_tome(name, lambda df, ids=ids: df["match_id"].isin(ids).to_numpy(),
                                 src_tome_name=cfg["header_tome"])
         counts[name] = len(ids)
@@ -223,7 +249,8 @@ def report(q: pd.DataFrame, out_dir: Path, meta: dict, sub_counts: dict) -> None
                    full_channels=("complete", lambda s: int(s.fillna(False).astype(bool).sum())))
               .reset_index())
     counts.to_csv(out_dir / "counts_platform_map_month_channelset.csv", index=False)
-    flag_cols = ["q_platform_unknown", "q_upload_date", "q_player_count", "q_incomplete", *CHANNEL_DEFECTS]
+    flag_cols = ["q_platform_unknown", "q_upload_date", "q_player_count", "q_incomplete", *CHANNEL_DEFECTS,
+                 "q_header_loser_score"]
     flags = {c: int(q[c].fillna(False).astype(bool).sum()) for c in flag_cols}
     flags["channel_error"] = int(q["channel_error"].notna().sum())
     summary = {
@@ -234,6 +261,7 @@ def report(q: pd.DataFrame, out_dir: Path, meta: dict, sub_counts: dict) -> None
         "canonical": int(q["is_canonical"].sum()),
         "format": q.loc[q["is_canonical"], "format"].value_counts().to_dict(),
         "final_state_canonical": q.loc[q["is_canonical"], "final_state"].value_counts().to_dict(),
+        "final_state_source_canonical": q.loc[q["is_canonical"], "final_state_source"].value_counts().to_dict(),
         "channel_checked": int(q["n_round_end"].notna().sum()),
         "flags_all_rows": flags,
         "clean": int(q["clean"].sum()),
