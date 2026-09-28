@@ -17,7 +17,7 @@ loop:
 model:
   label: y_ct_win
   stratum: tier
-  calibration: {method: auto, by: [tier, platform], isotonic_min_rows: 5000, min_rows_per_group: 1000}   # A-28
+  calibration: {method: platt, by: null, isotonic_min_rows: 5000, min_rows_per_group: 1000}   # A-28
   gbdt:
     label: y_ct_win
     stratum: tier
