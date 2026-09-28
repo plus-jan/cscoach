@@ -26,4 +26,4 @@ model:
   train_row_fraction: 0.25  # A-29: snapshot thinning for fitting (predictions cover all rows)
   seed: 20260928
   params: {learning_rate: 0.03, num_leaves: 31, min_data_in_leaf: 200, bagging_fraction: 0.8, bagging_freq: 1,
-           feature_fraction: 0.8, lambda_l2: 10.0, num_threads: 16}                     # A-29
+           feature_fraction: 0.8, lambda_l2: 1.0, num_threads: 16}                     # A-29
