@@ -6,8 +6,9 @@ right against the victim's side at death), filled from ``player_spawn.player_tea
 ``player_info`` has no row for that player and round (spawn: 99.24 %); remaining players without a side are counted
 in ``n_players_no_side``, never guessed.
 
-- bomb: ``bomb_planted`` from ``bomb_state`` ``bomb_planted`` with tick ≤ t; ``bomb_site_code`` is the raw
-  per-map entity code (A/B mapping in MV.1).
+- bomb: ``bomb_planted`` from ``bomb_state`` ``bomb_planted`` with tick ≤ t; ``bomb_site`` (A/B) from the planter's
+  ``place_name`` at the plant tick (a snapshot tick, since ``bomb_state`` is an event channel). The raw ``site_code``
+  is a per-server entity index and is not used (MV.1, docs/data/csds_decoding.md).
 - time: ``time_remaining_s`` = round clock (``round_time_s`` from freeze end) before the plant, bomb clock
   (``bomb_timer_s`` from the plant tick) after it (A-44, measured in MV.1: 115 s / 41 s).
 - weapons: v1 counts ``primaries`` (inv_primary > 0); weapon classes need the weapon-code decoding (MV.1).
@@ -87,15 +88,26 @@ def build_features(snap: pd.DataFrame, pi: pd.DataFrame, bomb: pd.DataFrame, rou
     tr = ctx["tick_rate"]
     fe = out["round"].map(rounds.astype({"round": "int64"}).set_index("round")["freeze_end_tick"]).astype("float64")
     out["second_in_round"] = (out["tick"] - fe) / tr
-    plants = (bomb[bomb["event_type"] == "bomb_planted"][["round", "tick", "site_code"]].dropna(subset=["round", "tick"])
-              .astype({"round": "int64", "tick": "int64"})
-              .rename(columns={"tick": "plant_tick", "site_code": "bomb_site_code"}).sort_values("plant_tick"))
+    plants = (bomb[bomb["event_type"] == "bomb_planted"][["round", "tick", "player_id_fixed"]]
+              .dropna(subset=["round", "tick"]).astype({"round": "int64", "tick": "int64"})
+              .rename(columns={"tick": "plant_tick", "player_id_fixed": "planter"}).sort_values("plant_tick"))
+    site_of_place = {"BombsiteA": "A", "BombsiteB": "B"}
+    if "place_name" in snap:
+        at_plant = snap[["tick", "player_id_fixed", "place_name"]].assign(
+            player_id_fixed=snap["player_id_fixed"].astype("float64"))
+        plants = plants.assign(planter=plants["planter"].astype("float64")).merge(
+            at_plant.rename(columns={"tick": "plant_tick", "player_id_fixed": "planter"}), on=["plant_tick", "planter"],
+            how="left")
+        plants["bomb_site"] = plants["place_name"].map(site_of_place)
+    else:
+        plants["bomb_site"] = None
+    plants = plants[["round", "plant_tick", "bomb_site"]].drop_duplicates(["round", "plant_tick"])
     out = out.astype({"tick": "int64"}).sort_values("tick")
     out = pd.merge_asof(out, plants.assign(plant_tick_key=plants["plant_tick"]).rename(columns={"round": "plant_round"}),
                         left_on="tick", right_on="plant_tick_key", direction="backward")
     planted = out["plant_round"].eq(out["round"]).fillna(False).astype(bool)  # CSDS ints arrive nullable
     out["bomb_planted"] = planted
-    out["bomb_site_code"] = out["bomb_site_code"].where(planted).astype("Int64")
+    out["bomb_site"] = out["bomb_site"].astype(object).where(planted & out["bomb_site"].notna(), None)
     since_plant = ((out["tick"] - out["plant_tick"]) / tr).astype("float64")
     out["second_in_round"] = out["second_in_round"].astype("float64")
     out["time_remaining_s"] = np.where(planted, cfg["bomb_timer_s"] - since_plant, cfg["round_time_s"] - out["second_in_round"])
@@ -124,7 +136,7 @@ def _one(args):
     loader = GameDsLoader(reader=DsReaderFs(root_path=root, manifest_key=key))
     ch = loader.get_channels([
         {"channel": "player_info", "columns": ["round", "player_id_fixed", "team_code"]},
-        {"channel": "bomb_state", "columns": ["round", "tick", "event_type", "site_code"]},
+        {"channel": "bomb_state", "columns": ["round", "tick", "event_type", "player_id_fixed"]},
         {"channel": "player_spawn", "columns": ["round", "tick", "player_id_fixed", "player_team_code"]},
     ])
     rounds = pd.read_parquet(Path(root) / "derived" / "rounds" / f"{match_id}.parquet", columns=["round", "freeze_end_tick"])

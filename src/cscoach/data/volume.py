@@ -27,17 +27,25 @@ def fraction_needed(count: float, current_fraction: float, target: float) -> flo
 
 
 def gap_table(df: pd.DataFrame, dims: list[str], *, current_fraction: float, targets: dict) -> pd.DataFrame:
-    g = df.groupby(dims, dropna=False).agg(matches=("rounds", "size"), rounds=("rounds", "sum")).reset_index()
+    """``current_fraction`` is the sampling fraction; if ``df`` has ``inclusion_prob`` (platform-stratified sample),
+    each stratum uses its mean inclusion probability instead."""
+    agg = {"matches": ("rounds", "size"), "rounds": ("rounds", "sum")}
+    if "inclusion_prob" in df:
+        agg["current_fraction"] = ("inclusion_prob", "mean")
+    g = df.groupby(dims, dropna=False).agg(**agg).reset_index()
+    if "current_fraction" not in g:
+        g["current_fraction"] = current_fraction
     share = targets["test_share"]
     g["test_rounds_expected"] = g["rounds"] * share
     g["fraction_needed_matches"] = [
-        fraction_needed(m, current_fraction, targets["min_matches_per_bucket"]) for m in g["matches"]
+        fraction_needed(m, f, targets["min_matches_per_bucket"]) for m, f in zip(g["matches"], g["current_fraction"])
     ]
     g["fraction_needed_rounds"] = [
-        fraction_needed(r * share, current_fraction, targets["min_test_rounds_per_stratum"]) for r in g["rounds"]
+        fraction_needed(r * share, f, targets["min_test_rounds_per_stratum"])
+        for r, f in zip(g["rounds"], g["current_fraction"])
     ]
     g["fraction_needed"] = g[["fraction_needed_matches", "fraction_needed_rounds"]].max(axis=1)
-    g["meets_targets"] = g["fraction_needed"] <= current_fraction + 1e-12
+    g["meets_targets"] = g["fraction_needed"] <= g["current_fraction"] + 1e-12
     return g
 
 
@@ -53,6 +61,9 @@ def analysis_frame(root: Path) -> pd.DataFrame:
     q = pd.read_parquet(root / "manifest" / "match_quality.parquet")
     t = pd.read_parquet(root / "manifest" / "match_tiers.parquet")[["match_id", "tier", "tier_source"]]
     df = q[q["clean"] & q["in_seeded_sample"].fillna(False).astype(bool)].merge(t, on="match_id", how="left")
+    man = pd.read_parquet(root / "manifest" / "matches.parquet")
+    if "inclusion_prob" in man:
+        df = df.merge(man[["match_id", "inclusion_prob"]], on="match_id", how="left")
     df["rounds"] = (df["final_hi"] + df["final_lo"]).astype(int)
     df["tier"] = df["tier"].fillna("null")
     return df

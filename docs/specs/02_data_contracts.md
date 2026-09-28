@@ -44,7 +44,8 @@ row ≤ tick (same round) and `is_alive` from `player_death` — `player_status`
 plain as-of join would keep them alive (F-06); dead players' state columns are masked. Players without a status
 row in the current round (not yet seen, or gone after a disconnect) get no row. Sides: `player_info.team_code`,
 filled from `player_spawn` only where `player_info` lacks the player (F-06 addendum). Built by
-`cscoach.data.features` (v1: `primaries` instead of weapon classes and raw `bomb_site_code` until MV.1).
+`cscoach.data.features` (v1: `primaries` instead of weapon classes; `bomb_site` A/B from the planter's `place_name`
+at the plant, since `site_code` is not a stable site id — MV.1).
 
 Features are aggregated per side from `player_status` at the latest tick ≤ snapshot tick:
 - `alive` (health > 0), `hp_sum` (`health`), `armor_sum` (`armor`), `helmets` (`has_helmet`),
@@ -52,7 +53,7 @@ Features are aggregated per side from `player_status` at the latest tick ≤ sna
 - `equip_value` (`current_equipment_cost` / `equipment_value_calc`);
 - weapon class counts (`inv_primary`, `inv_secondary`) and utility counts (`inv_*grenade`, `inv_flashbang`, `inv_molotov`, `inv_incgrenade`);
 - `money` (post-buy float);
-- bomb: `bomb_planted`, `bomb_site`, and the plant time (`bomb_state` `bomb_planted` + `site_code`);
+- bomb: `bomb_planted`, `bomb_site` (planter's `place_name` at the plant), and the plant time (`bomb_state` `bomb_planted`);
 - time: `time_remaining_s` (round clock pre-plant, bomb clock post-plant; timers from `tick` phases, A-14);
 - context: `man_advantage`, `tier`, `platform`, `map_name`, `build_num`.
 

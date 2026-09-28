@@ -25,6 +25,7 @@ def snaps():
                 "inv_primary": np.nan if dead else (7.0 if p < 3 else 0.0), "inv_flashbang": np.nan if dead else 1.0,
                 "inv_hegrenade": np.nan if dead else 0.0, "inv_smokegrenade": np.nan if dead else 1.0,
                 "inv_molotov": np.nan if dead else 0.0, "inv_incgrenade": np.nan if dead else 1.0,
+                "place_name": None if dead else ("BombsiteA" if p == 2 else "Middle"),
                 "staleness_ticks": 0,
             })
     df = pd.DataFrame(rows)
@@ -38,7 +39,9 @@ def player_info():  # players 0,1 CT; 2,3 T
 
 
 def bomb():
-    return pd.DataFrame({"round": [1], "tick": [1640], "event_type": ["bomb_planted"], "site_code": [168]})
+    # player 2 (T) plants at 1640 while standing in BombsiteA; site_code is an unstable entity index (MV.1)
+    return pd.DataFrame({"round": [1], "tick": [1640], "event_type": ["bomb_planted"], "player_id_fixed": [2.0],
+                         "site_code": [168]})
 
 
 def rounds():
@@ -63,7 +66,8 @@ def test_time_remaining_before_and_after_plant():
     f = build_features(snaps(), player_info(), bomb(), rounds(), CTX, CFG).set_index("tick")
     assert f.loc[1000, "time_remaining_s"] == pytest.approx(115.0)
     assert not f.loc[1000, "bomb_planted"]
-    assert f.loc[1640, "bomb_planted"] and f.loc[1640, "bomb_site_code"] == 168
+    assert f.loc[1640, "bomb_planted"] and f.loc[1640, "bomb_site"] == "A"  # from the planter's place_name
+    assert f.loc[1000, "bomb_site"] is None and "bomb_site_code" not in f.columns
     assert f.loc[1640, "time_remaining_s"] == pytest.approx(40.0)  # plant at this tick (≤ t)
     assert f.loc[2280, "time_remaining_s"] == pytest.approx(30.0)
     assert f.loc[2280, "second_in_round"] == pytest.approx(20.0)
@@ -103,7 +107,7 @@ def test_features_unchanged_when_future_rows_removed(cut):
 
 
 def test_nullable_integer_inputs_from_csds():
-    b = bomb().astype({"round": "Int64", "tick": "Int64", "site_code": "Int64"})
+    b = bomb().astype({"round": "Int64", "tick": "Int64", "site_code": "Int64", "player_id_fixed": "Int64"})
     r = rounds().astype({"round": "Int64", "freeze_end_tick": "Int64"})
     f = build_features(snaps(), player_info(), b, r, CTX, CFG).set_index("tick")
     assert f.loc[1000, "time_remaining_s"] == pytest.approx(115.0) and f.loc[2280, "time_remaining_s"] == pytest.approx(30.0)

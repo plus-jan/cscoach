@@ -39,3 +39,12 @@ def test_gap_table_binding_constraint_is_the_larger_fraction():
     assert g["fraction_needed_matches"] == pytest.approx(0.18)
     assert g["fraction_needed_rounds"] == pytest.approx(0.15)
     assert g["fraction_needed"] == pytest.approx(0.18)
+
+
+def test_gap_table_uses_stratum_inclusion_probability():
+    df = pd.DataFrame({"platform": ["steam"] * 200 + ["faceit"] * 200, "rounds": [20] * 400,
+                       "inclusion_prob": [0.35] * 200 + [1.0] * 200})
+    g = gap_table(df, ["platform"], current_fraction=0.35, targets=TARGETS).set_index("platform")
+    assert g.loc["steam", "fraction_needed"] == pytest.approx(0.525)  # 200 → 300 needs 0.35·1.5
+    assert math.isinf(g.loc["faceit", "fraction_needed"])  # already fully included, still short
+    assert g.loc["faceit", "current_fraction"] == pytest.approx(1.0)
