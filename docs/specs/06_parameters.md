@@ -106,7 +106,7 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | LightGBM start values | n_estimators 2000, lr 0.03, num_leaves 31, min_child_samples 200, subsample 0.8, colsample 0.8, λ 1.0, early stopping 100 | A-29 |
 | GBDT early-stopping slice / snapshot thinning (fitting only) | 10% of fitting matches (seeded match hash) / 25% of snapshots | A-29 |
 | calibration | auto: isotonic if ≥ 5000 rows else Platt; per tier if ≥ 1000 rows | A-28 |
-| calibration.by (group columns) / output clip | tier (M3.3 loop decides) / [1e−6, 1 − 1e−6] | A-28 |
+| calibration.by (group columns) / output clip | none — global Platt (M3.3 loop, F-13) / [1e−6, 1 − 1e−6] | A-28 |
 | wp.map_prefixes (eligible maps) | `de_` (bomb defusal only) | A-47 |
 | xK features | see docs/specs/03#xk | A-19, A-20 |
 

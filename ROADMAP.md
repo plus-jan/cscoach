@@ -148,7 +148,11 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   (+ second_in_round); OOF log-loss 0.4849 [0.4830, 0.4869] vs logistic 0.5157 (Δ 0.0308 [0.0298, 0.0319]), ECE
   0.0061; hyperparameters flat; tier/platform/map kept; rank prior not adopted (A-48). Sealed-test look deferred to
   M3.4 (after M3.3). F-12. Report `reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/`.
-- [ ] **M3.3 — Calibration layer** per tier/platform [A-28].
+- [x] **M3.3 — Calibration layer** per tier/platform [A-28].
+  Done: `cscoach.models.calibration`, final fit `cscoach.models.wp_fit` (`models/wp_v1`); gated loop 5 variants, 1 kept:
+  global Platt (lower bound +0.000002; OOF ECE 0.0061 → 0.0031); per-tier/platform isotonic lowered ECE but worsened
+  log-loss (−0.0002 to −0.0005) and was not kept. Final: 818 trees; Platt a 0.96, b 0.01 on the calibration fold.
+  F-13. Report `reports/experiments/20260928-2206_m3.3_wp_fit/`.
 - [ ] **M3.4 — WP validation report** (docs/specs/04 §2, incl. the temporal split by `build_num`).
   **DoD:** passes gates.
 

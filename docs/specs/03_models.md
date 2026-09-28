@@ -49,6 +49,8 @@ defuser-to-bomb distance.
    Refs: [pandaskill] (monotone GBDT + ECE).
 3. Calibration layer: global + per-tier (and/or per-platform) isotonic or Platt, fitted on a dedicated
    calibration fold of matches (A-28).
+   M3.3 (F-13): global Platt only (`cscoach.models.calibration`, `configs/wp_calibration.yaml`); per-group
+   isotonic did not pass the keep rule. Final model: `cscoach.models.wp_fit` → `models/wp_v1`.
 4. Challengers (optional, M3.5): sequence/set models over snapshots; promoted only by protocol.
 
 **Symmetry:** `wp_t = 1 − wp_ct`. Sanity-check a side-swap on mirrored states (CS2 is not side-symmetric).

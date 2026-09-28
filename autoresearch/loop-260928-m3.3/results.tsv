@@ -1,0 +1,8 @@
+# metric_direction: higher_is_better
+iteration	timestamp	commit	metric	delta	guard	guard-metric	status	description
+0	2026-09-28T21:42:49+02:00	4ac96c2	0.000000	0.0	pass	-	baseline	champion: uncalibrated M3.2 GBDT (clipped identity)
+1	2026-09-28T21:47:04+02:00	fde124c	-0.000015	0.000077	pass	0 fails	discard	global isotonic
+2	2026-09-28T21:51:27+02:00	f14f78f	0.000002	0.000073	pass	0 fails	keep	global Platt
+3	2026-09-28T21:56:07+02:00	9287743	-0.000343	-0.000222	pass	0 fails	discard	global + per tier, auto (A-28 design)
+4	2026-09-28T22:00:56+02:00	311954c	-0.000103	-0.000026	pass	0 fails	discard	global + per platform, auto
+5	2026-09-28T22:05:31+02:00	54a63f0	-0.000621	-0.000450	pass	0 fails	discard	global + per tier x platform, auto

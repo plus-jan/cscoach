@@ -125,4 +125,9 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   [0.4830, 0.4869] vs logistic 0.5157 (paired Δ 0.0308 [0.0298, 0.0319]); ECE 0.0061, per tier ≤ 0.0071, per map
   ≤ 0.017; weakest: side wiped out (3v0 0.091). A-29 supported. Sealed test deferred to M3.4. F-12 ·
   reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/report.md
+- 2026-09-28 · M3.3 · WP calibration layer: gated loop (cross-fitted over training folds), 5 variants, 1 kept —
+  global Platt (Δ log-loss +0.00007, lower bound +0.000002; OOF ECE 0.0061 → 0.0031). Global isotonic ECE 0.0004 but
+  no log-loss gain; per tier / platform / tier × platform isotonic worse (Δ −0.0002 to −0.0005). Final fit: GBDT on
+  6,293 training matches (818 trees), Platt on 897 calibration matches (a 0.96, b 0.01); test/temporal unread. F-13 ·
+  reports/experiments/20260928-2206_m3.3_wp_fit/report.md
 

@@ -413,6 +413,10 @@
   type: method
   source: initial choice
   status: open
+  note: >-
+    2026-09-28 (M3.3, F-13): cross-fitted gated loop on training folds — global Platt kept (OOF ECE 0.0061 → 0.0031);
+    the per-tier isotonic design (isotonic always applies at ~1–2 M rows per tier) worsened log-loss by 0.0002 and
+    was not adopted. Row thresholds count clustered snapshots, not independent rows (see A-07). Decide in MV.7.
   test: [MV.7]
   parameters: [calibration, split]
   blocks: [wp_timeline]

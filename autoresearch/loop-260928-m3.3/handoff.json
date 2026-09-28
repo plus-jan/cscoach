@@ -1,0 +1,4 @@
+{"version": "2.1.0", "source": "loop", "timestamp": "2026-09-28T22:08:02+02:00", "status": "BOUNDED",
+ "results_tsv": "autoresearch/loop-260928-m3.3/results.tsv",
+ "findings": ["5 of 15 variants, 1 kept (global Platt, lower bound +0.000002)", "per-group isotonic lowers ECE but worsens log-loss"],
+ "config": {"goal": "M3.3 calibration layer", "scope": "configs/wp_calibration.yaml (model.calibration)", "metric": "lower CI bound of delta log-loss vs champion", "direction": "higher_is_better", "verify": "uv run python -m cscoach.loops.gated_verify --config configs/wp_calibration.yaml"}}

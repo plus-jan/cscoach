@@ -249,3 +249,22 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
   and further tuning does not pay.
 - supersedes: —
 
+### F-13 — The GBDT is already calibrated; only a global Platt layer passes, per-tier isotonic overfits
+- date: 2026-09-28 · task: M3.3 · decision: —
+- question: Which calibration layer (none, global isotonic/Platt, per tier, per platform, per tier × platform;
+  A-28) improves out-of-fold log-loss under the gated keep rule?
+- result: global Platt kept (Δ +0.000073, lower bound +0.000002; OOF ECE 0.0061 → 0.0031, per tier ≤ 0.0054). Global
+  isotonic: ECE 0.0004 but Δ +0.000077 with lower bound −0.000015. Per-group isotonic lowers per-tier ECE to ≤ 0.0032
+  but worsens log-loss (per tier −0.00022, per tier × platform −0.00045). The final Platt fit on the calibration fold
+  (897 matches) is a = 0.96, b = 0.01. There is no sign of tier- or platform-specific miscalibration large enough to
+  pay for per-group calibrators on this data (relevant to A-01, tested in MV.3).
+- evidence: `reports/experiments/20260928-2206_m3.3_wp_fit/` (report.md, card.json, ledgers); config
+  `configs/wp_calibration.yaml`; split `wp_v1`, training folds for the loop, calibration fold for the final fit.
+- confidence: medium (effects are tiny; cross-fitted on training folds; the test fold is evaluated once in M3.4).
+- changes: A-28 note (the initial per-tier isotonic design is not adopted; global Platt); docs/specs/06 calibration
+  row; docs/specs/03 WP model 3.
+- next step: M3.4 WP validation report — the single sealed-test and temporal-holdout evaluation of models/wp_v1
+  against the gates — rationale: the WP pipeline is complete. Open question for MV.5/MV.7: whether ECE should enter
+  the keep rule for calibration choices (log-loss barely moves when ECE is already small).
+- supersedes: —
+
