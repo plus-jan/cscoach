@@ -1,0 +1,12 @@
+# Rank decoding and match tiers (M1.4). Parameters and assumptions: docs/specs/06_parameters.md, "Tiers".
+root: /media/jan/merged/cs2coach
+tome_root: /media/jan/merged/cs2coach/tomes
+header_tome: header.2025-09-01,2026-09-28.full
+tiers: [low, mid, high, semipro]
+tier_cutoffs:                  # lower bounds of mid/high/semipro; A-11
+  premier: [10000, 15000, 20000]
+  competitive: [7, 13, 17]     # MM skill groups 1-18
+  faceit: [4, 7, 10]           # FACEIT levels 1-10
+min_known_players: 6           # A-12
+premier_min_rating: 19         # A-15: Premier ratings never fall in 1-18 (observed minimum 1,206)
+workers: 12
