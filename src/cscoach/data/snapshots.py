@@ -79,9 +79,10 @@ def asof_join(snaps: pd.DataFrame, status: pd.DataFrame, columns: list[str], dea
     j["status_other_round"] = other | j["status_round"].isna()
     for c in columns:
         j[c] = j[c].mask(j["status_other_round"] | ~j["is_alive"])
-    # a player with no status row at or before the snapshot tick is not known yet: no row (a row would
-    # reveal a future player)
-    j = j[j["status_tick"].notna()].copy()
+    # no row for a player without a status row in this round at or before the snapshot tick: not known yet (a
+    # row would reveal a future player) or not in this round (e.g. disconnected; the latest row is from an
+    # earlier round and would otherwise be carried forward as a "ghost")
+    j = j[j["status_tick"].notna() & ~j["status_other_round"]].copy()
     j["status_tick"] = j["status_tick"].astype("Int64")
     j["staleness_ticks"] = (j["tick"] - j["status_tick"]).where(~j["status_other_round"] & j["is_alive"]).astype("Int64")
     j = j.drop(columns=["status_round", "death_round", "death_tick"])

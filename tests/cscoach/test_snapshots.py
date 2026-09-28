@@ -70,13 +70,13 @@ def test_asof_join_takes_latest_row_not_after_tick():
     assert len(j) == len(s) * 4  # every player has a status row before the first snapshot
 
 
-def test_asof_join_flags_status_from_another_round():
+def test_player_absent_from_the_round_has_no_rows():
     st = status()
-    st = st[~((st["player_id_fixed"] == 3) & (st["round"] == 2))]  # player 3 has no rows in round 2
+    st = st[~((st["player_id_fixed"] == 3) & (st["round"] == 2))]  # player 3 left after round 1 (ghost)
     s = sample_ticks(rounds(), events(), tick_rate=TICK_RATE, cadence_s=1.0)
     j = asof_join(s, st, ["health"], deaths())
-    p3 = j[(j["player_id_fixed"] == 3) & (j["round"] == 2)]
-    assert p3["status_other_round"].all() and p3["health"].isna().all()  # never carried across rounds
+    assert j[(j["player_id_fixed"] == 3) & (j["round"] == 2)].empty  # never carried across rounds
+    assert not j[(j["player_id_fixed"] == 3) & (j["round"] == 1)].empty
 
 
 @pytest.mark.parametrize("cut", [999, 1000, 1499, 1500, 2100, 4000, 5100, 6499, 6999])

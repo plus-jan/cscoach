@@ -1,0 +1,8 @@
+# State features v1 (M2.3). Parameters and assumptions: docs/specs/06_parameters.md.
+root: /media/jan/merged/cs2coach
+tome_root: /media/jan/merged/cs2coach/tomes
+header_tome: header.2025-09-01,2026-09-28.full
+code_side: {2: T, 3: CT}      # A-15 (F-05)
+round_time_s: 115.0           # A-14 (verify in MV.1)
+bomb_timer_s: 40.0            # A-14 (verify in MV.1)
+workers: 12
