@@ -89,6 +89,8 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
 13. **Rounds (M2.1, F-05):** `winner_team_code` 2 = T / 3 = CT, but the v30 parser reports a stale side in
    the first round of every half (fixed in `cscoach.data.rounds`); v30 has no round end reasons (only 8/9).
    Per-match round tables: `<root>/derived/rounds/`; reconciliation flags: `<root>/manifest/rounds_check.parquet`.
+14. **Dead players (M2.2, F-06):** `player_status` stops at a player's death and resumes after the round end;
+   derive alive/dead from `player_death`, never from the last `player_status` row.
 
 ## Access procedure (for the implementing agent)
 

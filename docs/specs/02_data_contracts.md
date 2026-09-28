@@ -39,6 +39,10 @@ One row per (match_id, round, tick). Ticks are chosen by the sampler (docs/specs
 event ticks (`player_death`, `player_hurt`, `bomb_*`, `grenade_state`) plus a fixed cadence between
 freeze end and round end (end tick excluded).
 
+Built by `cscoach.data.snapshots` (M2.2): one row per snapshot × known player with the latest `player_status`
+row ≤ tick (same round) and `is_alive` from `player_death` — `player_status` has no rows for dead players, so a
+plain as-of join would keep them alive (F-06); dead players' state columns are masked.
+
 Features are aggregated per side from `player_status` at the latest tick ≤ snapshot tick:
 - `alive` (health > 0), `hp_sum` (`health`), `armor_sum` (`armor`), `helmets` (`has_helmet`),
   `kits` (`has_defuser`, CT);

@@ -78,3 +78,6 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
 - 2026-09-28 · M2.1 · Round reconstruction (7,984 canonical 5v5 full-channel matches, 162,102 rounds, 2,822 OT):
   final team scores = round_state + header winner in 99.887% (v30 99.921%, v42 99.757%; OT and draws 100%) after
   the v30 half-start winner fix. F-05 · reports/experiments/20260928-1613_m2.1_rounds/report.md
+- 2026-09-28 · M2.2 · Snapshot sampler + as-of join (300 clean seeded matches): 703,293 snapshots (2,344/match,
+  36.6% event-driven), 7.0 M player rows, alive share 0.68; leakage check 300/300; 0.39 s/match. Dead players
+  from `player_death` (F-06) · reports/experiments/20260928-1623_m2.2_snapshots/report.md

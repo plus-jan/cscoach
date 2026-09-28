@@ -132,3 +132,18 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: finish the M1.5 top-up, refresh manifest/quality/tiers/volume, rebuild rounds for the new matches;
   then M2.2 (snapshot sampler) and MV.1 (remaining code decoding) — rationale: both are Part A and unblock E.x/M3.
 - supersedes: —
+
+### F-06 — `player_status` has no rows for dead players; state must come from deaths
+- date: 2026-09-28 · task: M2.2 · decision: —
+- question: Does an as-of join of `player_status` give the current state of every player at a snapshot tick?
+- result: No. A victim's rows stop at the death tick (last health > 0) and resume 19–20 ticks after the round end
+  with health 100 (4,638 of 4,648 resumptions in 40 matches). A plain as-of join carries dead players forward as
+  alive (alive rows looked up to ~2 min stale). With `is_alive` from `player_death`: alive rows p99 staleness
+  0 ticks, 144 of 4.77 M alive rows > 1 s stale; alive share 0.68. The leakage check (truncate at T, snapshots ≤ T
+  unchanged) passes in 300/300 real matches.
+- evidence: `reports/experiments/20260928-1623_m2.2_snapshots/report.md`; config `configs/snapshots.yaml`.
+- confidence: high.
+- changes: docs/specs/02 snapshots (alive state from `player_death`); docs/data/README.md quirk 14.
+- next step: M2.3 state features on the snapshots (after the top-up refresh) — rationale: next Part A task;
+  alive counts and man advantage depend on this fix.
+- supersedes: —

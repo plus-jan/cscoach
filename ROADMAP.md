@@ -89,8 +89,9 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   **DoD:** round winners match the final scores in `header` for ≥ 99.5% of matches. Adjusted (F-02: header loser
   score unreliable): final team scores = last `round_state` scores and header winner score. Done:
   `cscoach.data.rounds`; 99.887% of 7,984 matches; v30 winner-side fix; F-05. Report `reports/experiments/20260928-1613_m2.1_rounds/`.
-- [ ] **M2.2 — Snapshot sampler** (event ticks + cadence [A-22]); as-of join of `player_status` ≤ tick.
-  **DoD:** leakage test (removing future rows changes nothing).
+- [x] **M2.2 — Snapshot sampler** (event ticks + cadence [A-22]); as-of join of `player_status` ≤ tick.
+  **DoD:** leakage test (removing future rows changes nothing). Done: `cscoach.data.snapshots`; leakage check
+  300/300 real matches + unit tests; dead players from `player_death` (F-06). Report `reports/experiments/20260928-1623_m2.2_snapshots/`.
 - [ ] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
   distributions per tier/platform in PROGRESS.
 - [ ] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end.
