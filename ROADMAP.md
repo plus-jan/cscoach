@@ -15,7 +15,7 @@ they are open.
 ## M0 — Knowledge base (this repository)
 
 - [x] **M0.1 — Specs, roadmap, agent manual, skills.**
-- [~] **M0.2 — Research sources verified** (14 papers + HLTV notes + CSDS spec; see `docs/research/papers/README.md`).
+- [~] **M0.2 — Research sources verified** (15 papers + HLTV notes + CSDS spec; only DxT missing; see `docs/research/papers/README.md`).
   Remaining PDFs are requested from the user.
 - [x] **M0.3 — Assumptions register** (`docs/assumptions.yaml`) + parameter spec (`docs/specs/06`).
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
@@ -64,7 +64,8 @@ they are open.
   compares with the expected population.
   **DoD:** tier cut-offs revised or confirmed (ADR); corpus-bias note.
 - [ ] **MV.3 — Tier hypothesis (architecture-deciding).**
-  deps: M3.1–M3.3. Refs: [A-01], [xenopoulos_pro_vs_amateur_wp], [champ_matchmaking].
+  deps: M3.1–M3.3. Refs: [A-01], [xenopoulos_pro_vs_amateur_wp] (prior result to replicate: ΔECE ≈ +0.02
+  for a pro→amateur transfer), [champ_matchmaking].
   Fit WP on one tier/platform and evaluate calibration on the others. Compare against pooled,
   tier-conditioned and per-tier models, with cluster-bootstrap CIs.
   **DoD:** A-01 supported/refuted; ADR-0002 confirmed or replaced.
@@ -120,8 +121,8 @@ they are open.
 
 - [ ] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map, reported next to the pro CS:GO
   benchmark in [xenopoulos_valuing_actions_csgo] (log-loss 0.535 XGBoost / 0.692 map-only).
-- [ ] **M3.2 — GBDT WP** (monotone, tier/platform features), with hyperparameters tuned by grouped
-  CV [A-29]. Refs: [pandaskill].
+- [ ] **M3.2 — GBDT WP** (monotone, tier/platform features, rank-prior features via ablation), with
+  hyperparameters tuned by grouped CV [A-29]. Refs: [pandaskill].
 - [ ] **M3.3 — Calibration layer** per tier/platform [A-28].
 - [ ] **M3.4 — WP validation report** (docs/specs/04 §2, incl. the temporal split by `build_num`).
   **DoD:** passes gates.

@@ -22,7 +22,7 @@
     model fitted on one tier/platform is miscalibrated on others; WP must be tier/platform-conditioned
     and recalibrated per stratum.
   type: research
-  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); [xenopoulos_valuing_actions_csgo] §VI-D names 'similar skill' as a strong assumption of WPA; pooling with a conditioning feature beat per-group models in [xenopoulos_optimal_economy] (maps); direct but unread [xenopoulos_pro_vs_amateur_wp]
+  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); [xenopoulos_valuing_actions_csgo] §VI-D names 'similar skill' as a strong assumption of WPA; pooling with a conditioning feature beat per-group models in [xenopoulos_optimal_economy] (maps); DIRECT prior evidence [xenopoulos_pro_vs_amateur_wp] (CS:GO 2021, PureSkill MM: pro model ECE 0.023 vs 0.004 in-domain, no CIs) — supports the direction; replication on CS2 CSDS tiers pending (MV.3)
   status: open
   test: [MV.3]
   parameters: [WP features (v1), calibration]

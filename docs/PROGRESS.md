@@ -23,3 +23,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   `verified: notes`). Added counterfactual rules (actionable, on-manifold, minimum viable change), a
   round-end residual credit rule, eco-adjusted duel value via xK, and a build-versioned economy (Aug 2025
   change) · docs/research/papers/README.md
+- 2026-09-28 · M0.2 (partial) · Xenopoulos, Freeman & Silva 2022 added (ACM HTML full text): a pro-trained WP
+  model was miscalibrated on PureSkill amateur MM (ECE 0.023 vs 0.004 in-domain) → prior evidence for A-01
+  (still open until MV.3). Added a rank-prior feature candidate, map-imbalance note, abandonment flag ·
+  docs/research/papers/xenopoulos_pro_vs_amateur_wp.md

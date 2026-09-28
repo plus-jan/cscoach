@@ -25,6 +25,7 @@ synthesis, and where the paper is used in this project.
 
 | id | Paper | Game / data | Questions | Used in |
 |---|---|---|---|---|
+| [xenopoulos_pro_vs_amateur_wp](xenopoulos_pro_vs_amateur_wp.md) | Pro vs Amateur Esports through WP (Xenopoulos, Freeman, Silva 2022) | CS:GO pro / FPL / **PureSkill MM** | A, C | **A-01 prior evidence**, MV.3, MV.5, rank-prior feature |
 | [same_player_verification_cs2](same_player_verification_cs2.md) | Account Consistency from Gameplay Traces: Same-Player Verification in CS2 (Zhang 2026, **v2**) | CS2 amateur + pro | A, C, E | M4.2 xK features, A-20, A-29, ADR-0005 ethics |
 | [learning_to_move_like_pros](learning_to_move_like_pros.md) | Learning to Move Like Professional CS Players (Durst et al. 2024) | CS:GO pro, dust2 | G, I | CSDS quality caveat (A-16/A-40), M9.1 region detectors, MV.12/13 |
 | [x_ego_cs](x_ego_cs.md) | X-Ego (Wang, Hans, Ustun 2025) | CS2 pro video, Mirage | G, J | named-area positions (A-37); data out of scope |
@@ -43,14 +44,13 @@ synthesis, and where the paper is used in this project.
 
 All listed papers are full-text verified (`verified: true`) except `hltv_rating_3` (`verified: notes`).
 
-**Still missing (full text needed, see `../sources.yaml` for URLs):** **xenopoulos_pro_vs_amateur_wp**
-(highest priority: direct test of A-01; it used earlier PureSkill data), dynamic_xt (MDPI, open access).
+**Still missing (full text needed, see `../sources.yaml` for URLs):** dynamic_xt (MDPI, open access).
 
 ## By research question
 
-- **A. WP in Counter-Strike:** xenopoulos_valuing_actions_csgo, same_player_verification_cs2 (features only); *missing:* xenopoulos_pro_vs_amateur_wp
+- **A. WP in Counter-Strike:** xenopoulos_pro_vs_amateur_wp, xenopoulos_valuing_actions_csgo, same_player_verification_cs2 (features only)
 - **B. WP in other games:** valorant_round_outcome_tactical, champ_matchmaking
-- **C. Skill tiers:** champ_matchmaking (conditioning lesson), same_player_verification_cs2 (domain-matched training matters, Table 9), xenopoulos_optimal_economy (pooled model + conditioning feature beat per-group models)
+- **C. Skill tiers:** **xenopoulos_pro_vs_amateur_wp** (direct: pro→amateur miscalibration), champ_matchmaking (conditioning lesson), same_player_verification_cs2 (domain-matched training matters, Table 9), xenopoulos_optimal_economy (pooled model + conditioning feature beat per-group models)
 - **D. Action valuation / credit:** xenopoulos_valuing_actions_csgo, hltv_rating_3 (notes), pandaskill, tar2_credit_assignment, contextual_xt_spatial; *missing:* dynamic_xt
 - **E. Duels (xK):** same_player_verification_cs2 (mechanics features)
 - **F. Economy:** xenopoulos_optimal_economy, hltv_rating_3 (eco-adjustment, notes)
@@ -63,7 +63,9 @@ All listed papers are full-text verified (`verified: true`) except `hltv_rating_
 1. **Calibration is rarely reported.** Only PandaSkill reports ECE. VALORANT and CHAMP report accuracy
    (CHAMP adds RMSE), and xT reports log-likelihood without CIs. Our gates in `docs/specs/06_parameters.md`
    go beyond the literature; don't relax them to match the papers.
-2. **Skill/domain groups need explicit conditioning or matched training.** Naive pooling can do worse
+2. **Skill/domain groups need explicit conditioning or matched training.** Direct CS evidence: a
+   pro-trained WP model is miscalibrated on PureSkill amateur MM (ECE 0.023 vs 0.004 in-domain)
+   [xenopoulos_pro_vs_amateur_wp]. Naive pooling can do worse
    than a single-group model [champ_matchmaking]. Mixing amateur and pro data reduced pro performance
    [same_player_verification_cs2, Table 9]. This supports ADR-0002 while MV.3 is open.
 3. **Low-level mechanics carry strong player-specific signal** that outcome stats miss (AUC 0.572 → 0.855,

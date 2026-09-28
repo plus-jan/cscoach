@@ -17,7 +17,8 @@ conditioning variable, because MM and FACEIT scales are not comparable.
 
 Refs: [champ_matchmaking] (condition on domain; naive pooling hurts), [same_player_verification_cs2]
 (pro data didn't help an amateur model). [xenopoulos_pro_vs_amateur_wp] is the most direct evidence
-(pro vs amateur WP), but its full text is pending.
+(pro vs amateur WP; pro-trained WP was miscalibrated on PureSkill amateur MM: ECE 0.023 vs 0.004 in-domain,
+CS:GO 2021, no CIs).
 
 ## WP — round win probability
 
@@ -27,6 +28,10 @@ tick ≤ *t* only.
 **Features v1** (from `player_status`, `bomb_*`): alive, HP, armor, helmets, kits, equipment value,
 weapon-class and utility counts per side, `bomb_planted`, bomb site, `time_remaining_s`,
 `man_advantage`, `tier`, `platform`, `map_name`.
+**Skill-prior features (candidate, must win an ablation):** the mean rank of each side's alive
+players and the rank difference (`player_info` at round start, known before the round). In
+[xenopoulos_pro_vs_amateur_wp] these shifted WP much more in amateur MM (r = 0.59) than in near-pro
+FPL (r = 0.13), especially when equipment/HP were balanced.
 **Features v2** (spatial, M7, must win an ablation): area control share and distance to sites on
 the empirical `area_graph`, spotted counts (`is_spotted`), active smokes/mollies on key edges,
 defuser-to-bomb distance.

@@ -21,7 +21,7 @@ Conventions:
 | tier, tier_source | derived (docs/specs/03 §Tiers) | null if unknown — never guessed |
 | channel_set | index object | `v30` / `v42` |
 | dedup_key | hash of header values | used to drop duplicates |
-| quality_flags | derived | missing ticks, missing round_end, warmup leftovers, … |
+| quality_flags | derived | missing ticks, missing round_end, warmup leftovers, **abandonment** (`player_disconnect` without reconnect → 4v5 phases with money compensation [xenopoulos_pro_vs_amateur_wp]), … |
 
 ## rounds
 match_id, round, start_tick (`round_start`/`round_state`), freeze_end_tick (phase change in
