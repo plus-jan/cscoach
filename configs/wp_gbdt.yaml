@@ -23,7 +23,7 @@ model:
   num_boost_round: 2000   # A-29
   early_stopping_rounds: 100
   es_fraction: 0.1        # A-29: grouped early-stopping slice of the fitting matches
-  train_row_fraction: 0.25  # A-29: snapshot thinning for fitting (predictions cover all rows)
+  train_row_fraction: 0.5  # A-29: snapshot thinning for fitting (predictions cover all rows)
   seed: 20260928
   params: {learning_rate: 0.03, num_leaves: 31, min_data_in_leaf: 200, bagging_fraction: 0.8, bagging_freq: 1,
            feature_fraction: 0.8, lambda_l2: 1.0, num_threads: 16}                     # A-29
