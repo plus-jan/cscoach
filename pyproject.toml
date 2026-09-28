@@ -9,6 +9,8 @@ dependencies = [
   "pureskillgg-csgo-dsdk>=3.1.1",
   "pandas>=2.2",
   "pyarrow>=16",
+  "pyyaml>=6.0.3",
+  "botocore[crt]>=1.43.75",
 ]
 
 [dependency-groups]

@@ -1,0 +1,10 @@
+# CSDS export (M1.2). Parameters and assumptions: docs/specs/06_parameters.md, "Data export".
+region: us-east-1
+dataset_id: f49be2ef387af522a7b6f000158113e0   # pureskillgg-csgo-production-dataexchange-csds-0
+bucket: cs2coach-csds-688474982708             # own export bucket (same region as the dataset)
+root: /media/jan/merged/cs2coach               # local collection; never inside the repo (ADR-0008)
+start_date: "2025-09-01"                       # revision comment date, inclusive
+end_date: "2026-09-28"                         # exclusive
+full_channel_fraction: 0.15                    # A-32
+sample_seed: 20260928                          # A-32
+egress_usd_per_gb: 0.09                        # S3 internet egress estimate (cost log only)

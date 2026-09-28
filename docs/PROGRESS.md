@@ -54,3 +54,9 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
 - 2026-09-28 · M0.6 · Done. No remote CI: checks run locally via the new gate `scripts/check.sh` (kbcheck +
   the four upstream suites; ADR-0009, amends ADR-0007); work branches are merged into master locally ·
   docs/adr/0009-local-checks.md
+- 2026-09-28 · M1.2 · Reproducible export (`cscoach.data.export`: ADX asset index → plan → export to
+  s3://cs2coach-csds-688474982708 → sync) and manifest (`cscoach.data.manifest`). 363 live revisions
+  (2025-09-01 to 2026-09-27), 32,498 matches (steam 30,731 / faceit 1,636 / unknown 131; v30 26,516 /
+  v42 5,982), 8,676 with all channels, of which 4,864 = seeded 15% sample; 351 GB; this run exported
+  129,800 assets (153.8 GB, est. egress $14). F-01: legacy test download over-represents FACEIT (0.079
+  vs 0.050) → use the seeded sample · reports/data/export_manifest_by_revision_date.csv

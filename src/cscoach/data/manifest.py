@@ -80,6 +80,24 @@ def build_manifest(root: Path, workers: int = 16) -> pd.DataFrame:
     return df
 
 
+def attach_revisions(manifest: pd.DataFrame, assets: pd.DataFrame, *, seed: int, fraction: float) -> pd.DataFrame:
+    """Add the ADX revision of each match (from the asset index) and its seeded-sample membership.
+
+    Matches missing from the asset index get null revision fields (never guessed from the folder date).
+    """
+    from cscoach.data.export import in_sample
+
+    rev = (
+        assets.assign(match_id=assets["name"].str.split("/").str[4])
+        .drop_duplicates("match_id")
+        .set_index("match_id")[["revision_id", "revision_date"]]
+        .rename(columns={"revision_date": "adx_revision_date"})
+    )
+    out = manifest.join(rev, on="match_id")
+    out["in_seeded_sample"] = [in_sample(m, seed=seed, fraction=fraction) for m in out["match_id"]]
+    return out
+
+
 def summarize_by_revision_date(manifest: pd.DataFrame) -> pd.DataFrame:
     g = manifest.groupby("revision_date")
     out = pd.DataFrame(
@@ -95,6 +113,12 @@ def summarize_by_revision_date(manifest: pd.DataFrame) -> pd.DataFrame:
             "gb": (g["bytes"].sum() / 1e9).round(3),
         }
     )
+    if "revision_id" in manifest:
+        out["revision_ids"] = g["revision_id"].apply(lambda s: ";".join(sorted(s.dropna().unique())))
+        out["n_seeded_sample"] = g["in_seeded_sample"].sum().astype(int)
+        out["n_seeded_complete"] = g.apply(
+            lambda d: int((d["in_seeded_sample"] & d["complete"].astype(bool)).sum()), include_groups=False
+        )
     return out.reset_index()
 
 
@@ -103,8 +127,19 @@ def main(argv=None) -> int:
     ap.add_argument("--root", type=Path, required=True, help="collection root holding csds/YYYY/MM/DD/")
     ap.add_argument("--matches-out", type=Path, required=True, help="per-match parquet (keep next to the data)")
     ap.add_argument("--summary-out", type=Path, required=True, help="per-revision-date CSV (committed)")
+    ap.add_argument("--config", type=Path, default=Path("configs/export.yaml"),
+                    help="export config (seed/fraction); revisions come from <root>/manifest/adx_assets.parquet")
     args = ap.parse_args(argv)
     manifest = build_manifest(args.root)
+    assets_path = args.root / "manifest" / "adx_assets.parquet"
+    if assets_path.exists():
+        import yaml
+
+        cfg = yaml.safe_load(args.config.read_text())
+        assets = pd.read_parquet(assets_path, columns=["name", "revision_id", "revision_date"])
+        manifest = attach_revisions(
+            manifest, assets, seed=cfg["sample_seed"], fraction=cfg["full_channel_fraction"]
+        )
     args.matches_out.parent.mkdir(parents=True, exist_ok=True)
     manifest.to_parquet(args.matches_out, index=False)
     summary = summarize_by_revision_date(manifest)

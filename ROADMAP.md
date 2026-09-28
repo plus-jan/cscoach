@@ -60,10 +60,13 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   **DoD:** one revision exported; license ADR. Done: revisions 2025-09-01 to 2026-09-28 exported to
   `/media/jan/merged/cs2coach` (32,379 match headers, ~4,510 with all channels; header tome built);
   ADR-0008 (non-commercial, derived work public under CC BY-NC-SA 4.0), A-38 decided.
-- [ ] **M1.2 — Export & collection layout.** Export revisions in ≤ 1-month batches with
+- [x] **M1.2 — Export & collection layout.** Export revisions in ≤ 1-month batches with
   `pureskillgg_dsdk` (telemetry channels only where needed, costs logged). Keep an export manifest
   (revision ids, dates, channel-set version, `ppp_version`).
-  **DoD:** reproducible export script in the code repo; manifest.
+  **DoD:** reproducible export script in the code repo; manifest. Done: `cscoach.data.export`
+  (ADX asset index → plan → EXPORT_ASSETS_TO_S3 → sync; boto3 directly, since the dsdk exports whole
+  revisions only) and `cscoach.data.manifest`; 363 revisions, 32,498 matches, 8,676 with all channels
+  (seeded 15% sample = 4,864), 351 GB, ≈ $14 egress. F-01: use the seeded sample for full-channel work.
 - [ ] **M1.3 — Header tome, dedup, quality.** `create_header_tome`; dedup on header-derived keys
   [A-36]; quality flags (missing round_end, warmup leftovers, missing ticks, abandonment) [A-40];
   subheader tomes by platform / rank availability / channel set / date.

@@ -26,7 +26,14 @@ Tome env vars: `PURESKILLGG_TOME_DEFAULT_HEADER_NAME`, `PURESKILLGG_TOME_DS_TYPE
 - CS2 matches from **Valve Matchmaking, FACEIT and other third parties**, uploaded by PureSkill.gg users
   (the other 9 players per match are mostly not users). Daily revisions; ~90–150 matches/day recently,
   ~12/day in July 2025. **Only ~1 year retained** (365 revisions from 2025-07-18 as of 2026-08-27):
-  download what you need, older revisions disappear.
+  download what you need, older revisions disappear. Checked 2026-09-28: 1,337 revisions exist, 941 of
+  them (2021-12-01 to 2025-07-18) are `Revoked` ("Retention policy: data older than the retention window
+  is archived to Amazon S3 Glacier Deep Archive and removed from AWS Data Exchange"); 396 are live
+  (2025-07-19 to 2026-09-27), one per day.
+- Asset names are `csds/YYYY/MM/DD/<match_id>/<channel>`. The folder date is **not always** the revision
+  date (a revision can hold matches filed under other dates), so the match → revision map comes from
+  the asset listing (`<root>/manifest/adx_assets.parquet`), not from the path. A revision holds at most
+  10,000 assets (ADX quota).
 - One match = JSON index object `csds` + **42 Parquet channels** (since 2026-08-04; 30 before, mixed on
   2026-08-02). **Always drive reading from the per-match index**, never a hard-coded channel list.
 - ~35 MB/match, of which `player_vector` + `player_status` (per-tick telemetry) are ~30 MB.
@@ -72,6 +79,18 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
    must be excluded; model overtime explicitly otherwise (economy differs).
 
 ## Access procedure (for the implementing agent)
+
+**Current setup (M1.2):** ADX dataset `f49be2ef387af522a7b6f000158113e0` (`…-csds-0`, us-east-1; a
+`…-csds-tome-0` dataset exists too), export bucket `cs2coach-csds-688474982708`, local collection
+`/media/jan/merged/cs2coach`. Run `uv run python -m cscoach.data.export {index,plan,export,sync}` with
+`configs/export.yaml`; then `uv run python -m cscoach.data.manifest` to refresh the manifest. boto3 needs
+`botocore[crt]` for `aws login` credentials.
+
+**Sampling rule (F-01):** every match has `header` + `csds`; all channels exist for a seeded sample
+(`in_seeded_sample` in the manifest; `export.full_channel_fraction`, `export.sample_seed` in
+docs/specs/06) plus a legacy test download of unknown selection. Analyses that need non-header channels
+use `in_seeded_sample == True` only. To grow the sample, raise the fraction (nested: it only adds
+matches) and rerun `index`/`plan`/`export`/`sync`.
 
 1. The user subscribes to the ADX product (approval takes days) and provides AWS credentials.
 2. Export revisions (≤ 1 month per batch) with `pureskillgg_dsdk.download_adx_dataset_revision` or to

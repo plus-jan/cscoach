@@ -76,3 +76,22 @@ def test_summary_by_revision_date(corpus):
     assert s.loc["2026-08-10", "n_index_broken"] == 0
     assert s.loc["2026-07-20", "ppp_versions"] == "8.4.0"
     assert "match_id" not in s.columns
+
+
+def test_attach_revisions_and_sample(corpus):
+    from cscoach.data.manifest import attach_revisions
+
+    assets = pd.DataFrame(
+        {
+            "name": ["csds/2026/08/10/m1/header", "csds/2026/08/10/m1/csds", "csds/2026/08/10/m2/header"],
+            "revision_id": ["r1", "r1", "r2"],
+            "revision_date": ["2026-08-11", "2026-08-11", "2026-08-10"],
+        }
+    )
+    m = attach_revisions(build_manifest(corpus), assets, seed=1, fraction=1.0).set_index("match_id")
+    assert m.loc["m1", "revision_id"] == "r1" and m.loc["m1", "adx_revision_date"] == "2026-08-11"
+    assert m.loc["m2", "revision_id"] == "r2"
+    assert pd.isna(m.loc["m3", "revision_id"])  # not in the asset index → null, never guessed
+    assert m["in_seeded_sample"].all()
+    s = summarize_by_revision_date(m).set_index("revision_date")
+    assert s.loc["2026-08-10", "revision_ids"] == "r1;r2"
