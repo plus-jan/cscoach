@@ -97,7 +97,9 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   Partial (2026-09-28): `cscoach.data.features` + denylist and truncation tests done; side from `player_info`
   (99.97% vs death-time side) with `player_spawn` fill; ghost rows of absent players removed from snapshots.
   Open: distributions per tier/platform after the M1.5 top-up refresh.
-- [ ] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end.
+- [x] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end. Done:
+  `cscoach.verify.leakage_audit`; max freeze-end AUC 0.630 (ct_equip_value, CI 0.615–0.644), 300 matches; re-run
+  with M2.3 on the refreshed data. Report `reports/experiments/20260928-1705_m2.4_leakage_audit/`.
 - [ ] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
   `cscoach.loops.gated_verify` (prints the budget-corrected CI lower bound of the improvement vs the
   champion on match-grouped out-of-fold predictions, training matches only) and `cscoach.loops.guard`

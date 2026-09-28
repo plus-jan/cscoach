@@ -91,3 +91,6 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   (loss counter −2 per win, plant bonus 600, CT +50 per T kill, OT 10,000; money 96.2–97.1% with one credit).
   v30 round ends 6.7 s late → `decided_tick`. A-13/A-14 refuted → A-44/A-45; A-15/A-16 supported. F-07 ·
   docs/data/csds_decoding.md · reports/experiments/20260928-1657_mv1_decoding/report.md
+- 2026-09-28 · M2.4 · Leakage audit (300 clean seeded matches, 6,215 freeze-end snapshots): max single-feature AUC
+  0.630 [0.615, 0.644] (ct_equip_value) ≪ 0.99 → gate passes; best mid-round feature man_advantage 0.874. F-08 ·
+  reports/experiments/20260928-1705_m2.4_leakage_audit/report.md

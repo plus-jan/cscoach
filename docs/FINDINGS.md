@@ -170,3 +170,16 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: after the top-up, refresh everything and finish M2.3 (distributions per tier/platform), then M2.4
   (leakage audit) — rationale: remaining Part A tasks before M3; the end-tick fix changes every snapshot table.
 - supersedes: —
+
+### F-08 — No single-feature leakage at freeze end
+- date: 2026-09-28 · task: M2.4 · decision: —
+- question: Does any state feature predict the round winner almost perfectly at freeze end (A-46: AUC > 0.99)?
+- result: no. Best: ct_equip_value AUC 0.630 [0.615, 0.644] (6,215 freeze-end snapshots, 300 matches, cluster
+  bootstrap); all CT buy features 0.60–0.63. Over the round the best single feature (man advantage) peaks at 0.874
+  (60–80 s). Null result on the corrected tables (MV.1 `decided_tick`).
+- evidence: `reports/experiments/20260928-1705_m2.4_leakage_audit/` (report.md, summary.json); config `configs/leakage_audit.yaml`.
+- confidence: medium (pre-top-up sample of 300 matches; re-run on the refreshed data).
+- changes: none (A-46 threshold unchanged).
+- next step: refresh after the top-up, finish M2.3, re-run this audit; then plan M2.5/M3 — rationale: the state
+  table is the input of the WP baseline.
+- supersedes: —
