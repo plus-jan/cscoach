@@ -83,6 +83,9 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
 11. **Duplicates and quality (M1.3):** `<root>/manifest/match_quality.parquet` holds `dedup_key`,
    `is_canonical`, `format`, `final_state`, `q_*` flags and `clean`; nothing is deleted from `csds/`.
    Use subheader tomes `subheader.2025-09-01,2026-09-28.clean*` or filter the flag table.
+12. **Ranks (M1.4, F-03):** see the decoding table in the M1.4 report and docs/specs/06; per-match tiers in
+   `<root>/manifest/match_tiers.parquet` (full-channel matches only; null when < 6 known ranks, never guessed).
+   `header.*_starters_avg_rank` averages unranked players as 0; don't use it for tiers.
 
 ## Access procedure (for the implementing agent)
 

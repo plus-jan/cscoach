@@ -67,3 +67,8 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   steam v42 5,572/5,469/4,171/1,669, unknown 131/129/0/46. Clean per month 2025-08…2026-09: 371, 1,340,
   712, 1,615, 1,764, 2,154, 2,410, 2,316, 2,031, 1,507, 2,225, 2,532, 2,493, 1,964. Full table
   (platform × map × month × channel set, 350 cells) in the report. F-02 · reports/experiments/20260928-1540_m1.3_header_quality/report.md
+- 2026-09-28 · M1.4 · Rank decoding (Steam rank_type 11 Premier / 12 Competitive / 7 Wingman; FACEIT level in
+  rank_platform; type-free v30 rule agrees 2,079/2,079). Tier coverage, seeded canonical 5v5 (n = 4,176):
+  faceit low/mid/high/semipro/null 18/84/84/46/13; steam competitive 578/292/31/0/508; steam premier
+  1,110/372/316/164/543; unknown 17 null. Spread ≥ 2 tiers 17.5%. F-03 (legacy download = 100% de_mirage) ·
+  reports/experiments/20260928-1554_m1.4_tiers/report.md

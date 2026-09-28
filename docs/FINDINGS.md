@@ -74,3 +74,25 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
   docs/data/README.md quirks 10–11; final scores come from `round_state` wherever channels exist.
 - next step: M1.4 (tier labels) — rationale: A-40 still needs the tier dimension, and D1 depends on tiers.
 - supersedes: —
+
+### F-03 — Ranks decode cleanly; tiers exist for 74% of seeded 5v5 matches, missingness is not random
+- date: 2026-09-28 · task: M1.4 · decision: feeds D1 (via MV.2)
+- question: Can `player_info` ranks be decoded per platform without guessing, and how complete and
+  homogeneous are match tiers (A-11, A-12, A-15, A-40)?
+- result: Steam `rank_type` 11 = Premier (1,206–30,763), 12 = Competitive SG, 7 = Wingman SG; FACEIT level in
+  `rank_platform`; 0 = unknown. `rank_type` is missing in v30; the type-free rule (Premier iff any rank ≥ 19)
+  agrees with `rank_type` in 2,079/2,079 v42 matches with known ranks. Seeded canonical 5v5 (n = 4,176):
+  tier for 3,095 (74%): low 1,706, mid 748, high 431, semipro 210, null 1,081. Missing tier: competitive 0.361
+  [0.335, 0.385], premier 0.217 [0.200, 0.233], faceit 0.053 [0.025, 0.082]. Lobby spread ≥ 2 tiers 0.175
+  [0.162, 0.189]. Competitive skill groups never reach semipro (64% low). Exclusion by known tier 0.039–0.056
+  (overlapping), untiered 0.077. **Extends F-01:** the legacy full-channel download is 100% de_mirage
+  (n = 3,808); the seeded sample matches the corpus (mirage 0.263 vs 0.255).
+- evidence: `reports/experiments/20260928-1554_m1.4_tiers/` (report.md, summary.json, validation.json, tier_coverage_seeded.csv); config
+  `configs/tiers.yaml`.
+- confidence: high for decoding and counts; medium for cut-off adequacy (A-11 untested until MV.2).
+- changes: A-15 note (rank fields decoded; other codes open); A-12 note (missingness and spread measured);
+  A-11 note (uneven across scales); A-40 note (tier dimension flat among tiered); docs/specs/06 rank decoding;
+  docs/data/README.md quirk 12.
+- next step: M1.5 (volume check per stratum) — rationale: semipro is below the A-32 target and tiers exist only
+  for full-channel matches, so the top-up size must be decided before E.x/M3.
+- supersedes: —

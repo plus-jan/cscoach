@@ -131,6 +131,9 @@
   status: open
   test: [MV.2]
   parameters: [FACEIT level → tier, Premier rating → tier, MM skill group → tier]
+  note: >-
+    2026-09-28 (M1.4, F-03): on the seeded sample, competitive skill groups never map to semipro (64% low) and
+    premier is 57% low; the cut-offs are uneven across scales. Whether tiers differ in play is MV.2.
   blocks: [wp_timeline, player_metrics, coaching_feedback]
 
 - id: A-12
@@ -143,6 +146,10 @@
   status: open
   test: [MV.2]
   parameters: [match tier rule, min players with known rank]
+  note: >-
+    2026-09-28 (M1.4, F-03): tier missing (< 6 known ranks) for 36% competitive, 22% premier, 5% faceit
+    seeded 5v5 matches (not random); 17.5% of labelled lobbies span >= 2 tiers. Excluding untiered matches
+    would shift the platform/scale mix.
   blocks: [wp_timeline, player_metrics]
 
 # ---------------------------------------------------------------- game rules / tooling
@@ -178,7 +185,11 @@
   source: docs/data/csds_spec.md lists types but not code meanings
   status: open
   test: [MV.1, MV.2]
-  parameters: [rank field decoding]
+  parameters: [rank field decoding, premier_min_rating]
+  note: >-
+    2026-09-28 (M1.4, F-03): rank fields decoded (rank_type 11/12/7, FACEIT level in rank_platform); the
+    type-free rule for v30 agrees with rank_type in 2,079/2,079 v42 matches with known ranks. The other codes
+    (team, win reason, weapon, hit box, site) are still open (MV.1).
   blocks: [wp_timeline, xk, economy_feedback, player_metrics]
 
 - id: A-16
@@ -465,7 +476,8 @@
   note: >-
     2026-09-28 (M1.3, F-02): no tick gaps > 1 s, no missing round_end, no warmup leftovers in 8,676
     full-channel matches. Excluding flagged canonical 5v5 matches is flat across maps (0.073-0.087) but
-    not platforms (faceit 0.156 vs steam 0.071); tiers pending M1.4. Flagged matches stay stratifiable.
+    not platforms (faceit 0.156 vs steam 0.071). M1.4 (F-03, seeded): flat across known tiers
+    (0.039-0.056), higher for untiered (0.077). Flagged matches stay stratifiable.
   test: [M1.3, MV.1]
   blocks: []
 

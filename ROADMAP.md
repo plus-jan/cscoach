@@ -74,8 +74,10 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   flags only (raw data untouched); 31,779 canonical, 25,434 clean 5v5; subheader tomes by
   platform / rank / channel set (date windows are selected from the flag table's `month`); F-02.
   Report `reports/experiments/20260928-1540_m1.3_header_quality/`.
-- [ ] **M1.4 — Tier labels.** Decode `player_info` rank fields per platform (with MV.2) → match tier +
-  spread [A-11, A-12, A-15]. **DoD:** tier coverage table; unknowns are null, never guessed.
+- [x] **M1.4 — Tier labels.** Decode `player_info` rank fields per platform (with MV.2) → match tier +
+  spread [A-11, A-12, A-15]. **DoD:** tier coverage table; unknowns are null, never guessed. Done:
+  `cscoach.data.tiers`; seeded 5v5 coverage 3,095 / 4,176 (low 1,706, mid 748, high 431, semipro 210);
+  F-03. Report `reports/experiments/20260928-1554_m1.4_tiers/`.
 - [ ] **M1.5 — Data volume check** against the target [A-32]. **DoD:** gap analysis per stratum.
 
 ## M2 — Round reconstruction & snapshots
