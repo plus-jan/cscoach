@@ -37,6 +37,8 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | MM skill group → tier | 1–6 low, 7–12 mid, 13–16 high, 17–18 semipro | A-11 |
 | rank field decoding (`rank`, `rank_type`, `rank_platform`) | Steam `rank_type` 11 = Premier, 12 = Competitive SG, 7 = Wingman SG; `rank` 0 = unknown; FACEIT level = `rank_platform` (0 = unknown); without `rank_type` (v30): Premier iff any rank ≥ premier_min_rating (M1.4) | A-15 |
 | premier_min_rating (type-free scale inference) | 19 | A-15 |
+| rounds.code_side (`team_code`, `winner_team_code`) | 2 = T, 3 = CT | A-15 |
+| rounds.flip_winner_after_swap (channel sets) | v30 (first round after each side swap) | A-15 |
 | match tier rule | median of known player tiers | A-12 |
 | min players with known rank | 6 | A-12 |
 
