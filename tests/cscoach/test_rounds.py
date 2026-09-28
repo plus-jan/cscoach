@@ -5,19 +5,18 @@ import pytest
 
 from cscoach.data.rounds import build_rounds, check_rounds, sides_by_round
 
-CFG = {"regulation_rounds": 24, "flip_winner_after_swap": ["v30"], "code_side": {2: "T", 3: "CT"}}
+CFG = {"regulation_rounds": 24, "overtime_half_rounds": 3, "flip_winner_after_swap": ["v30"],
+       "code_side": {2: "T", 3: "CT"}}
 
 
-def player_info(n_rounds, swap_after=12, ot_half=3):
-    """Players 0-4 start CT (3), 5-9 start T (2); sides swap after `swap_after`, then every `ot_half`."""
+def player_info(n_rounds):
+    """Players 0-4 start CT (3), 5-9 start T (2). CS2 schedule (observed in CSDS): swap at 13; overtime
+    blocks of 6 from round 25 keep the sides for 3 rounds, then swap (28, 34, 40, …)."""
     rows = []
     for r in range(1, n_rounds + 1):
-        if r <= swap_after:
-            flipped = False
-        elif r <= 2 * swap_after:
-            flipped = True
-        else:
-            flipped = ((r - 2 * swap_after - 1) // ot_half) % 2 == 0  # OT half 1 swaps back? keep simple: alternate
+        swaps = 1 if r >= 13 else 0
+        swaps += sum(1 for s in range(28, r + 1, 6))  # overtime swaps at 28, 34, 40 (observed in CSDS)
+        flipped = swaps % 2 == 1
         for p in range(10):
             start_ct = p < 5
             is_ct = start_ct != flipped
@@ -38,9 +37,9 @@ def match(true_winner_team, channel_set="v42", n_regulation=24):
         codes.append(code_side[win_side])
     re_ = pd.DataFrame({"round": range(1, n + 1), "tick": [1000 * r for r in range(1, n + 1)],
                         "winner_team_code": codes, "win_reason_code": [8] * n})
-    if channel_set == "v30":  # simulate the old parser: side mapping is stale in the first round after a swap
+    if channel_set == "v30":  # simulate the old parser: stale side in the first round of every half
         swaps = [r for r in range(2, n + 1) if side.loc[r] != side.loc[r - 1]]
-        for r in swaps:
+        for r in sorted(set(swaps) | set(range(25, n + 1, 6))):
             re_.loc[re_["round"] == r, "winner_team_code"] = 5 - re_.loc[re_["round"] == r, "winner_team_code"]
     rs_rows = []
     for r in range(1, n + 1):
@@ -115,3 +114,13 @@ def test_check_flags_team_score_mismatch():
     r = build_rounds(re_, rs, pi, st, channel_set="v42", cfg=CFG)
     chk = check_rounds(r, final_hi=12, final_lo=2, header_winner=12)
     assert not chk["ok"] and chk["reason"] == "team_scores"
+
+
+@pytest.mark.parametrize("channel_set", ["v42", "v30"])
+def test_overtime_recovers_true_winners(channel_set):
+    truth = list("AAAAAABBBBBB" + "BBBBBBAAAAAA" + "ABA" + "BAB" + "AAAA")  # 12-12, 15-15 draw, then A 4-0
+    re_, rs, pi, st, final = match(truth, channel_set)
+    r = build_rounds(re_, rs, pi, st, channel_set=channel_set, cfg=CFG)
+    assert ["A" if w == "start_ct" else "B" for w in r["winner_team"]] == truth
+    assert list(r.loc[r["side_swap_before"], "round"]) == [13, 28, 34]
+    assert check_rounds(r, final_hi=19, final_lo=15, header_winner=19)["ok"]

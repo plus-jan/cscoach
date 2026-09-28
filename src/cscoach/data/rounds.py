@@ -4,9 +4,11 @@ Decoding (M2.1 report, A-15):
 - ``team_code`` / ``winner_team_code``: 2 = T, 3 = CT (``win_reason_message`` agrees).
 - Each player's side per round comes from ``player_info.team_code``; sides swap where the players' codes
   flip (no hard-coded schedule). ``start_ct`` = the team that plays CT in round 1.
-- The v30 parser reports the winner's side with the pre-swap mapping in the first round after each side
-  swap (round 13: 322/322 disagreements with ``round_state``; rounds 14–24: 100 % agreement). For channel
-  sets in ``flip_winner_after_swap`` that side is flipped. v42 needs no correction.
+- The v30 parser reports the winner's side with a stale mapping in the first round of every half: after each
+  side swap (13, 28, 34, …) and at the start of each overtime block (25, 31, …) where the sides do not change
+  (round 13: 322/322 disagreements with ``round_state``; rounds 14–24: 100 % agreement; with this rule
+  overtime and draw matches reconcile 100 %). For channel sets in ``flip_winner_after_swap`` that side is
+  flipped. v42 needs no correction.
 - ``round_state`` scores are not used for winners (their convention differs by parser and swaps on display);
   they are the independent check: final team scores must equal the last ``round_state`` scores and the header
   winner score.
@@ -48,7 +50,10 @@ def build_rounds(re_: pd.DataFrame, rs: pd.DataFrame, pi: pd.DataFrame, rstart: 
     swapped = r["side_start_ct"].ne(r["side_start_ct"].shift()) & r.index.to_series().gt(0)
     side = r["winner_team_code"].map(cfg["code_side"])
     if channel_set in cfg["flip_winner_after_swap"]:
-        side = np.where(swapped, side.map({"T": "CT", "CT": "T"}), side)
+        ot_block = 2 * cfg["overtime_half_rounds"]
+        half_start = swapped | ((r["round"] > cfg["regulation_rounds"])
+                                & ((r["round"] - cfg["regulation_rounds"] - 1) % ot_block == 0))
+        side = np.where(half_start, side.map({"T": "CT", "CT": "T"}), side)
     r["winner_side"] = side
     r["winner_team"] = np.where(r["winner_side"] == r["side_start_ct"], "start_ct", "start_t")
     a_win = (r["winner_team"] == "start_ct").astype(int)
