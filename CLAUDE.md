@@ -82,7 +82,7 @@ Results on synthetic data prove code correctness only, never facts about CS2 (A-
 Full-text papers: `docs/research/papers/<id>.md` (index and rules in its README). Consult them before
 designing a model, feature, metric, validation step or feedback format. Cite by `sources.yaml` id as
 `[id]`. Trust order: paper full text > its cscoach notes > `sources.yaml` > `research_synthesis_de.md`
-(the synthesis has known errors). Only `verified: true` entries justify decisions. Missing full text →
+(the synthesis has known errors). Only `verified: true` entries justify decisions; `verified: notes` (e.g. HLTV articles) may support conventions, not evidence. Missing full text →
 list it in the papers README and ask the user for the PDF (skill `add-paper`).
 
 ## Conventions

@@ -16,6 +16,8 @@
 > - Franks et al.: die Aussage „r = 0,70 (Offensivzone ↔ Punkte)“ findet sich nicht im Paper. Stabilität ist dort als Varianzverhältnis über Saisons definiert, Unabhängigkeit über ein latentes Gauß-Copula-Modell.
 > - OSE (Xenopoulos et al. 2021) bewertet Käufe mit einer Spiel-Siegwahrscheinlichkeit zu Rundenbeginn; „Hero Buys“ sind dort explizit als Kauftypen modelliert.
 > - Brill, Yurko & Wyner: auch der Cluster-Bootstrap unterschätzt die Unsicherheit (Abdeckung 0,71 statt 0,90); ein fraktionierter Bootstrap mit an einem Simulator abgestimmtem φ ist nötig.
+> - Play Like Champions: Training nur auf Profi-Replays (Amateure nur als OOD-Test); Klassifikator nutzt Spielende-Statistiken (Ergebnis-Proxys), daher kaum umsetzbare Ratschläge; keine Validierung mit Menschen.
+> - HLTV Rating 3.0: Primärquelle sind die HLTV-Artikel (nur als Notizen vorhanden); Round-Swing-Gewicht im Okt. 2025 reduziert.
 > - "Andersen 2021" nicht auffindbar → ersetzt durch Brill, Yurko & Wyner (`brill_yurko_wp_difficulty`).
 
 Die Entwicklung eines datengesteuerten Coachingsystems für Amateur- und Semi-Profi-Spieler in Counter-Strike 2 (CS2) erfordert eine präzise Orchestrierung von maschinellen Lernmodellen, strenger statistischer Validierung und der Verarbeitung von Telemetriedaten. Der Rahmen – Runden-Siegwahrscheinlichkeiten (Win Probability), Attribution von Erwartungswerten (Expected Value), Evaluierung von Duellen (Expected Kills) und wirtschaftliche Kontextualisierung – schließt die Lücke zwischen traditioneller Sportanalytik (z. B. _Expected Threat_ im Fußball) und den hochfrequenten, komplexen räumlichen Umgebungen taktischer Shooter.

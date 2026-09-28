@@ -12,8 +12,9 @@ synthesis, and where the paper is used in this project.
 2. **Cite by id** (`sources.yaml` id) in specs, ADRs and docstrings, e.g. `[pandaskill]`.
 3. **Trust order:** paper full text > cscoach notes > `sources.yaml` > `research_synthesis_de.md`.
    The German synthesis contains known errors (see *Corrections* in each note).
-4. Only cite claims from entries with `verified: true` as design justification. `search` means only
-   the paper's existence was confirmed.
+4. Only cite claims from entries with `verified: true` as design justification. `notes` means only
+   paraphrased secondary notes exist locally (e.g. HLTV articles): fine for industry conventions, not
+   for scientific evidence. `search` means only the paper's existence was confirmed.
 5. **Numbers:** tables and equations may be garbled by PDF conversion. Check the PDF before quoting a
    number in a spec, and never quote a number from these papers in player-facing text.
 6. **Adding a paper:** follow the `add-paper` skill (`.claude/skills/add-paper/SKILL.md`).
@@ -36,25 +37,26 @@ synthesis, and where the paper is used in this project.
 | [xenopoulos_optimal_economy](xenopoulos_optimal_economy.md) | Optimal Team Economic Decisions in CS (Xenopoulos et al. 2021) | CS:GO pro | F | game-level WP, OSE (M6.3), buy types (A-21) |
 | [franks_meta_analytics](franks_meta_analytics.md) | Meta-Analytics (Franks et al. 2016) | NBA/NHL | H | player-metric D/S/I (specs/04 §4), MV.9, A-25 |
 | [brill_yurko_wp_difficulty](brill_yurko_wp_difficulty.md) | Exploring the Difficulty of Estimating WP (Brill, Yurko, Wyner 2025) | simulation | H | two uncertainty kinds, fractional bootstrap (MV.4, A-24) |
+| [play_like_champions](play_like_champions.md) | Play Like Champions (Białecki et al. 2026) | StarCraft II pro | I | counterfactual rules: actionable, on-manifold, minimum viable change (M9.2) |
+| [hltv_rating_3](hltv_rating_3.md) | HLTV Rating 3.0 + adjustments (2025) — **notes only** | CS2 pro | D, F | Round Swing credit, round-end residual, eco-adjustment (M5.2, A-23, A-13) |
 | [gig_economy_esports_coaching](gig_economy_esports_coaching.md) | Understanding Game Coaching on Gig Platforms (Lee & Savage 2026) | interviews | C, I | specs/05, M9, M10.3 |
 
-All listed papers are full-text verified (`verified: true` in `../sources.yaml`).
+All listed papers are full-text verified (`verified: true`) except `hltv_rating_3` (`verified: notes`).
 
 **Still missing (full text needed, see `../sources.yaml` for URLs):** **xenopoulos_pro_vs_amateur_wp**
-(highest priority: direct test of A-01; it used earlier PureSkill data), play_like_champions,
-dynamic_xt, hltv_rating_3 (HLTV article, save as PDF).
+(highest priority: direct test of A-01; it used earlier PureSkill data), dynamic_xt (MDPI, open access).
 
 ## By research question
 
 - **A. WP in Counter-Strike:** xenopoulos_valuing_actions_csgo, same_player_verification_cs2 (features only); *missing:* xenopoulos_pro_vs_amateur_wp
 - **B. WP in other games:** valorant_round_outcome_tactical, champ_matchmaking
 - **C. Skill tiers:** champ_matchmaking (conditioning lesson), same_player_verification_cs2 (domain-matched training matters, Table 9), xenopoulos_optimal_economy (pooled model + conditioning feature beat per-group models)
-- **D. Action valuation / credit:** xenopoulos_valuing_actions_csgo, pandaskill, tar2_credit_assignment, contextual_xt_spatial; *missing:* hltv_rating_3, dynamic_xt
+- **D. Action valuation / credit:** xenopoulos_valuing_actions_csgo, hltv_rating_3 (notes), pandaskill, tar2_credit_assignment, contextual_xt_spatial; *missing:* dynamic_xt
 - **E. Duels (xK):** same_player_verification_cs2 (mechanics features)
-- **F. Economy:** xenopoulos_optimal_economy; *missing:* hltv_rating_3
+- **F. Economy:** xenopoulos_optimal_economy, hltv_rating_3 (eco-adjustment, notes)
 - **G. Spatial:** learning_to_move_like_pros, x_ego_cs, contextual_xt_spatial, valorant_round_outcome_tactical; *missing:* dynamic_xt
 - **H. Statistical validity:** franks_meta_analytics, brill_yurko_wp_difficulty, xenopoulos_valuing_actions_csgo (meta-metrics applied), pandaskill (ECE), same_player_verification_cs2 (cluster bootstrap CIs)
-- **I. Coaching:** gig_economy_esports_coaching, learning_to_move_like_pros (region-based mistake metrics); *missing:* play_like_champions
+- **I. Coaching:** gig_economy_esports_coaching, play_like_champions (counterfactual paths; a cautionary example), learning_to_move_like_pros (region-based mistake metrics)
 
 ## Cross-paper takeaways (so far)
 
@@ -88,7 +90,13 @@ dynamic_xt, hltv_rating_3 (HLTV article, save as PDF).
     and game-level WP for buy decisions (OSE). Both authors flag skill heterogeneity and confounding as
     open issues [xenopoulos_valuing_actions_csgo, xenopoulos_optimal_economy], which are our A-01 and
     A-04.
-12. **CSDS data quality:** an independent group notes that PureSkill.gg data has no guarantee on capture
+12. **Counterfactual feedback must be actionable and realistic:** a near-perfect outcome model built on
+    outcome-proxy features gives circular advice, and unconstrained optimisation drifts off the data
+    [play_like_champions]. Change only pre-decision variables and stay within observed states.
+13. **Industry practice (HLTV Rating 3.0) values kills by ΔWP** (Round Swing) and adjusts for economy
+    via duel win rates. HLTV itself notes that single rounds can dominate a match, and that its model
+    ignores HP and position [hltv_rating_3]. Our WP + xK + shrinkage address exactly these points.
+14. **CSDS data quality:** an independent group notes that PureSkill.gg data has no guarantee on capture
    frequency and may drop data [learning_to_move_like_pros]. Measure it before building sub-second
    features (MV.1).
 

@@ -19,3 +19,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   Brill/Yurko/Wyner. Spec changes: two uncertainty kinds and a fractional bootstrap (specs/04), real Franks
   D/S/I adapted within-match, game-level WP + OSE for economy, damage events + victim-negative WPA credit;
   MV.4 now builds a CSDS-fitted round simulator · docs/research/papers/README.md
+- 2026-09-28 · M0.2 (partial) · Batch 4: Play Like Champions (full text) and HLTV Rating 3.0 (owner's notes,
+  `verified: notes`). Added counterfactual rules (actionable, on-manifold, minimum viable change), a
+  round-end residual credit rule, eco-adjusted duel value via xK, and a build-versioned economy (Aug 2025
+  change) · docs/research/papers/README.md

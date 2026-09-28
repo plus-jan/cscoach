@@ -41,7 +41,7 @@
 - id: A-03
   statement: Counterfactual, prioritised feedback from the engine improves player performance.
   type: causal
-  source: research_synthesis_de I; project premise
+  source: research_synthesis_de I; project premise; [play_like_champions] reports no human validation of latent-space feedback
   status: open
   test: [M9.5, M11.1]
   blocks: []   # product premise; communicated as such until M11 — does not block shipping analysis
@@ -149,9 +149,10 @@
 - id: A-13
   statement: >-
     Economy values in docs/specs/06 match the CS2 builds in the corpus (predicted start money equals
-    player_status.money at freeze end for >= 99% of player-rounds).
+    player_status.money at freeze end for >= 99% of player-rounds), per game build. Valve changed the CS2
+    economy around Aug 2025, inside the CSDS window (from 2025-07-18), so values differ by build_num.
   type: game_rule
-  source: recalled from memory — unverified
+  source: recalled from memory — unverified; economy update noted in [hltv_rating_3]
   status: open
   test: [MV.1]
   parameters: [start money / max money / OT start money, round win, loss bonus ladder, kill reward, T loss after plant bonus / planter / defuser]
@@ -195,7 +196,7 @@
 - id: A-17
   statement: A kill counts as traded if the killer dies within 5 s.
   type: data
-  source: initial choice (community convention)
+  source: initial choice (community convention; HLTV Rating 3.0 uses 5 s [hltv_rating_3])
   status: open
   test: [MV.6]
   parameters: [trade.window_s]
@@ -256,7 +257,7 @@
 - id: A-23
   statement: Fixed kill-credit split 0.70/0.15/0.15 (killer/assister/flash-assister) is a fair approximation.
   type: method
-  source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]; learned redistribution [tar2_credit_assignment] forces non-negative credit (unsuitable as-is)
+  source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]; learned redistribution [tar2_credit_assignment] forces non-negative credit (unsuitable as-is); HLTV re-weighted its split toward damage/trades/flashes and defines a round-end residual rule [hltv_rating_3]
   status: open
   test: [MV.11]
   parameters: [attribution]

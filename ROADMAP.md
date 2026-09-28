@@ -15,7 +15,7 @@ they are open.
 ## M0 — Knowledge base (this repository)
 
 - [x] **M0.1 — Specs, roadmap, agent manual, skills.**
-- [~] **M0.2 — Research sources verified** (13 papers + CSDS spec verified; see `docs/research/papers/README.md`).
+- [~] **M0.2 — Research sources verified** (14 papers + HLTV notes + CSDS spec; see `docs/research/papers/README.md`).
   Remaining PDFs are requested from the user.
 - [x] **M0.3 — Assumptions register** (`docs/assumptions.yaml`) + parameter spec (`docs/specs/06`).
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
@@ -53,7 +53,7 @@ they are open.
 - [ ] **MV.1 — Game rules & decoding on CSDS.**
   deps: M2.1. Refs: [A-13, A-14, A-15, A-16, A-39].
   Reconcile the economy engine against `player_status.money` per `build_num`/platform (target ≥ 99% of
-  player-rounds). Measure round/bomb/freeze timers from phase durations. Decode `team_code`,
+  player-rounds). Locate the Aug 2025 economy change [hltv_rating_3] and version the rules by build. Measure round/bomb/freeze timers from phase durations. Decode `team_code`,
   `win_reason_code`, `weapon_code`, `hit_box_code` and `site_code`. Check the tick rate, the staleness of as-of merges, and **tick coverage and gaps per match** (independent
   report of possible drops: [learning_to_move_like_pros]). Compare the v30 and v42 channel sets.
   **DoD:** decoding tables committed to `docs/data/`; parameters and statuses updated.
@@ -137,8 +137,8 @@ they are open.
 ## M5 — WPA & credit assignment (requires MV.10 not refuted)
 
 - [ ] **M5.1 — Event WPA** [A-18].
-- [ ] **M5.2 — Attribution rules** incl. damage events, victim-negative credit, trades [A-17] and eco
-  adjustment [A-23]. Refs: [xenopoulos_valuing_actions_csgo].
+- [ ] **M5.2 — Attribution rules** incl. damage events, victim-negative credit, the round-end residual,
+  trades [A-17] and eco adjustment via xK [A-23]. Refs: [xenopoulos_valuing_actions_csgo], [hltv_rating_3].
 - [ ] **M5.3 — Shapley credit.** **DoD:** tests for efficiency, symmetry and the null player, plus the
   WPA telescoping test (docs/specs/04 §7). Refs: [tar2_credit_assignment].
 - [ ] **M5.4 — xK × WPA decision matrix** [A-05].
@@ -168,7 +168,8 @@ they are open.
 ## M9 — Coaching engine
 
 - [ ] **M9.1 — Mistake detectors** (docs/specs/05); region-based definitions as in [learning_to_move_like_pros].
-- [ ] **M9.2 — Counterfactual recourse** (limited to the types MV.10 allows) [A-04].
+- [ ] **M9.2 — Counterfactual recourse** (limited to the types MV.10 allows) [A-04]: only actionable
+  decision variables, on-manifold, minimum viable change (docs/specs/05). Refs: [play_like_champions].
 - [ ] **M9.3 — Prioritisation** [A-30]. Refs: [gig_economy_esports_coaching].
 - [ ] **M9.4 — Narrative rendering + grounding check** [A-31].
 - [ ] **M9.5 — Expert review:** coaches rate ≥ 50 feedback items drawn from CSDS matches. The target

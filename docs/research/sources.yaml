@@ -3,6 +3,8 @@
 # verified:  null  = not yet checked
 #            search = existence/metadata confirmed via web search only (numbers NOT checked)
 #            true  = full text read; `claim` below matches the paper (see local file notes)
+#            notes = only secondary/paraphrased notes available locally (e.g. news articles); usable for
+#                    industry practice and conventions, NOT as scientific evidence
 #            false = could not be confirmed / claim wrong — do not use as justification
 # local:     path to the markdown full text (docs/research/papers/<id>.md), null if missing
 # claim:     what the ORIGINAL synthesis claimed; `verified_claim` = what the paper says.
@@ -131,15 +133,18 @@
   verified: null
 
 - id: hltv_rating_3
-  title: Introducing Rating 3.0 (HLTV) + third-party explainers
+  title: HLTV Rating 3.0 — Introducing Rating 3.0 (20 Aug 2025), Rating 3.0 adjustments go live (29 Oct 2025); Skin.Club explainer
+  authors: NER0cs (HLTV); Skin.Club
   year: 2025
   url: https://www.hltv.org/news/42485/introducing-rating-30
   also: [https://www.hltv.org/news/43047/rating-30-adjustments-go-live, https://community.skin.club/en/news/hltv-rating-3-0-cs2-update]
   questions: [D, F]
-  claim: "Round Swing: entry kill in 5v5 ~ +20% WP; eco-adjusted kill values"
-  search_note: "Round Swing = WP change per kill given map, side, economy, alive, bomb; credit split by final damage, damage share, flash assists, trades. One of six sub-ratings."
-  local: null
-  verified: search
+  claim: "Round Swing: entry kill in 5v5 ~ +20% WP; 1v2 clutch up to 50%; eco-adjusted kill values"
+  verified_claim: "Per owner's notes of the HLTV articles: opening kill ≈ +20%, 1v1 clutch ≈ +50%; credit split final blow/damage/flash/trade (re-weighted Oct 2025); end-of-round residual shared among clutcher/kill contributors/defuser/alive; eco-adjustment via bucketed duel win rates (44.7% same-bucket duels); 5 s trade window; 40-damage assist; Swing ignores HP and kill location; recalibration after Valve's ~Aug 2025 economy update."
+  use_in_project: WPA credit and round-end residual (docs/specs/03#wpa, A-23), eco-adjusted value via xK (M5.2), A-17 convention, A-13 economy change
+  license: notes are owner-written paraphrases; originals © HLTV/Skin.Club
+  local: docs/research/papers/hltv_rating_3.md
+  verified: notes
 
 - id: learning_to_move_like_pros
   title: Learning to Move Like Professional Counter-Strike Players
@@ -194,10 +199,11 @@
   url: https://arxiv.org/abs/2607.00190
   questions: [I]
   claim: "VAE + optimal transport + flow matching for recourse on 23,476 amateur+pro SC2 replays"
-  search_note: "Search says Guided VAE on 23,305 PROFESSIONAL tournament replays"
-  use_in_project: M9.2 counterfactual recourse (conceptual)
-  local: null
-  verified: search
+  verified_claim: "Guided VAE on 23,305 PRO SC2EGSet replays (random split), amateur replays only as OOD test; classifier AUC 0.999 driven by end-of-game economy features (outcome proxies); OT/flow paths stay on-manifold, gradient ascent drifts off-manifold; minimum-viable-change feedback; no human validation."
+  use_in_project: docs/specs/05 counterfactual rules (actionable decision variables only, on-manifold, minimum viable change), M9.2, A-04
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/play_like_champions.md
+  verified: true
 
 - id: pureskill_cs2_dataset
   title: PureSkill.gg Competitive CS2 Gameplay Data Set (CSDS)

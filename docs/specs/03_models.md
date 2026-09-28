@@ -70,6 +70,12 @@ in S acted. Efficiency: Σ credit = ΔWP. Validity of counterfactual states: A-0
 - **Actions:** kills *and* damage events (`player_hurt`), bomb plant/defuse, and utility effects.
 - **Victim credit:** the damaged or killed player is credited with −V, as in
   [xenopoulos_valuing_actions_csgo]; the attacker gets +V.
+- **Round-end residual:** when a round ends without a final kill (time, bomb explosion, defuse, saving
+  survivors), the last ΔWP up to the outcome is shared among contributors (initial rule after HLTV:
+  clutcher ×1, players with positive kill credit ×2, defuser ×1, alive at the end ×1; saving players
+  take the loss) [hltv_rating_3]. This keeps the telescoping property (docs/specs/04 §7).
+- **Economy-adjusted duel value:** a won duel is worth (1 − xK_p1) as execution credit, which replaces
+  HLTV-style bucket win rates with our tier-calibrated xK [hltv_rating_3].
 - **Uncertainty:** WPA and ΔWP intervals are model-uncertainty CIs (fractional bootstrap,
   docs/specs/04 §2(b)).
 

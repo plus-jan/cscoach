@@ -20,7 +20,7 @@ short Python one-off in the scratchpad (never commit scripts).
    - every `[A-NN]` exists in the register;
    - every `local:` path exists, and every `docs/research/papers/*.md` (except README) is registered and
      has a finished notes block (no TODO);
-   - `verified: true` requires `local`.
+   - `verified: true` and `verified: notes` require `local`.
 4. **Roadmap:** task IDs are unique, deps refer to existing tasks, and ticked tasks have a PROGRESS line.
 5. **Data rule:** no spec or task introduces a data source other than CSDS, or demo parsing (ADR-0003).
 6. **No code** in this repo: no source files, scripts, configs or CI (ADR-0004).

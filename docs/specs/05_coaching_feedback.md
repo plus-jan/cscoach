@@ -18,12 +18,19 @@ identity. Any such source must itself be CSDS-compatible and approved via an ADR
    - `risky_duel`: xK < θ₁ while WP-if-avoided > θ₂ (A-05);
    - `untraded_death` / `no_trade_position`: a teammate could have traded (area-graph transit time <
      trade window, A-17) but was not positioned;
-   - `desync_buy`: individual buy class ≠ team buy class, with negative two-round EV (A-21);
+   - `desync_buy`: individual buy class ≠ team buy class, with a negative game-level WP cost (docs/specs/03#economy, A-21);
    - `utility_waste`: utility with ~0 delay and no enemies affected;
    - `late_rotation`: rotation time vs. the area-graph shortest path and the moment of information
      (spotted/footstep/sound events).
-2. **Counterfactual:** the minimal feasible alternative gives a ΔWP with a CI (model-ensemble + cluster
-   bootstrap). Drop the item if the CI contains 0. Validity: A-04 (MV.10).
+2. **Counterfactual:** the minimal feasible alternative gives a ΔWP with a CI (model uncertainty via the
+   fractional bootstrap, docs/specs/04 §2(b)). Drop the item if the CI contains 0. Validity: A-04
+   (MV.10). Rules [play_like_champions]:
+   - **actionable:** change only decision variables known *before* the decision (buy, take/avoid the
+     duel, utility timing, position/rotation), never outcome proxies (kills, damage, round result);
+   - **realistic:** the counterfactual state must be supported by observed CSDS states (near-twin
+     matches or a density check). No unconstrained optimisation over the model;
+   - **minimum viable change:** report the smallest change that flips or materially improves the
+     outcome estimate, next to the full-path gain.
 3. **Rank:** `priority = E[ΔWP] × recurrence within the match × confidence`. Keep ≤ 3 focus themes per
    match (A-30); a recurring theme counts for more than a single moment.
 4. **Render:** template-first. An LLM rewrite is allowed only from a structured payload, followed by the
