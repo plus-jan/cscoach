@@ -1,4 +1,4 @@
-# This repo holds documentation only (ADR-0004). Never commit data, PDFs or code artefacts.
+# Never commit CSDS data, PDFs or demo files (ADR-0003, data license).
 *.pdf
 *.parquet
 *.dem

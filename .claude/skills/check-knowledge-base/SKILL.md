@@ -1,10 +1,11 @@
 ---
 name: check-knowledge-base
-description: Consistency checklist for this docs-only repository (replaces automated tests). Run before every commit that changes docs, roadmap, assumptions, parameters or research.
+description: Consistency check for the cscoach knowledge base (scripts/kbcheck.py + manual items). Run before every commit that changes docs, roadmap, assumptions, parameters or research.
 ---
 
-Check each item and fix any problem before committing. The quick checks can be done with `grep` / a
-short Python one-off in the scratchpad (never commit scripts).
+Run `python3 scripts/kbcheck.py` first. It automates items 1–4 (except the PROGRESS/deps/F-NN field
+checks) and the data-artefact part of 5, and it runs in CI (`.github/workflows/kb-check.yml`). Commit
+only after it exits 0 (run it, read the result, then commit). Check the remaining items by hand.
 
 1. **Assumptions register** parses as YAML:
    - IDs are unique;
@@ -26,4 +27,9 @@ short Python one-off in the scratchpad (never commit scripts).
    cite a finding. Findings use unique `F-NN` ids and their required fields.
    No task is ticked in Part C (it must move to Part A first).
 5. **Data rule:** no spec or task introduces a data source other than CSDS, or demo parsing (ADR-0003).
-6. **No code** in this repo: no source files, scripts, configs or CI (ADR-0004).
+6. **Code placement** (ADR-0007): implementation lives in the autoresearch fork (`src/cscoach/`,
+   `tests/`, `configs/`), never in `docs/`. In `plus-jan/cscoach-template` only `scripts/` (kbcheck,
+   migration) and `.github/workflows/kb-check.yml` are allowed. No data artefacts (`.pdf`, `.parquet`,
+   `.dem`) anywhere.
+7. **Loops** (docs/specs/07): no assumption status, parameter, gate, finding or tick is justified by a
+   loop metric or a persona command; only by a report meeting the CLAUDE.md "Evidence" standard.

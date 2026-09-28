@@ -12,8 +12,11 @@ description: Add a new feature to the WP or xK model safely (CSDS source check, 
    window that uses only data with tick ≤ snapshot tick. Account for as-of merge staleness on merged
    columns.
 4. **New thresholds** need an assumption entry + a row in `docs/specs/06_parameters.md`.
-5. **In the code repo:** a leakage test (the feature is unchanged when future rows are removed), then an
+5. **In the project repo:** a leakage test (the feature is unchanged when future rows are removed), then an
    ablation on identical grouped splits. Keep the feature only if the log-loss improvement CI excludes 0
-   and no stratum's ECE regresses beyond its gate.
+   and no stratum's ECE regresses beyond its gate. Several candidate features or encodings → run them as
+   a Classic `/autoresearch` loop with the gated Verify and Guard of docs/specs/07 §2 (training matches
+   only, bounded budget), then one sealed-test evaluation with `validate-model`. Report the number of
+   variants tried.
 6. Record the experiment in `docs/PROGRESS.md`. Add the feature to the spec's feature list and the
    monotone-constraint table if it has a clear direction (A-27).

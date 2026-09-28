@@ -22,6 +22,9 @@ Each task: **ID — title** · deps · **DoD** · refs (`[paper]`, `[A-NN]`). Im
 code repository; results are reported back here (CLAUDE.md, "How to work"). "Passes gates" means the
 validation report shows all gates in `docs/specs/06_parameters.md` green.
 IDs are stable. Tasks keep their ID when they move between parts.
+Measurable implementation work may run in autoresearch loops only under
+`docs/specs/07_autoresearch_protocol.md`; its §7 maps task types to commands. Exploration, verification
+experiments and decisions never run as loops.
 
 ---
 
@@ -39,6 +42,12 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
 - [x] **M0.5 — Research-driven planning:** decision points, findings log, `plan-next-step` skill
   (ADR-0006).
+- [~] **M0.6 — Migrate to the autoresearch fork** (ADR-0007). Done: loop protocol
+  (docs/specs/07), `scripts/kbcheck.py` + CI, skills updated, migration script
+  `scripts/migrate_to_autoresearch_fork.sh` (dry-run tested against upstream). Open: the user forks
+  `uditgoenka/autoresearch` (e.g. as `plus-jan/cscoach`) and grants this project access; then run the
+  script, open a PR on the fork, and point this repository's README to the fork.
+  **DoD:** fork contains both histories; `scripts/kbcheck.py` and upstream CI green; hooks enabled.
 
 ## M1 — Data access (CSDS via official libraries)
 
@@ -67,6 +76,11 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [ ] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
   distributions per tier/platform in PROGRESS.
 - [ ] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end.
+- [ ] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
+  `cscoach.loops.gated_verify` (prints the budget-corrected CI lower bound of the improvement vs the
+  champion on match-grouped out-of-fold predictions, training matches only) and `cscoach.loops.guard`
+  (tests, leakage, split integrity, sealed folds untouched, per-stratum calibration gates) [A-42].
+  **DoD:** unit tests incl. "sealed fold read → failure"; a synthetic end-to-end loop run (A-33).
 
 ## E — Exploration (let the data propose hypotheses)
 
@@ -151,6 +165,14 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   utility used vs. held; matched on the other features). Do observed outcome differences match the
   model's ΔWP, per decision type? Also check sensitivity to features that don't cause outcomes.
   **DoD:** A-04 status per decision type; D2 decided.
+
+- [ ] **MV.14 — False-keep rate of the gated loop.**
+  deps: M2.5. Refs: [A-42], [brill_yurko_wp_difficulty].
+  Simulation with known truth (A-33 permits this: it tests a method property, not a CS2 fact): run the
+  loop with (a) only no-effect variants and (b) variants with a planted improvement, at the match counts
+  and cluster sizes of the CSDS training split. Measure the loop-level false-keep rate and the power;
+  compare the budget-corrected level with the uncorrected one.
+  **DoD:** A-42 supported/refuted; `loop.*` parameters confirmed or changed (docs/specs/06).
 
 ---
 

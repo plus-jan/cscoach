@@ -1,6 +1,6 @@
 # ADR-0004 — This repository contains concepts only; code lives elsewhere
 
-- Status: accepted
+- Status: superseded by ADR-0007
 - Date: 2026-09-28
 
 ## Context

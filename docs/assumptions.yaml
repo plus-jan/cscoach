@@ -65,7 +65,7 @@
   source: research_synthesis_de E; initial choice for thresholds
   status: open
   test: [MV.10, M9.5]
-  parameters: [decision_matrix]
+  parameters: ["risky duel: max xK / min WP-if-avoided"]
   blocks: [coaching_feedback]
 
 # ---------------------------------------------------------------- acceptance policy
@@ -199,7 +199,7 @@
   source: initial choice (community convention; HLTV Rating 3.0 uses 5 s [hltv_rating_3])
   status: open
   test: [MV.6]
-  parameters: [trade.window_s]
+  parameters: [trade window]
   blocks: [wpa, coaching_feedback]
 
 - id: A-18
@@ -242,7 +242,7 @@
   source: initial choice; team buy types from [xenopoulos_optimal_economy] Table 1 (CS:GO pro)
   status: open
   test: [MV.6]
-  parameters: [buy_classes]
+  parameters: [buy classes, team buy types]
   blocks: [economy_feedback]
 
 - id: A-22
@@ -251,7 +251,7 @@
   source: initial choice
   status: open
   test: [MV.6]
-  parameters: [snapshots]
+  parameters: [snapshot cadence]
   blocks: []
 
 - id: A-23
@@ -260,7 +260,7 @@
   source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]; learned redistribution [tar2_credit_assignment] forces non-negative credit (unsuitable as-is); HLTV re-weighted its split toward damage/trades/flashes and defines a round-end residual rule [hltv_rating_3]
   status: open
   test: [MV.11]
-  parameters: [attribution]
+  parameters: [kill credit split, Shapley permutations]
   blocks: [wpa, player_metrics]
 
 # ---------------------------------------------------------------- statistical methods
@@ -334,7 +334,7 @@
   source: initial choice; [gig_economy_esports_coaching] supports few, individual points
   status: open
   test: [M9.5]
-  parameters: [display]
+  parameters: [interval shown to players, max focus points per match]
   blocks: [coaching_feedback]
 
 - id: A-31
@@ -409,7 +409,7 @@
   source: ADR-0003 (no external data); named-area modelling used by [learning_to_move_like_pros], [x_ego_cs]
   status: open
   test: [MV.13]
-  parameters: [area graph: node definition / edge weight]
+  parameters: ["area graph: node definition / edge weight"]
   blocks: [spatial_feedback, coaching_feedback]
 
 - id: A-38
@@ -454,3 +454,17 @@
   status: open
   test: [E.4]
   blocks: [coaching_feedback]
+
+- id: A-42
+  statement: >-
+    The gated keep rule of the autoresearch loop (docs/specs/07 §2: keep iff the lower bound of the
+    one-sided cluster-bootstrap CI of the improvement over the champion, at level 1 − alpha/budget, is
+    > 0, computed on match-grouped out-of-fold predictions from training matches only) keeps a
+    no-effect change in ≤ 5% of loops (loop-level false-keep rate), and keeps a true improvement of the
+    size that matters for WP (Δlog-loss ≥ 0.002) with ≥ 80% power at the corpus sizes we expect.
+  type: method
+  source: "project design (ADR-0007); selection bias of repeated keep/revert decisions on one validation set"
+  status: open
+  test: [MV.14]
+  parameters: [loop.budget / alpha / n_resamples]
+  blocks: [wp_timeline, xk]
