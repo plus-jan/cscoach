@@ -56,6 +56,10 @@ Features are aggregated per side from `player_status` at the latest tick ≤ sna
 - bomb: `bomb_planted`, `bomb_site` (planter's `place_name` at the plant), and the plant time (`bomb_state` `bomb_planted`);
 - time: `time_remaining_s` (round clock pre-plant, bomb clock post-plant; timers from `tick` phases, A-14);
 - context: `man_advantage`, `tier`, `platform`, `map_name`, `build_num`.
+- rank prior (M3.2, A-48): `ct_rank_alive`, `t_rank_alive` = mean tier-unit rank of the side's alive players from
+  `player_info` of the snapshot's round (`rank` for Premier/skill groups, `rank_platform` for FACEIT levels; 0 =
+  unknown) on the match's rank scale (M1.4 `tier_source`); missing unless ≥ `rank_min_known_share` of the alive
+  players are ranked; `rank_diff_alive` = CT − T.
 
 The label `y_ct_win` (from `rounds.winner_side`) is attached only in the modelling table.
 Groups: `match_id` (split) and `round_uid` (cluster).

@@ -32,6 +32,9 @@ weapon-class and utility counts per side, `bomb_planted`, bomb site, `time_remai
 players and the rank difference (`player_info` at round start, known before the round). In
 [xenopoulos_pro_vs_amateur_wp] these shifted WP much more in amateur MM (r = 0.59) than in near-pro
 FPL (r = 0.13), especially when equipment/HP were balanced.
+Implemented as `ct_rank_alive`, `t_rank_alive`, `rank_diff_alive` in tier units (docs/specs/02, A-48); no monotone
+constraint (a direction conditional on equipment and tier is not established).
+
 **Features v2** (spatial, M7, must win an ablation): area control share and distance to sites on
 the empirical `area_graph`, spotted counts (`is_spotted`), active smokes/mollies on key edges,
 defuser-to-bomb distance.
