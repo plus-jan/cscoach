@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pathlib
 import re
+import subprocess
 import sys
 
 import yaml
@@ -105,9 +106,10 @@ def main() -> int:
     if len(findings) != len(set(findings)):
         probs.append("duplicate finding ids")
 
-    # 5. data rule: no data artefacts committed
-    data = [str(p.relative_to(ROOT)) for p in ROOT.rglob("*")
-            if p.suffix in {".pdf", ".parquet", ".dem"} and ".git" not in p.parts]
+    # 5. data rule: no data artefacts committed (tracked, or untracked and not ignored)
+    listed = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+                            cwd=ROOT, capture_output=True, text=True, check=True).stdout.splitlines()
+    data = [f for f in listed if pathlib.PurePath(f).suffix in {".pdf", ".parquet", ".dem"}]
     if data:
         probs.append(f"data artefacts committed: {data}")
 

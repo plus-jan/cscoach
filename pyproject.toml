@@ -1,0 +1,25 @@
+[project]
+name = "cscoach"
+version = "0.0.1"
+description = "Data-driven CS2 coaching engine on the PureSkill.gg CSDS corpus"
+requires-python = ">=3.12"
+license = { text = "MIT (code); derived CSDS data CC BY-NC-SA 4.0, see ADR-0008" }
+dependencies = [
+  "pureskillgg-dsdk>=3.2.1",
+  "pureskillgg-csgo-dsdk>=3.1.1",
+  "pandas>=2.2",
+  "pyarrow>=16",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cscoach"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/cscoach"]
