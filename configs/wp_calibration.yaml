@@ -34,4 +34,4 @@ model:
     params: {learning_rate: 0.03, num_leaves: 31, min_data_in_leaf: 200, bagging_fraction: 0.8, bagging_freq: 1, feature_fraction: 0.8,
       lambda_l2: 1.0, num_threads: 16}
 fit:
-  model_dir: /media/jan/merged/cs2coach/models/wp_v1   # final WP model (M3.3): GBDT on train, calibrator on calibration fold
+  model_dir: /media/jan/merged/cs2coach/models/wp_v2   # final WP model (M3.6 refit after the F-15 fix; wp_v1 = M3.3): GBDT on train, calibrator on calibration fold

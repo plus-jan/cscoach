@@ -1,10 +1,11 @@
 # M3.4 WP validation — pre-registered before the single sealed look (docs/specs/04 §2–3, docs/specs/07 §3).
-# Model: models/wp_v1 (M3.3 final fit). Folds evaluated: test and temporal (newest builds, A-29), each against the
+# Model: models/wp_v2 (M3.6: refit after the F-15 decided-tick fix; unchanged M3.2/M3.3 configs). Look 2 on the
+# sealed folds, declared a new experiment (--new-experiment); look 1 was models/wp_v1 (M3.4). Folds evaluated: test and temporal (newest builds, A-29), each against the
 # gates below; the M3.4 DoD is judged on the test fold, the temporal holdout is the drift check (reported, and a
 # failure there becomes a finding and a roadmap task). Gates are docs/specs/06 values (still assumptions A-06/A-07).
 data: /media/jan/merged/cs2coach/derived/wp_table_v1.parquet
 work_dir: /media/jan/merged/cs2coach/splits/wp_v1
-model_dir: /media/jan/merged/cs2coach/models/wp_v1
+model_dir: /media/jan/merged/cs2coach/models/wp_v2
 columns: [match_id, round_uid, y_ct_win, ct_alive, t_alive, ct_hp_sum, t_hp_sum, ct_armor_sum, t_armor_sum, ct_helmets, t_helmets, ct_kits, ct_equip_value, t_equip_value, ct_primaries, t_primaries, ct_flashes, t_flashes, ct_smokes, t_smokes, ct_molotovs, t_molotovs, ct_hes, t_hes, man_advantage, bomb_planted, bomb_site, time_remaining_s, tier, platform, map_name, second_in_round, channel_set, build_num]
 baseline_C: 1.0            # M3.1 baseline (configs/wp_baseline.yaml)
 n_resamples: 500           # A-10
