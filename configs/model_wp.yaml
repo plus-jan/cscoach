@@ -1,0 +1,49 @@
+name: wp_gbdt_v1
+target: y_ct_win
+group_col: match_id
+cluster_col: round_uid
+tier_col: tier
+features:
+  numeric:
+    - alive_ct
+    - alive_t
+    - hp_sum_ct
+    - hp_sum_t
+    - armor_sum_ct
+    - armor_sum_t
+    - equip_value_ct
+    - equip_value_t
+    - n_kits_ct
+    - bomb_planted
+    - time_remaining_s
+    - man_advantage
+  categorical:
+    - tier
+    - map_name
+monotone:            # +1 increasing in CT win prob, -1 decreasing
+  alive_ct: 1
+  alive_t: -1
+  hp_sum_ct: 1
+  hp_sum_t: -1
+  equip_value_ct: 1
+  equip_value_t: -1
+  man_advantage: 1
+lightgbm:
+  n_estimators: 2000
+  learning_rate: 0.03
+  num_leaves: 31
+  min_child_samples: 200
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.8
+  reg_lambda: 1.0
+  early_stopping_rounds: 100
+calibration:
+  method: auto          # auto -> isotonic if n >= isotonic_min_rows else platt
+  isotonic_min_rows: 5000
+  per_tier: true
+split:
+  train: 0.7
+  calibration: 0.1
+  test: 0.2
+  seed: 42

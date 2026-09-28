@@ -1,0 +1,17 @@
+wpa:
+  pre_ticks: 1          # WP evaluated this many ticks before the event
+  post_ticks: 1         # ... and after (state after event applied)
+attribution:            # share of a kill's team WPA credited per role (M5.2); must sum to 1
+  kill:
+    killer: 0.7
+    assister: 0.15
+    flash_assister: 0.15
+  redistribute_missing_to: killer
+trade:
+  window_s: 5.0         # a kill of the killer within this window counts as trade
+shapley:
+  n_permutations: 200
+  seed: 7
+decision_matrix:
+  risky_duel_max_xk: 0.30
+  safe_state_min_wp: 0.85

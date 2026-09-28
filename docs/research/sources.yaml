@@ -1,0 +1,167 @@
+# Source registry. Every design claim in docs/specs must cite an entry here.
+# verified: null = not yet checked (task M0.5); true = existence + cited numbers confirmed;
+# false = could not be confirmed / numbers wrong (do not use as justification).
+# Note: the original synthesis (research_synthesis_de.md) was produced by an AI research
+# assistant; several arXiv IDs, author attributions and numbers need confirmation.
+
+- id: same_player_verification_cs2
+  title: Same-Player Verification for Account Consistency in Counter-Strike 2
+  year: 2026
+  venue: arXiv (preprint)
+  url: https://arxiv.org/html/2608.24893v1
+  questions: [A, C]
+  claim: "Tree models on mechanical fingerprints reach ROC AUC 0.955; 1,330 demos, 12 amateur tiers (Perfect World Arena)"
+  use_in_project: features separating execution vs decision (M4.2), tier differences
+  verified: null
+
+- id: valorant_round_outcome_tactical
+  title: Round Outcome Prediction in VALORANT Using Tactical Features from Video Analysis
+  authors: Hayakawa et al.
+  year: 2025
+  venue: IEEE CoG
+  url: https://arxiv.org/abs/2510.17199
+  questions: [B, G]
+  claim: "80.55% accuracy from mid-round vs 72.28% baseline; 29,506 rounds"
+  verified: null
+
+- id: champ_matchmaking
+  title: "CHAMP: Cross-domain Hybrid Architecture for Matchmaking"
+  authors: Wang et al.
+  year: 2026
+  url: https://arxiv.org/pdf/2609.04870
+  questions: [B, C]
+  claim: "Cold-start via cross-mode behaviour; -20.73% kill-crushing rate in low tiers"
+  verified: null
+
+- id: gig_economy_esports_coaching
+  title: The Gig Economy of Esports Coaching
+  year: 2026
+  url: https://arxiv.org/html/2609.12695v1
+  questions: [C, I]
+  claim: "Coaches create value through situated interpretation, not raw stats"
+  use_in_project: feedback design (docs/specs/05)
+  verified: null
+
+- id: pandaskill
+  title: PandaSkill - Player Performance and Skill Rating in Esports
+  authors: De Bois et al.
+  year: 2025
+  url: https://arxiv.org/abs/2501.10049
+  questions: [D]
+  claim: "Performance → percentile transform + OpenSkill; decouples role performance from team win"
+  code: GitHub (link to confirm)
+  verified: null
+
+- id: contextual_xt_spatial
+  title: Contextual Expected Threat (xT) using Spatial Event Data
+  authors: Everett et al.
+  year: 2022
+  venue: StatsBomb Conference
+  url: https://blogarchive.statsbomb.com/uploads/2022/09/Gregory-Everett-et-al-%E2%80%93-Contextual-Expected-Threat-xT-using-Spatial-Event-Data.pdf
+  questions: [D, G]
+  claim: "CNN spatial xT: 19.2% log-loss reduction on ball transitions"
+  verified: null
+
+- id: tar2_credit_assignment
+  title: "TAR2: Joint Temporal and Agent Credit Assignment"
+  year: 2025
+  url: https://arxiv.org/abs/2502.04864
+  questions: [D]
+  claim: "Transformer + Shapley-based temporal/agent reward redistribution"
+  use_in_project: M5.3 Shapley credit
+  verified: null
+
+- id: xk_budapest_major_reddit
+  title: xK analysis / Deep Dive into Budapest Major 2025
+  authors: bradac3k
+  year: 2025
+  venue: Reddit (non-peer-reviewed)
+  url: https://www.reddit.com/r/counterstrike2/comments/1qa2x93/deep_dive_into_budapest_major_2025/
+  questions: [E]
+  claim: "20+ pre-shot variables; AK-47 +6.67 xK/game, MP9 -1.87 xK"
+  note: "Year given as 2024 in synthesis but event is 2025 — inconsistent"
+  verified: null
+
+- id: hltv_rating_3
+  title: HLTV Rating 3.0 (and third-party explainer by SkinClub)
+  year: 2025
+  url: https://community.skin.club/en/news/hltv-rating-3-0-cs2-update
+  questions: [D, F]
+  claim: "Round Swing: entry kill in 5v5 ≈ +20% WP; 1v2 clutch up to 50%; eco-adjusted kill values"
+  note: "Prefer HLTV's own announcement article as primary source"
+  verified: null
+
+- id: learning_to_move_like_pros
+  title: Learning to Move Like Professional Counter-Strike Players
+  authors: Durst et al.
+  year: 2024
+  venue: ACM SIGGRAPH / SCA
+  url: https://arxiv.org/abs/2408.13934
+  questions: [G, I]
+  claim: "Transformer behaviour cloning (MLMove), <0.5 ms/step, 123 h pro data"
+  verified: null
+
+- id: x_ego_cs
+  title: "X-Ego: Acquiring team-level tactical situational awareness"
+  year: 2025
+  url: https://arxiv.org/abs/2510.19150
+  questions: [G, J]
+  claim: "124 h, 45 pro matches on Mirage, cross-egocentric contrastive learning; dataset released"
+  verified: null
+
+- id: franks_meta_analytics
+  title: "Meta-Analytics: Tools for Understanding the Statistical Properties of Sports Metrics"
+  authors: Franks, D'Amour, Cervone, Bornn
+  year: 2016
+  venue: Journal of Quantitative Analysis in Sports
+  questions: [H]
+  use_in_project: validation/meta_analytics.py, docs/specs/04 §4
+  verified: null
+
+- id: play_like_champions
+  title: "Play Like Champions: Counterfactual Feedback Generation in Latent Space"
+  year: 2026
+  url: https://arxiv.org/pdf/2607.00190
+  questions: [I]
+  claim: "VAE + optimal transport + flow matching for recourse on 23,476 SC2 replays"
+  use_in_project: M9.2 counterfactual recourse (conceptual)
+  verified: null
+
+- id: pureskill_cs2_dataset
+  title: PureSkill.gg Competitive CS2 Gameplay Data Set
+  year: 2023
+  url: https://www.kaggle.com/datasets/billpureskillgg/cs2-2023-11-23
+  questions: [J]
+  claim: "~1,300 amateur/MM matches with skill labels"
+  use_in_project: M1.2 primary amateur training data
+  verified: null
+
+- id: demoparser2
+  title: demoparser2
+  authors: LaihoE
+  url: https://github.com/LaihoE/demoparser
+  questions: [J]
+  use_in_project: ingest/demo_parser.py
+  verified: null
+
+- id: dynamic_xt
+  title: Dynamic Expected Threat (DxT)
+  authors: Hassani et al.
+  year: 2025
+  questions: [D, G]
+  note: "URL not given in synthesis — locate"
+  verified: null
+
+- id: ess_clustered_outcomes
+  title: Effective sample size in clustered outcomes (Andersen 2021) / Brill & Yurko on WP calibration
+  questions: [H]
+  note: "Exact references not given — locate. Design effect formula (Kish) is standard."
+  verified: null
+
+# Candidates not in the synthesis (likely "seed papers"; check and add if useful)
+- id: awpy
+  title: awpy (Counter-Strike parsing & analytics, incl. map/nav data)
+  authors: Xenopoulos et al.
+  url: https://github.com/pnxenopoulos/awpy
+  use_in_project: M7.1 nav meshes (ADR on license/format)
+  verified: null

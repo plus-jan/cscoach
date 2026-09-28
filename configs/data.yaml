@@ -1,0 +1,16 @@
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  external: data/external
+  manifest: data/manifest.parquet
+snapshots:
+  cadence_s: 1.0          # fixed-cadence snapshots in addition to event-anchored ones
+  include_event_ticks: true
+parse:
+  player_props: [X, Y, Z, yaw, pitch, velocity_X, velocity_Y, health, armor_value, has_helmet,
+                 has_defuser, is_alive, team_num, active_weapon_name, current_equip_value,
+                 balance, flash_duration, inventory]
+  events: [player_death, player_hurt, bomb_planted, bomb_defused, bomb_exploded, bomb_begindefuse,
+           round_start, round_freeze_end, round_end, weapon_fire, smokegrenade_detonate,
+           inferno_startburn, flashbang_detonate, hegrenade_detonate, player_blind]

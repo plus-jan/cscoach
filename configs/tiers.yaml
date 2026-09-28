@@ -1,0 +1,30 @@
+# Canonical skill tiers. Every data source maps onto these (ingest/tiers.py, M1.3).
+# Boundaries are initial proposals — revisit once data volume per bucket is known (M1.5).
+tiers:
+  - id: low        # new/low MM, Premier < 10k, FACEIT 1-3
+    order: 0
+  - id: mid        # Premier 10k-15k, FACEIT 4-6
+    order: 1
+  - id: high       # Premier 15k-20k, FACEIT 7-9
+    order: 2
+  - id: semipro    # Premier 20k+, FACEIT 10 / FPL-C / low-tier leagues
+    order: 3
+  - id: pro        # HLTV-covered pro matches (reference & transfer study only)
+    order: 4
+
+mappings:
+  faceit_level: {1: low, 2: low, 3: low, 4: mid, 5: mid, 6: mid, 7: high, 8: high, 9: high, 10: semipro}
+  premier_rating:   # [lower_inclusive, upper_exclusive, tier]
+    - [0, 10000, low]
+    - [10000, 15000, mid]
+    - [15000, 20000, high]
+    - [20000, 100000, semipro]
+  # MM skill groups (1=Silver I ... 18=Global Elite) — verify dataset encodings (M1.2)
+  mm_skill_group:
+    - [1, 7, low]
+    - [7, 13, mid]
+    - [13, 17, high]
+    - [17, 19, semipro]
+
+match_tier_rule: median_of_players   # median | mean_order | min ; players with unknown tier ignored
+min_known_players: 6                 # else match tier = null

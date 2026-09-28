@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# data & artefacts
+data/**
+!data/README.md
+!data/*/.gitkeep
+models/**
+!models/.gitkeep
+reports/experiments/**
+!reports/experiments/.gitkeep
+*.dem
+*.parquet
+.env
+.claude/settings.local.json

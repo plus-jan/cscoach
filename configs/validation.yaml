@@ -1,0 +1,25 @@
+# Acceptance gates. `cscoach validate` fails (exit 1) if any gate fails.
+# Thresholds are initial; tighten as data grows. Changes require an ADR.
+bootstrap:
+  n_resamples: 500
+  alpha: 0.05
+  seed: 123
+ece:
+  n_bins: 15
+  strategy: quantile
+gates:
+  wp:
+    ece_max: 0.02                  # overall
+    ece_max_per_tier: 0.03         # every tier with >= min_rounds_per_stratum rounds
+    ece_max_per_map: 0.035
+    brier_skill_vs_baseline_min: 0.0   # lower CI bound of BSS must be > this
+    min_rounds_per_stratum: 500
+  xk:
+    ece_max: 0.03
+    auc_min: 0.62
+    min_duels_per_stratum: 1000
+  player_metric:
+    discrimination_min: 0.3
+    stability_min: 0.5
+    independence_min: 0.2
+    min_ess: 30

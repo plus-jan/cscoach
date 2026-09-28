@@ -1,0 +1,30 @@
+# CS2 economy rules. ALL VALUES MUST BE VERIFIED against the current game build (task M6.1)
+# by reconciling predicted vs observed money in demos. Keep one block per build range.
+version: cs2-initial-unverified
+valid_from_build: null
+start_money: 800
+max_money: 16000
+overtime_start_money: 12500
+rounds_per_half: 12
+overtime_rounds_per_half: 3
+round_win:
+  elimination: 3250
+  time_expired: 3250        # CT win
+  bomb_defused: 3500
+  bomb_exploded: 3500
+loss_bonus: [1400, 1900, 2400, 2900, 3400]
+loss_counter_start: 1        # counter at half start (pistol loss pays loss_bonus[1])
+loss_counter_on_win: decrement   # decrement | reset
+t_loss_after_plant_bonus: 800
+planter_bonus: 300
+defuser_bonus: 300
+kill_reward:
+  default: 300
+  smg: 600
+  p90: 300
+  shotgun: 900
+  xm1014: 600
+  awp: 100
+  knife: 1500
+  zeus: 0
+  cz75a: 100
