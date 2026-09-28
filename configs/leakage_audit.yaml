@@ -1,0 +1,6 @@
+# Leakage audit (M2.4). Parameters and assumptions: docs/specs/06_parameters.md.
+root: /media/jan/merged/cs2coach
+auc_threshold: 0.99            # A-46
+n_boot: 500                    # A-10 (bootstrap.n_resamples)
+seed: 20260928
+profile_bins_s: [0, 1, 10, 20, 40, 60, 80, 100, 130]

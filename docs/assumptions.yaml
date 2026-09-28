@@ -243,6 +243,17 @@
   parameters: [start money / max money / OT start money, round win, loss bonus ladder, kill reward, T loss after plant bonus / planter / defuser, CT team bonus per T killed]
   blocks: [economy_feedback]
 
+- id: A-46
+  statement: >-
+    At the freeze-end snapshot no honest state feature separates the round winner almost perfectly; a single-feature
+    AUC above 0.99 indicates leaked outcome information (M2.4 audit threshold).
+  type: policy
+  source: ROADMAP M2.4 (initial choice)
+  status: open
+  test: [M2.4]
+  parameters: [leakage_audit.auc_threshold]
+  blocks: []
+
 # ---------------------------------------------------------------- windows & thresholds (estimable from data)
 - id: A-17
   statement: A kill counts as traded if the killer dies within 5 s.
