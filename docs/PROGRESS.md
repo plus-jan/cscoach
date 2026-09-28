@@ -81,3 +81,8 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
 - 2026-09-28 · M2.2 · Snapshot sampler + as-of join (300 clean seeded matches): 703,293 snapshots (2,344/match,
   36.6% event-driven), 7.0 M player rows, alive share 0.68; leakage check 300/300; 0.39 s/match. Dead players
   from `player_death` (F-06) · reports/experiments/20260928-1623_m2.2_snapshots/report.md
+- 2026-09-28 · M2.3 (partial) · State features v1 (`cscoach.data.features`, 39 columns): per-side alive, HP, armor,
+  helmets, kits, equipment value, money, primaries, utility counts, man advantage, time remaining, bomb state,
+  context; denylist + truncation tests. 300 matches: 703,293 rows, 0.5 s/match; freeze-end 5v5 in 93.4% of rounds;
+  0.4% of snapshots with a player without side. Found: ghost rows of absent players (fixed in snapshots),
+  `time_remaining_s` < 0 in 0.6% of rows (timers → MV.1). Distributions per tier/platform after the top-up.

@@ -92,8 +92,11 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [x] **M2.2 — Snapshot sampler** (event ticks + cadence [A-22]); as-of join of `player_status` ≤ tick.
   **DoD:** leakage test (removing future rows changes nothing). Done: `cscoach.data.snapshots`; leakage check
   300/300 real matches + unit tests; dead players from `player_death` (F-06). Report `reports/experiments/20260928-1623_m2.2_snapshots/`.
-- [ ] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
+- [~] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
   distributions per tier/platform in PROGRESS.
+  Partial (2026-09-28): `cscoach.data.features` + denylist and truncation tests done; side from `player_info`
+  (99.97% vs death-time side) with `player_spawn` fill; ghost rows of absent players removed from snapshots.
+  Open: distributions per tier/platform after the M1.5 top-up refresh.
 - [ ] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end.
 - [ ] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
   `cscoach.loops.gated_verify` (prints the budget-corrected CI lower bound of the improvement vs the

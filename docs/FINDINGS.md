@@ -146,4 +146,9 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - changes: docs/specs/02 snapshots (alive state from `player_death`); docs/data/README.md quirk 14.
 - next step: M2.3 state features on the snapshots (after the top-up refresh) — rationale: next Part A task;
   alive counts and man advantage depend on this fix.
+- addendum (M2.3, 2026-09-28): players absent from a round (e.g. after a disconnect; their latest status row is
+  from an earlier round) were still listed with masked values and `is_alive = True`; snapshots now drop them
+  (0.66% of player rows; leakage check 300/300 after the change). Side per player: `player_info.team_code` is
+  right for 99.97% of 45,629 deaths (victim side at death), `player_spawn` for 99.24%; on 343 disagreements
+  `player_info` was right 328 times → primary `player_info`, spawn only fills missing rows.
 - supersedes: —

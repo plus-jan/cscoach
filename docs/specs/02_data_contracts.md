@@ -41,7 +41,10 @@ freeze end and round end (end tick excluded).
 
 Built by `cscoach.data.snapshots` (M2.2): one row per snapshot × known player with the latest `player_status`
 row ≤ tick (same round) and `is_alive` from `player_death` — `player_status` has no rows for dead players, so a
-plain as-of join would keep them alive (F-06); dead players' state columns are masked.
+plain as-of join would keep them alive (F-06); dead players' state columns are masked. Players without a status
+row in the current round (not yet seen, or gone after a disconnect) get no row. Sides: `player_info.team_code`,
+filled from `player_spawn` only where `player_info` lacks the player (F-06 addendum). Built by
+`cscoach.data.features` (v1: `primaries` instead of weapon classes and raw `bomb_site_code` until MV.1).
 
 Features are aggregated per side from `player_status` at the latest tick ≤ snapshot tick:
 - `alive` (health > 0), `hp_sum` (`health`), `armor_sum` (`armor`), `helmets` (`has_helmet`),
