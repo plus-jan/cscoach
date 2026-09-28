@@ -60,3 +60,10 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   v42 5,982), 8,676 with all channels, of which 4,864 = seeded 15% sample; 351 GB; this run exported
   129,800 assets (153.8 GB, est. egress $14). F-01: legacy test download over-represents FACEIT (0.079
   vs 0.050) → use the seeded sample · reports/data/export_manifest_by_revision_date.csv
+- 2026-09-28 · M1.3 · Header tome rebuilt (32,498); dedup 647 groups / 719 copies → 31,779 canonical
+  (5v5 27,655, wingman 4,124); clean 5v5 25,434 (steam 24,056 / faceit 1,378; v30 20,984 / v42 4,450;
+  seeded full-channel 3,930). Counts per platform × channel set (all / canonical / clean / full):
+  faceit v30 1,284/1,284/1,099/439, faceit v42 352/352/279/109, steam v30 25,159/24,545/19,885/6,413,
+  steam v42 5,572/5,469/4,171/1,669, unknown 131/129/0/46. Clean per month 2025-08…2026-09: 371, 1,340,
+  712, 1,615, 1,764, 2,154, 2,410, 2,316, 2,031, 1,507, 2,225, 2,532, 2,493, 1,964. Full table
+  (platform × map × month × channel set, 350 cells) in the report. F-02 · reports/experiments/20260928-1540_m1.3_header_quality/report.md

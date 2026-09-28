@@ -67,10 +67,13 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   (ADX asset index → plan → EXPORT_ASSETS_TO_S3 → sync; boto3 directly, since the dsdk exports whole
   revisions only) and `cscoach.data.manifest`; 363 revisions, 32,498 matches, 8,676 with all channels
   (seeded 15% sample = 4,864), 351 GB, ≈ $14 egress. F-01: use the seeded sample for full-channel work.
-- [ ] **M1.3 — Header tome, dedup, quality.** `create_header_tome`; dedup on header-derived keys
+- [x] **M1.3 — Header tome, dedup, quality.** `create_header_tome`; dedup on header-derived keys
   [A-36]; quality flags (missing round_end, warmup leftovers, missing ticks, abandonment) [A-40];
   subheader tomes by platform / rank availability / channel set / date.
-  **DoD:** counts per platform × map × month × channel set in PROGRESS.
+  **DoD:** counts per platform × map × month × channel set in PROGRESS. Done: `cscoach.data.quality`;
+  flags only (raw data untouched); 31,779 canonical, 25,434 clean 5v5; subheader tomes by
+  platform / rank / channel set (date windows are selected from the flag table's `month`); F-02.
+  Report `reports/experiments/20260928-1540_m1.3_header_quality/`.
 - [ ] **M1.4 — Tier labels.** Decode `player_info` rank fields per platform (with MV.2) → match tier +
   spread [A-11, A-12, A-15]. **DoD:** tier coverage table; unknowns are null, never guessed.
 - [ ] **M1.5 — Data volume check** against the target [A-32]. **DoD:** gap analysis per stratum.

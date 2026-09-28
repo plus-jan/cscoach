@@ -52,3 +52,25 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: M1.3 on the header tome of all 32,498 matches — rationale: dedup and quality flags come
   before any analysis, and headers cover the full corpus.
 - supersedes: —
+
+### F-02 — Header loser scores are unreliable; 2% duplicates, 13% wingman, 6% incomplete
+- date: 2026-09-28 · task: M1.3 · decision: —
+- question: Which header fields can drive dedup and completeness, and does excluding flagged matches bias
+  the corpus (A-36, A-40)?
+- result: (1) Header `*_starters_score_final`: the winner score equals the last `round_state` score in
+  100% of 8,676 full-channel matches, the loser score in only 51.6% (header too high by 1–8); `round_state`
+  scores equal the `round_end` count in 99.92%. (2) 647 duplicate groups, 719 extra copies (2.2%;
+  steam 4.4% of rows, faceit 0.1%); 28/28 groups with ≥ 2 full-channel copies have identical round_end
+  sequences. (3) `is_wingman` is null for 88% of rows; `unique_steamids` ≤ 5 marks 4,124 canonical
+  wingman matches (13%). (4) Canonical final states: regulation 27,142, incomplete 1,987, draw 1,692,
+  overtime 958. (5) No tick gap > 1 s (max 0.109 s), no missing round_end, no warmup after start.
+  (6) Exclusion of canonical 5v5 matches (bootstrap 95% CI): faceit 0.156 [0.139, 0.175] vs steam 0.071
+  [0.068, 0.074]; maps 0.073–0.087, overlapping CIs.
+- evidence: `reports/experiments/20260928-1540_m1.3_header_quality/` (report.md, summary.json, validation.json, counts CSV); header tome
+  `header.2025-09-01,2026-09-28.full`; config `configs/quality.yaml`.
+- confidence: high for (1)–(5) (exact counts); medium for the abandonment flag (upper bound, id gaps).
+- changes: A-43 new (format/completion rule, open); A-36 note (precision checked, leakage untested);
+  A-40 note (maps fine, platform differential → keep flagged matches stratifiable, never drop silently);
+  docs/data/README.md quirks 10–11; final scores come from `round_state` wherever channels exist.
+- next step: M1.4 (tier labels) — rationale: A-40 still needs the tier dimension, and D1 depends on tiers.
+- supersedes: —

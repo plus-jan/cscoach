@@ -20,7 +20,9 @@ Conventions:
 | ct/t_starters_avg_rank | `header` | coarse match-level skill |
 | tier, tier_source | derived (docs/specs/03 §Tiers) | null if unknown — never guessed |
 | channel_set | index object | `v30` / `v42` |
-| dedup_key | hash of header values | used to drop duplicates |
+| dedup_key, dup_n, is_canonical | hash of map, server, `number_of_points`, final scores (no date) | duplicates are **flagged**, one canonical copy per group; the raw collection is never modified (M1.3) |
+| format, final_state, final_state_source | `is_wingman` / `unique_steamids`; last `round_state` scores (header scores only where channels are missing, F-02) | A-43 |
+| clean | derived | canonical 5v5 without data defects (abandonment is a stratum, not a defect) |
 | quality_flags | derived | missing ticks, missing round_end, warmup leftovers, **abandonment** (`player_disconnect` without reconnect → 4v5 phases with money compensation [xenopoulos_pro_vs_amateur_wp]), … |
 
 ## rounds

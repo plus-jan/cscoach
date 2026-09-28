@@ -77,6 +77,12 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
    (assumption A-15, task MV.1).
 9. **Overtime:** CS2 regulation is 24 rounds; use `pop_overtime(..., max_rounds_csgo=24)` where overtime
    must be excluded; model overtime explicitly otherwise (economy differs).
+10. **Header final scores (F-02):** `*_starters_score_final` gives the right winner score but the
+   loser score is wrong in ~48% of matches. Use the last `round_state` scores (t_score/ct_score) where
+   channels exist; `is_wingman` is null in older ppp versions (use `unique_steamids` ≤ 5).
+11. **Duplicates and quality (M1.3):** `<root>/manifest/match_quality.parquet` holds `dedup_key`,
+   `is_canonical`, `format`, `final_state`, `q_*` flags and `clean`; nothing is deleted from `csds/`.
+   Use subheader tomes `subheader.2025-09-01,2026-09-28.clean*` or filter the flag table.
 
 ## Access procedure (for the implementing agent)
 

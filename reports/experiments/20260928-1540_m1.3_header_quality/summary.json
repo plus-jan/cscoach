@@ -1,0 +1,59 @@
+{
+  "commit": "fbf274f",
+  "config": "configs/quality.yaml",
+  "config_sha256_12": "429cd3110eb0",
+  "header_tome": "header.2025-09-01,2026-09-28.full",
+  "dataset_id": "f49be2ef387af522a7b6f000158113e0",
+  "revisions": "363 live, 2025-09-01..2026-09-27",
+  "matches": 32498,
+  "dedup_groups_with_copies": 647,
+  "duplicate_rows_non_canonical": 719,
+  "canonical": 31779,
+  "format": {
+    "5v5": 27655,
+    "wingman": 4124
+  },
+  "final_state_canonical": {
+    "regulation": 27142,
+    "incomplete": 1987,
+    "draw": 1692,
+    "overtime": 958
+  },
+  "final_state_source_canonical": {
+    "header": 23131,
+    "round_state": 8648
+  },
+  "channel_checked": 8676,
+  "flags_all_rows": {
+    "q_platform_unknown": 131,
+    "q_upload_date": 279,
+    "q_player_count": 420,
+    "q_incomplete": 2033,
+    "q_no_round_end": 0,
+    "q_rounds_vs_score": 4,
+    "q_warmup_after_start": 0,
+    "q_tick_gap": 0,
+    "q_abandonment": 1344,
+    "q_header_loser_score": 4200,
+    "channel_error": 0,
+    "matches_with_unknown_id_disconnect": 624
+  },
+  "clean": 25434,
+  "clean_by_platform": {
+    "steam": 24056,
+    "faceit": 1378
+  },
+  "clean_by_channel_set": {
+    "v30": 20984,
+    "v42": 4450
+  },
+  "subheader_tomes": {
+    "subheader.2025-09-01,2026-09-28.clean": 25434,
+    "subheader.2025-09-01,2026-09-28.clean_full_seeded": 3930,
+    "subheader.2025-09-01,2026-09-28.clean_steam": 24056,
+    "subheader.2025-09-01,2026-09-28.clean_faceit": 1378,
+    "subheader.2025-09-01,2026-09-28.clean_v30": 20984,
+    "subheader.2025-09-01,2026-09-28.clean_v42": 4450,
+    "subheader.2025-09-01,2026-09-28.clean_rank_known": 23375
+  }
+}

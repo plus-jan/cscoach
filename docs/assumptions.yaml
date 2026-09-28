@@ -397,6 +397,10 @@
   type: data
   source: CSDS datasheet
   status: open
+  note: >-
+    2026-09-28 (M1.3, F-02): key = map, server, number_of_points, final scores (no date). Precision: 28/28
+    groups with >= 2 full-channel copies have identical round_end sequences. Recall and cross-split
+    leakage are not yet measured, so the status stays open.
   test: [M1.3]
   blocks: [wp_timeline, xk]
 
@@ -458,6 +462,10 @@
   type: data
   source: CSDS datasheet; challenged by [learning_to_move_like_pros] §5 (no capture-frequency guarantee)
   status: open
+  note: >-
+    2026-09-28 (M1.3, F-02): no tick gaps > 1 s, no missing round_end, no warmup leftovers in 8,676
+    full-channel matches. Excluding flagged canonical 5v5 matches is flat across maps (0.073-0.087) but
+    not platforms (faceit 0.156 vs steam 0.071); tiers pending M1.4. Flagged matches stay stratifiable.
   test: [M1.3, MV.1]
   blocks: []
 
