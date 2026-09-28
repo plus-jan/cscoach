@@ -42,7 +42,7 @@ Equations were lost in PDF conversion (Eq. 1–10); read the PDF for formulas.
 - **Use in project:**
   - Feature ideas (Table I): speed drop in the 250 ms before each shot (counter-strafe), crosshair correction
     switches around firing, reloads per 100 shots, seconds to first shot, force-buy rate, deaths in first 20 s.
-    → `features/duel.py` (M4.2), player-habit metrics (M8/M9).
+    → xK features (docs/specs/03#xk, M4.2; in CSDS: `player_inputs`, `player_vector.speed_2d`/`ang_vel`/`inaccuracy`, `weapon_fire`), player-habit metrics (M8/M9).
   - Supports design choice: tree models (LightGBM) on engineered features beat MLPs at this data scale.
   - Evidence that pro data does not transfer to amateurs (supports ADR-0002, M3.5).
 - **Caveats:** split is person-disjoint but **not match-disjoint** (§V-A); pairwise CIs too narrow, they

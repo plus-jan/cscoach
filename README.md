@@ -1,26 +1,24 @@
-# cscoach — CS2 coaching engine
+# cscoach — CS2 coaching engine (knowledge base)
 
-Data-driven, statistically validated coaching for amateur and semi-pro Counter-Strike 2
-players: calibrated round **Win Probability**, **WPA** credit, **Expected Kills (xK)**,
-economy and spatial analytics, turned into counterfactual, actionable feedback.
+A knowledge base for AI agents building a **data-driven, statistically validated coaching engine** for
+amateur and semi-pro Counter-Strike 2 players. It covers calibrated round **Win Probability**, **WPA**
+credit, **Expected Kills (xK)**, and economy and spatial analytics, turned into counterfactual,
+actionable feedback.
 
-- **Start here (humans & Claude Code):** [`CLAUDE.md`](CLAUDE.md)
-- **Plan:** [`ROADMAP.md`](ROADMAP.md) · progress in [`docs/PROGRESS.md`](docs/PROGRESS.md)
-- **Specs:** [`docs/specs/`](docs/specs) · decisions in [`docs/adr/`](docs/adr)
-- **Research basis:** [`docs/research/`](docs/research) (German synthesis + source registry)
+This repository contains **concepts only, no code** (ADR-0004). The only data source is the
+**PureSkill.gg CSDS corpus**, used through the official `pureskillgg-dsdk` libraries (ADR-0003).
 
-## Quickstart
+| Start here | |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | Operating manual for agents: rules, workflow, evidence standard |
+| [`ROADMAP.md`](ROADMAP.md) | Tasks with IDs and Definition of Done, incl. milestone **MV** (empirical verification) |
+| [`docs/specs/`](docs/specs) | Architecture, derived data, models, validation (+ reference algorithms), coaching, parameters |
+| [`docs/data/`](docs/data) | CSDS corpus guide, vendored channel spec + data dictionary |
+| [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) · [`docs/assumptions.yaml`](docs/assumptions.yaml) | Everything not yet verified, and what it blocks |
+| [`docs/research/`](docs/research) | Source registry, full-text papers with verified notes, original German synthesis |
+| [`docs/adr/`](docs/adr) | Decisions |
+| [`.claude/skills/`](.claude/skills) | Agent workflows (next-task, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base) |
 
-```bash
-make install
-make check
-cscoach synth data/processed/synth.parquet --n-matches 300
-cscoach train-wp data/processed/synth.parquet --name synth
-cscoach validate models/<run-dir>
-```
-
-## Status
-
-Foundation (M0) done: validation core (grouped splits, calibration metrics, ESS, cluster
-bootstrap, meta-analytics, gates), synthetic simulator, baseline + GBDT WP with per-tier
-calibration. Next: real-demo ingestion (M1). See the roadmap.
+**Data attribution:** analyses built on this project use data provided by PureSkill.gg (CC BY-NC-SA 4.0
+Data Subscriber Agreement: non-commercial use, attribution "Data provided by PureSkill.gg.",
+share-alike).

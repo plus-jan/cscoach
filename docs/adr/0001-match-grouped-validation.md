@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-09-28
-- Roadmap task: M0.2
+- Roadmap: M3, MV.4 (method challenged by [brill_yurko_wp_difficulty] — fractional bootstrap)
 
 ## Context
 WP training rows are snapshots. All snapshots of a round share one label and all rounds

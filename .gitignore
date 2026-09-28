@@ -1,24 +1,7 @@
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-.coverage
-htmlcov/
-.ipynb_checkpoints/
-
-# data & artefacts
-data/**
-!data/README.md
-!data/*/.gitkeep
-models/**
-!models/.gitkeep
-reports/experiments/**
-!reports/experiments/.gitkeep
-*.dem
+# This repo holds documentation only (ADR-0004). Never commit data, PDFs or code artefacts.
+*.pdf
 *.parquet
+*.dem
 .env
+.DS_Store
 .claude/settings.local.json
-docs/research/papers/pdf/

@@ -7,7 +7,9 @@
 # local:     path to the markdown full text (docs/research/papers/<id>.md), null if missing
 # claim:     what the ORIGINAL synthesis claimed; `verified_claim` = what the paper says.
 #
-# Add PDFs with: python scripts/pdf_to_md.py <file.pdf>   (maps by `arxiv` or --id)
+# Add PDFs with the `add-paper` skill (.claude/skills/add-paper).
+# Data policy: CSDS is the sole data source (ADR-0003); dataset/tool entries marked `out_of_scope` are
+# kept for reference only and must not be used for features.
 
 - id: same_player_verification_cs2
   title: Same-Player Verification for Account Consistency in Counter-Strike 2
@@ -165,7 +167,7 @@
   arxiv: "1609.09830"
   url: https://arxiv.org/abs/1609.09830
   questions: [H]
-  use_in_project: validation/meta_analytics.py, docs/specs/04 §4
+  use_in_project: docs/specs/04 §4 (player-metric checks), MV.9, A-25
   local: null
   verified: search
 
@@ -183,24 +185,24 @@
   verified: search
 
 - id: pureskill_cs2_dataset
-  title: PureSkill.gg Competitive CS2 Gameplay Data Set
-  year: 2023
-  url: https://docs.pureskill.gg/datascience/adx/cs2/csds/
-  also: [https://www.kaggle.com/datasets/billpureskillgg/cs2-2023-11-23]
+  title: PureSkill.gg Competitive CS2 Gameplay Data Set (CSDS)
+  authors: Ethan Batson, William Robert Freeman, Evan Sosenko (FPS Critic, Inc.)
+  year: 2022-
+  url: https://aws.amazon.com/marketplace/pp/prodview-v3o7zrt6okwmo
+  also: [https://docs.pureskill.gg/datascience/, https://github.com/pureskillgg/docs]
   questions: [J]
-  license: CC BY-NC-SA 4.0 (non-commercial!)
-  search_note: "Kaggle sample: 1,300 matches (MM, FACEIT, others), 31 files per match (csds); full set on AWS Data Exchange"
-  use_in_project: M1.2 primary amateur training data
-  local: null
-  verified: search
+  license: data CC BY-NC-SA 4.0 via DSA (non-commercial, attribution, share-alike); docs MIT
+  verified_claim: "Daily revisions, ~1 year retained (from 2025-07-18 as of 2026-08-27), ~90-150 matches/day recently; 42 parquet channels + index per match since 2026-08-04 (30 before); MM/FACEIT/third-party; per-match steam_id aliases; rank fields in player_info/header."
+  use_in_project: SOLE DATA SOURCE (ADR-0003); see docs/data/
+  local: docs/data/csds_spec.md
+  verified: true
 
 - id: demoparser2
   title: demoparser2
   authors: LaihoE
   url: https://github.com/LaihoE/demoparser
   license: MIT
-  questions: [J]
-  use_in_project: ingest/demo_parser.py
+  status_in_project: out_of_scope (no demo parsing, ADR-0003)
   local: null
   verified: search
 
@@ -223,7 +225,7 @@
   url: https://arxiv.org/abs/2406.16171
   questions: [H]
   search_note: "Clustered play-by-play data inflates bias/variance and lowers ESS; proposes fractional bootstrap for WP CIs"
-  use_in_project: ADR-0001, validation/ess.py, validation/bootstrap.py (consider fractional bootstrap)
+  use_in_project: ADR-0001, docs/specs/04 §7 (ESS, bootstrap), MV.4 (fractional bootstrap challenger), A-24
   replaces: "'Andersen 2021' ESS reference in the synthesis, which could not be found"
   local: null
   verified: search
@@ -257,7 +259,7 @@
   authors: Peter Xenopoulos et al.
   url: https://github.com/pnxenopoulos/awpy
   license: MIT
-  use_in_project: M7.1 nav meshes (ADR on format)
+  status_in_project: out_of_scope (external nav data not allowed, ADR-0003; empirical area graph instead, A-37)
   local: null
   verified: search
 
@@ -266,6 +268,37 @@
   url: https://github.com/pnxenopoulos/esta
   license: CC BY-SA 4.0
   search_note: "1,558 pro demos (878 online, 680 LAN), 41,782 rounds; awpy 1.x format; includes WP benchmarks"
-  use_in_project: pro reference data for transfer study M3.5 (CS:GO, not CS2)
+  status_in_project: out_of_scope as data (ADR-0003); its published WP benchmarks may be cited as literature
+  local: null
+  verified: search
+
+
+- id: xenopoulos_pro_vs_amateur_wp
+  title: Analyzing the Differences between Professional and Amateur Esports through Win Probability
+  authors: Peter Xenopoulos, William Robert Freeman, Claudio Silva
+  year: 2022
+  venue: The ACM Web Conference (WWW) 2022
+  url: https://dl.acm.org/doi/abs/10.1145/3485447.3512277
+  questions: [A, C]
+  note: "Used an older version of PureSkill.gg data (per CSDS datasheet). Most direct evidence for A-01 — full text needed."
+  use_in_project: A-01, MV.3, ADR-0002
+  local: null
+  verified: null
+
+- id: pureskillgg_dsdk
+  title: pureskillgg-dsdk — PureSkill.gg Data Science Development Kit (Python)
+  url: https://pypi.org/project/pureskillgg-dsdk/
+  also: [https://github.com/pureskillgg/dsdk]
+  verified_claim: "v3.2.1, Python >= 3.11: DsReaderFs/DsReaderS3 + GameDsLoader (channel instructions), TomeCuratorFs (header/subheader/data tomes), ADX export helpers (source read 2026-09-28)"
+  use_in_project: sole data access library (docs/data/README.md)
+  local: null
+  verified: search
+
+- id: pureskillgg_csgo_dsdk
+  title: pureskillgg-csgo-dsdk — Counter-Strike helpers for CSDS
+  url: https://pypi.org/project/pureskillgg-csgo-dsdk/
+  also: [https://github.com/pureskillgg/csgo-dsdk]
+  verified_claim: "v3.1.1: pop_overtime (use max_rounds_csgo=24 for CS2), scrub_csds_pii"
+  use_in_project: overtime handling
   local: null
   verified: search

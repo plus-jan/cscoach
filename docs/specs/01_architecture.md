@@ -2,69 +2,79 @@
 
 ## Goal
 
-Post-match (not live in-game) analysis of a CS2 demo that yields, for each player:
-calibrated round win probability timelines, WPA per action, duel quality (xK),
-economy decisions, spatial/utility value, and ≤ 3 prioritised, counterfactual coaching
-points. Target users: amateur → semi-pro (MM, Premier, FACEIT levels 1–10, low-tier leagues).
+Post-match analysis of a CS2 match from the PureSkill.gg CSDS corpus. For each player in the match it
+produces:
+- calibrated round win-probability timelines;
+- WPA per action;
+- duel quality (xK);
+- economy and utility/spatial value;
+- at most 3 prioritised, counterfactual coaching points.
+
+Target population: amateur to semi-pro (Valve MM/Premier, FACEIT). Scope of evaluation: the CSDS corpus
+(ADR-0003). Output is **per match**, because CSDS has no cross-match player identity (ADR-0005).
 
 ## Pipeline
 
 ```
-.dem ──► ingest (demoparser2) ──► interim parquet (ticks, events, header)
-           │                          │
-           ▼                          ▼
-      manifest (hash, map,     preprocess: rounds, snapshots
-      build, tier)                    │
-                                      ▼
-                    features: state │ duel │ economy │ spatial
-                                      │
-             ┌────────────────────────┼─────────────────────────┐
-             ▼                        ▼                         ▼
-      WP model (per tier,       xK model                 economy engine
-      calibrated)                                        + nav graph / utility
-             │                        │                         │
-             └──────────► valuation: WPA, Shapley credit, decision matrix
-                                      │
-                                      ▼
-                   player metrics + shrinkage + meta-analytics gates
-                                      │
-                                      ▼
-                  coaching: detectors → counterfactuals → ranking → narrative
-                                      │
-                                      ▼
-                          JSON report ─► API ─► dashboard
+AWS Data Exchange (CSDS daily revisions)
+   │  pureskillgg_dsdk: download_adx_dataset_revision / export_*_to_s3
+   ▼
+local/S3 csds collection (index `csds` + 42 parquet channels per match)
+   │  TomeCuratorFs.create_header_tome → dedup → subheader tomes
+   │  (platform, rank availability, channel-set version, date window)
+   ▼
+per-match loading: DsReaderFs/DsReaderS3 + GameDsLoader.get_channels(instructions)
+   │  pureskillgg_csgo_dsdk.pop_overtime(max_rounds_csgo=24) where needed
+   ▼
+derived tables (docs/specs/02): rounds · snapshots · state_features · duels · buys · utility · area_graph
+   │  built per match, then assembled across matches as tomes (make_tome)
+   ▼
+models (docs/specs/03): baseline WP · GBDT WP (tier/platform-conditioned) + calibration · xK · economy
+   │
+   ▼
+valuation: WPA · Shapley credit · xK×WPA decision matrix · counterfactual buys/utility
+   │
+   ▼
+within-match player metrics + shrinkage + reliability gates
+   │
+   ▼
+coaching: detectors → counterfactuals → ranking → narrative (grounded) → JSON report → UI
 ```
 
-## Components & responsibilities
+Validation (docs/specs/04) runs on every model and metric. The assumption gate (docs/ASSUMPTIONS.md)
+controls what may reach players.
 
-| Package | Responsibility | Key outputs |
+## Components and responsibilities (to be implemented in the code repo)
+
+| Component | Responsibility | Key outputs |
 |---|---|---|
-| `ingest` | Parse `.dem`; load datasets; tier mapping; manifest | `ticks`, `events.*`, `header`, `manifest` |
-| `preprocess` | Round segmentation, snapshot sampling | `rounds`, `snapshots` |
-| `features` | Leakage-free feature tables | `state_features`, `duels`, `buys` |
-| `models` | Baseline WP, GBDT WP, xK, calibration, registry | model artefacts + cards |
-| `economy` | Rules engine, buy classes, team sync, counterfactual money | `economy_rounds` |
-| `spatial` | Nav graph, area control, utility delay | `spatial_features`, `utility_value` |
-| `valuation` | WPA, credit assignment, decision matrix | `event_values`, `player_round_values` |
-| `validation` | Everything that proves accuracy | reports, gate verdicts |
-| `coaching` | Shrinkage, detectors, counterfactuals, narratives | `feedback_items` |
-| `api`/`pipeline` | CLI + service | JSON reports |
+| data access | ADX export, header/subheader tomes, dedup, export manifest | tomes, manifest |
+| preprocess | round segmentation (phases, warmup, overtime), snapshot sampling | `rounds`, `snapshots` |
+| features | leakage-free feature tables from CSDS channels | `state_features`, `duels`, `buys`, `utility_events` |
+| spatial | empirical area graph from `place_name` + trajectories, utility delay | `area_graph`, spatial features |
+| models | baseline WP, GBDT WP, calibration, xK, model registry + cards | model artefacts |
+| economy | rules engine verified on `player_status.money`, buy classes, team sync | `economy_rounds` |
+| valuation | WPA, credit assignment, decision matrix | `event_values` |
+| validation | splits, metrics, ESS, bootstrap, reliability, gates, reports | reports |
+| coaching | shrinkage, detectors, counterfactuals, narratives, assumption gate | `feedback_items` |
+| serving | report generation/API/UI (later) | JSON reports |
 
 ## Design principles
 
-1. **Models are replaceable behind interfaces** (`models.base.ProbabilisticModel`):
-   `fit`, `predict_proba`, `save`, `load`, `card`. Challenger models must beat the
-   champion on the validation protocol to be promoted (ADR per promotion).
-2. **One WP model is the value function for everything** (WPA, Shapley, counterfactual
-   economy/utility). Its calibration therefore bounds the accuracy of the whole system —
-   that is why M3 precedes everything downstream.
-3. **Tier awareness everywhere**: models take `tier` as input and are calibrated per tier;
-   priors for shrinkage are per tier.
-4. **Deterministic & reproducible**: seeds, config hashes, data manifests in every report.
-5. **Latency budget** (post-match): full analysis < 30 s per match on 4 cores.
+1. **Single data source:** CSDS through official libraries. A feature that CSDS cannot support is
+   out of scope. It is not a reason to add data.
+2. **Replaceable models behind one interface** (fit, predict_proba, save/load, model card).
+   Challengers are promoted only via the protocol in docs/specs/04 (ADR per promotion).
+3. **One WP model is the value function** for WPA, Shapley credit and counterfactual economy/utility.
+   Its calibration and counterfactual validity (A-04) bound the accuracy of everything downstream, so
+   WP and its verification (MV) come first.
+4. **Tier/platform awareness everywhere** (A-01, A-11): conditioning features, stratified evaluation,
+   and per-tier calibration where data allows.
+5. **Reproducible:** seeds, config hashes, CSDS revision ids, and the channel-set version in every report.
+6. **Budget (initial, A-32):** full match analysis < 30 s on 4 cores, excluding download.
 
-## Technology
+## Technology (for the code repo)
 
-Python 3.11 · demoparser2 (Rust core) · polars/pandas/pyarrow · scikit-learn · LightGBM ·
-networkx (nav graph) · FastAPI · pytest/ruff/mypy. Optional: PyTorch for sequence
-challengers (M3.6), `awpy` for map/nav data (M7.1, pending ADR).
+Python ≥ 3.11 (dsdk requirement), `pureskillgg-dsdk`, `pureskillgg-csgo-dsdk`, pandas/pyarrow,
+scikit-learn, LightGBM (XGBoost acceptable; dsdk has an `xgboost` extra), networkx (area graph), a
+statistics stack (scipy/statsmodels). Environment: `uv`, as recommended by PureSkill.

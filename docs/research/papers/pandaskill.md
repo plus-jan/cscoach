@@ -40,7 +40,7 @@ Code/data: https://github.com/PandaScore/PandaSkill (CC BY-SA 4.0).
     match result → "free-for-all" update; conservative display value μ − 3σ (or our credible intervals).
   - "Isolated rating pools" ≈ our tiers/platforms (MM vs FACEIT): contextual + meta rating is a candidate
     for cross-tier comparison (M8.1 ADR).
-  - Confirms our choices: monotone GBDT (configs/model_wp.yaml `monotone`), ECE as a primary metric,
+  - Confirms our choices: monotone GBDT (docs/specs/06_parameters.md, monotone constraints, A-27), ECE as a primary metric,
     percentile/role normalisation for cross-role fairness (CS roles: entry, AWP, support, lurker, IGL).
   - Role fairness check: Wasserstein distance between role rating distributions (PScore 0.09–0.44).
 - **Caveats:** 5-fold CV not grouped by match/time for the PScore model; pro-only; LoL-specific features.

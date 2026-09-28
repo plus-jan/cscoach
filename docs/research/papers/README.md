@@ -16,9 +16,9 @@ synthesis, and where the paper is used in this project.
    the paper's existence was confirmed.
 5. **Numbers:** tables and equations may be garbled by PDF conversion. Check the PDF before quoting a
    number in a spec, and never quote a number from these papers in player-facing text.
-6. **Adding a paper:** add an entry to `../sources.yaml` (with `arxiv:` if applicable), then run
-   `python scripts/pdf_to_md.py <file.pdf>`. Then fill in the notes block, set `local:` and `verified:`,
-   and add a row below. Re-running the script keeps the notes block.
+6. **Adding a paper:** follow the `add-paper` skill (`.claude/skills/add-paper/SKILL.md`).
+7. **Data policy:** papers inform methods only. Features and evaluations use the CSDS corpus exclusively
+   (ADR-0003), even when a paper used other data.
 
 ## Index
 
@@ -30,14 +30,15 @@ synthesis, and where the paper is used in this project.
 | [gig_economy_esports_coaching](gig_economy_esports_coaching.md) | Understanding Game Coaching on Gig Platforms (Lee & Savage 2026) | many | ✅ | C, I | specs/05 feedback design, M9, M10.3 |
 | [pandaskill](pandaskill.md) | PandaSkill (De Bois et al. 2025) | LoL | ✅ | D | M8 player ratings, monotone GBDT, ECE |
 
-**Still missing (full text needed, see `../sources.yaml` for URLs):** franks_meta_analytics,
+**Still missing (full text needed, see `../sources.yaml` for URLs):** **xenopoulos_pro_vs_amateur_wp**
+(highest priority: direct test of A-01, used earlier PureSkill data), franks_meta_analytics,
 brill_yurko_wp_difficulty, xenopoulos_valuing_actions_csgo, xenopoulos_optimal_economy,
 learning_to_move_like_pros, x_ego_cs, tar2_credit_assignment, play_like_champions,
 contextual_xt_spatial, dynamic_xt, hltv_rating_3.
 
 ## By research question
 
-- **A. WP in Counter-Strike:** same_player_verification_cs2 (features only); *missing:* xenopoulos_valuing_actions_csgo
+- **A. WP in Counter-Strike:** same_player_verification_cs2 (features only); *missing:* xenopoulos_pro_vs_amateur_wp, xenopoulos_valuing_actions_csgo
 - **B. WP in other games:** valorant_round_outcome_tactical, champ_matchmaking
 - **C. Skill tiers:** champ_matchmaking (conditioning lesson), same_player_verification_cs2 (pro data doesn't transfer to amateurs)
 - **D. Action valuation / credit:** pandaskill; *missing:* hltv_rating_3, tar2_credit_assignment, contextual_xt_spatial, dynamic_xt
@@ -50,7 +51,7 @@ contextual_xt_spatial, dynamic_xt, hltv_rating_3.
 ## Cross-paper takeaways (so far)
 
 1. **Calibration is rarely reported.** VALORANT and CHAMP report accuracy (CHAMP also RMSE); only
-   PandaSkill reports ECE. Our gates in `configs/validation.yaml` go beyond the literature. Don't relax them
+   PandaSkill reports ECE. Our gates in `docs/specs/06_parameters.md` go beyond the literature. Don't relax them
    to match the papers.
 2. **Pooling across skill groups needs explicit conditioning.** Without it, performance can fall below a
    single-group model. Pro data did not help an amateur CS2 model [champ_matchmaking,

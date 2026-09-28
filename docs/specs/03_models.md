@@ -1,74 +1,96 @@
 # 03 — Models
 
+All inputs come from CSDS (docs/specs/02). Parameter values are in docs/specs/06 with assumption IDs.
+
+## Tiers {#tiers}
+
+Tier labels come only from CSDS:
+- `player_info.rank` / `rank_type` / `rank_raw` / `rank_platform` (per player-round);
+- `header.{ct,t}_starters_avg_rank`;
+- `header.platform` / `match_type`.
+
+The encoding of `rank_type` and the rank scales per platform are **undocumented**: derive them
+empirically in MV.2 (A-11, A-15). Canonical tiers: `low`, `mid`, `high`, `semipro`. The initial cut-offs
+are in docs/specs/06; revise them after MV.2. A match tier = aggregate of known player tiers (A-12). It is
+null when too few players have ranks (e.g. old FACEIT matches). Always keep `platform` as a separate
+conditioning variable, because MM and FACEIT scales are not comparable.
+
+Refs: [champ_matchmaking] (condition on domain; naive pooling hurts), [same_player_verification_cs2]
+(pro data didn't help an amateur model). [xenopoulos_pro_vs_amateur_wp] is the most direct evidence
+(pro vs amateur WP), but its full text is pending.
+
 ## WP — round win probability
 
-**Target**: `y_ct_win` for the round containing the snapshot.
-**Unit of prediction**: snapshot at tick *t*; features use only data with tick ≤ *t*.
+**Target:** `y_ct_win` of the snapshot's round. **Unit:** a snapshot at tick *t*; features use data with
+tick ≤ *t* only.
 
-**Features v1** (`features/state.py`): alive_ct/t, hp_sum_ct/t, armor_sum, helmets, kit
-count (CT), equipment value ct/t, primary weapon class counts (rifle, awp, smg,
-shotgun, pistol-only), utility counts, bomb_planted, bomb_site, time_remaining_s
-(round timer or bomb timer when planted), man_advantage (alive_ct − alive_t),
-tier (categorical), map (categorical).
-**Features v2** (M7): nav-distance of nearest T to each site, CT site coverage,
-area-control share, defuser-to-bomb distance, smokes active on key edges.
-
-Refs: [champ_matchmaking] (condition on domain/tier; naive pooling hurts), [pandaskill]
-(monotone GBDT + ECE), [xenopoulos_valuing_actions_csgo] (pending full text).
+**Features v1** (from `player_status`, `bomb_*`): alive, HP, armor, helmets, kits, equipment value,
+weapon-class and utility counts per side, `bomb_planted`, bomb site, `time_remaining_s`,
+`man_advantage`, `tier`, `platform`, `map_name`.
+**Features v2** (spatial, M7, must win an ablation): area control share and distance to sites on
+the empirical `area_graph`, spotted counts (`is_spotted`), active smokes/mollies on key edges,
+defuser-to-bomb distance.
 
 **Models**
-1. `baseline_wp`: logistic regression on alive_ct, alive_t, hp_sum_ct, hp_sum_t,
-   bomb_planted, time_remaining_s (+ interactions alive×planted). Reference only.
-2. `GBDTWinProbability`: LightGBM; monotone constraints: +alive_ct, −alive_t, +hp_ct,
-   −hp_t, +equipment_ct, −equipment_t. Early stopping on grouped validation fold.
-3. Per-tier calibration layer (`models/calibration.py`): isotonic (≥ 5k calibration
-   rows per tier) else Platt; fit on a dedicated calibration fold of matches.
+1. `baseline_wp`: logistic regression on alive_ct, alive_t, hp_sum_ct, hp_sum_t, bomb_planted,
+   time_remaining_s + interactions (alive diff × planted, time × planted). Reference only.
+2. `gbdt_wp`: LightGBM with monotone constraints (A-27): +alive_ct, −alive_t, +hp_ct, −hp_t,
+   +equipment_ct, −equipment_t. Early stopping on a grouped validation slice of training matches.
+   Refs: [pandaskill] (monotone GBDT + ECE).
+3. Calibration layer: global + per-tier (and/or per-platform) isotonic or Platt, fitted on a dedicated
+   calibration fold of matches (A-28).
+4. Challengers (optional, M3.5): sequence/set models over snapshots; promoted only by protocol.
 
-**Symmetry**: `wp_t = 1 − wp_ct`. Optionally augment/check by side-swap test on
-symmetric states (sanity only; CS2 is not side-symmetric).
+**Symmetry:** `wp_t = 1 − wp_ct`. Sanity-check a side-swap on mirrored states (CS2 is not side-symmetric).
 
 ## xK — expected kills (duel model) {#xk}
 
-Refs: [same_player_verification_cs2] (mechanics features: pre-shot speed drop, crosshair
-corrections, firing rhythm; LightGBM ≫ MLP at this scale).
+**Duel definition (A-19):** a duel starts at the first damage (`player_hurt`/`bullet_damage`) or first
+mutual `is_spotted` between two opponents. It resolves when one kills the other within the duel window
+(`player_death`); otherwise it is censored.
+**Pre-duel features** (at tick_start − ε):
+- geometry: distance, height delta, and the view-angle offset of each player's crosshair from the
+  opponent (from `phi_ang`/`theta_ang` + positions);
+- movement: `speed_2d`, `ang_vel`, `movement_angle_diff`, and counter-strafe state from the
+  `player_inputs` button timeline + speed (A-20);
+- weapon: `weapon_code`, `inaccuracy`, `recoil_index`, `is_scoped`;
+- state: HP/armor/helmet, flash (`flash_duration`, `player_blind`), smoke between the players (`grenade_state`);
+- context: peeker vs holder (who moved into line of sight), nearby teammates (trade availability), tier/platform.
 
-**Duel definition** (M4.1): the first damage or first mutual visibility event between
-two opposing players starts a duel; it resolves when one of them dies within
-`duel_window_s` (config) or is censored (drop or model as third class — ADR).
-**Pre-duel features** (computed at tick_start − ε): distance, height delta, weapons
-(class + specific), HP/armor/helmet, own & opponent speed (counter-strafe: speed <
-threshold at first shot), angular offset of crosshair from opponent head position,
-peeker vs holder, flashed (remaining duration), smoke between, nearby teammates
-(trade availability), tier.
-**Output**: P(p1 wins duel). xK per player = Σ over duels of P(win).
-**Uses**: execution = kills − xK (shrunk); decision quality = (xK, ΔWP-if-avoided).
+Refs: [same_player_verification_cs2] (pre-shot speed drop, crosshair corrections and firing rhythm carry
+strong signal; LightGBM ≫ MLP at this scale).
+**Output:** P(p1 wins). xK per player = Σ P(win). Execution = kills − xK; decision = the duel choice (see WPA).
 
-## WPA
+## WPA {#wpa}
 
-For event *e* at tick *t_e*: `wpa_team = WP_team(t_e + post) − WP_team(t_e − pre)`
-(defaults pre = 1 tick before, post = state after event resolution). Credit is split per
-`configs/valuation.yaml` rules (M5.2) or by Shapley over contributors (M5.3) with value
-function *v(S)* = WP of the counterfactual state where only contributors in S acted.
-Efficiency: Σ credits = ΔWP (tested).
+For an event at tick *t_e*: `wpa_team = WP_team(state after the event) − WP_team(state before)`, with the
+pre/post offsets from A-18. Credit is split by fixed shares (A-23) or by Shapley values over
+contributors, with value function *v(S)* = WP of the counterfactual state where only the contributors
+in S acted. Efficiency: Σ credit = ΔWP. Validity of counterfactual states: A-04, tested in MV.10.
+Refs: [xenopoulos_valuing_actions_csgo], [hltv_rating_3] (Round Swing), [tar2_credit_assignment].
 
-## Economy
+## Economy {#economy}
 
-Rules engine (`economy/rules.py`) from `configs/economy_cs2.yaml` (values must be
-verified against the current CS2 build, M6.1). Counterfactual buys: re-evaluate
-freeze-end WP with alternative equipment vectors and simulate next-round money for both
-outcomes; expected value over the two-round horizon = Σ_outcomes P(outcome) · WP_next.
+Rules engine from docs/specs/06 (A-13), **verified against `player_status.money`** round by round.
+Buy classes (A-21). Counterfactual buys: re-evaluate the freeze-end WP with alternative equipment
+vectors, and simulate next-round money for both outcomes. Expected value over the two-round horizon
+= Σ_outcomes P(outcome) · WP_next. Refs: [xenopoulos_optimal_economy].
 
-## Spatial
+## Spatial {#spatial}
 
-Nav graph (nodes = nav areas, edges = walkable connections, weights = travel time).
-Utility delay = shortest-path time with smoke/molotov-blocked edges removed − without.
-Converted to WPA via WP model sensitivity to `time_remaining_s` and positional features.
+No external nav mesh (ADR-0003). The empirical `area_graph` (docs/specs/02) is built from
+`place_name` + observed transitions (A-37). Utility delay = the shortest transit time with
+smoke/molotov-covered areas removed, minus the time without. It is converted to WPA through the WP
+model's sensitivity to time and position features. Refs: [dynamic_xt], [contextual_xt_spatial] (pending).
 
-## Player-level aggregation
+## Player-level aggregation (within match) {#player}
 
-Refs: [pandaskill] (performance → percentile per role; FFA OpenSkill rating independent of team
-outcome; meta rating for isolated pools), [franks_meta_analytics] (pending full text).
+CSDS has no cross-match identity (ADR-0005). Per-player values are computed **within a match**:
+1. raw sums/means of per-round values (WPA, xK diff, buy deviation, …);
+2. empirical-Bayes shrinkage toward the **tier prior** estimated across matches (A-26);
+3. intervals at the display level (A-30).
 
-Raw per-player sums/means → empirical-Bayes shrinkage toward tier prior
-(`coaching/shrinkage.py`) → reported with 80% credible intervals. Only metrics passing
-meta-analytics gates are displayed.
+Reliability (docs/specs/04 §4) uses odd/even rounds within a match. Discrimination and population-level
+stability are measured across matches.
+Refs: [pandaskill] (within-lobby "free-for-all" ranking by performance, independent of the team
+result — applicable within a match), [franks_meta_analytics] (pending).
