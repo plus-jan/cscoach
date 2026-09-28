@@ -442,3 +442,15 @@
   status: open
   test: [M1.3, MV.1]
   blocks: []
+
+# ---------------------------------------------------------------- route (research-driven planning)
+- id: A-41
+  statement: >-
+    The planned analysis modules (WP/WPA, duels, economy, spatial/utility) cover the main reasons amateur
+    and semi-pro teams lose rounds in CSDS, and the highest-value feedback areas are measurable with CSDS
+    channels.
+  type: research
+  source: "project premise derived from the literature synthesis; to be tested by exploration (ADR-0006)"
+  status: open
+  test: [E.4]
+  blocks: [coaching_feedback]

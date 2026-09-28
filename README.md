@@ -11,13 +11,14 @@ This repository contains **concepts only, no code** (ADR-0004). The only data so
 | Start here | |
 |---|---|
 | [`CLAUDE.md`](CLAUDE.md) | Operating manual for agents: rules, workflow, evidence standard |
-| [`ROADMAP.md`](ROADMAP.md) | Tasks with IDs and Definition of Done, incl. milestone **MV** (empirical verification) |
+| [`ROADMAP.md`](ROADMAP.md) | Research-driven plan: committed tasks, decision points D1–D5 with branches, provisional backlog |
+| [`docs/FINDINGS.md`](docs/FINDINGS.md) | Results from our data and the decisions they drove |
 | [`docs/specs/`](docs/specs) | Architecture, derived data, models, validation (+ reference algorithms), coaching, parameters |
 | [`docs/data/`](docs/data) | CSDS corpus guide, vendored channel spec + data dictionary |
 | [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) · [`docs/assumptions.yaml`](docs/assumptions.yaml) | Everything not yet verified, and what it blocks |
 | [`docs/research/`](docs/research) | Source registry, full-text papers with verified notes, original German synthesis |
 | [`docs/adr/`](docs/adr) | Decisions |
-| [`.claude/skills/`](.claude/skills) | Agent workflows (next-task, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base) |
+| [`.claude/skills/`](.claude/skills) | Agent workflows (next-task, plan-next-step, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base) |
 
 **Data attribution:** analyses built on this project use data provided by PureSkill.gg (CC BY-NC-SA 4.0
 Data Subscriber Agreement: non-commercial use, attribution "Data provided by PureSkill.gg.",

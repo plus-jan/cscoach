@@ -13,6 +13,22 @@ produces:
 Target population: amateur to semi-pro (Valve MM/Premier, FACEIT). Scope of evaluation: the CSDS corpus
 (ADR-0003). Output is **per match**, because CSDS has no cross-match player identity (ADR-0005).
 
+## Status: working hypothesis (ADR-0006)
+
+The pipeline below is the **current best hypothesis** of how to get from CSDS data to useful feedback.
+It is derived from the literature and has not yet been tested on our data. The decision points in
+ROADMAP Part B can change it. Each stage depends on assumptions:
+
+| Stage | Depends on | If they fail |
+|---|---|---|
+| Tier-aware WP backbone | A-01, A-11, A-12, A-15 | D1: per-tier / no tier / proxy skill |
+| WPA as causal credit, counterfactual feedback | A-04, A-05, A-18, A-23 | D2: restricted, or benchmark mode (no "what if") |
+| Duels (xK) | A-19, A-20, A-16, A-39 | D3: deprioritise; descriptive duel stats only |
+| Economy counterfactuals (gwp, OSE) | A-13, A-21, A-04 | D2/D3: benchmark buy comparisons |
+| Spatial (area graph, utility delay) | A-37, A-22 | D3: drop or reduce to `place_name` occupancy |
+| Per-player metrics | A-07, A-24, A-25, A-26 | D4: team-level or situation-level feedback |
+| The whole module selection | A-41 (planned modules cover where amateurs actually lose rounds) | D3 after exploration E.1–E.4 |
+
 ## Pipeline
 
 ```

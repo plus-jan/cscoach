@@ -17,7 +17,8 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
 
 | Path | What it is | Read when |
 |---|---|---|
-| `ROADMAP.md` | Ordered tasks with IDs, dependencies, Definition of Done | always, to pick work |
+| `ROADMAP.md` | Part A committed tasks, Part B decision points (D1–D5), Part C provisional backlog | always, to pick work |
+| `docs/FINDINGS.md` | Results from our data, the decisions they drove and the next step chosen | before planning or deciding |
 | `docs/specs/01_architecture.md` | Pipeline and components (CSDS → tomes → features → models → feedback) | any design/implementation |
 | `docs/specs/02_data_contracts.md` | Derived tables and how each column is built from CSDS channels | building data/features |
 | `docs/specs/03_models.md` | WP, xK, WPA, economy, spatial, player-level math | modelling |
@@ -29,11 +30,15 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
 | `docs/research/` | `sources.yaml` registry, `papers/` full texts with notes, German synthesis | design decisions |
 | `docs/adr/` | Architecture Decision Records | before changing a decision |
 | `docs/PROGRESS.md` | Log of completed work and key numbers | after every task |
-| `.claude/skills/` | Workflows: next-task, validate-model, add-model-feature, resolve-assumption, add-paper | as named |
+| `.claude/skills/` | Workflows: next-task, plan-next-step, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base | as named |
 
 ## How to work
 
-1. **Pick a task** from `ROADMAP.md`: the first open one whose dependencies are done (skill `next-task`).
+0. **The route is a hypothesis; the rules are not** (ADR-0006). The pipeline in docs/specs/01 is the
+   current best guess. Results decide the next step. Only tasks in ROADMAP **Part A** are committed.
+1. **Pick a task** from ROADMAP Part A: the first open one whose dependencies are done (skill
+   `next-task`). Never start Part C items directly. When a decision point's inputs are complete, or Part
+   A runs out, run `plan-next-step` and get the user's approval for the next batch.
 2. **Read before acting:** the spec sections the task names; the `[paper_id]` notes it cites
    (`docs/research/papers/<id>.md`); the assumptions `[A-NN]` it touches (`docs/assumptions.yaml`).
 3. **Data only from CSDS** via `pureskillgg-dsdk` / `pureskillgg-csgo-dsdk` (`docs/data/README.md`).
@@ -42,7 +47,8 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
    `docs/specs/04_validation_protocol.md`. Every run writes a reproducible report (see "Evidence").
 5. **Report back here, in the same change set:** tick the task in `ROADMAP.md`, add a line to
    `docs/PROGRESS.md`, update `docs/assumptions.yaml` statuses with evidence, and update specs/ADRs if
-   behaviour or decisions changed.
+   behaviour or decisions changed. Results that change beliefs or plans also get a **finding** in
+   `docs/FINDINGS.md`, including null results.
 
 ## Non-negotiable accuracy rules
 

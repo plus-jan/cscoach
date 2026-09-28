@@ -27,3 +27,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   model was miscalibrated on PureSkill amateur MM (ECE 0.023 vs 0.004 in-domain) → prior evidence for A-01
   (still open until MV.3). Added a rank-prior feature candidate, map-imbalance note, abandonment flag ·
   docs/research/papers/xenopoulos_pro_vs_amateur_wp.md
+- 2026-09-28 · M0.5 · Research-driven planning (ADR-0006): the roadmap is split into a committed horizon,
+  decision points D1–D5 with branches, and a provisional backlog; an exploration phase E.1–E.5 is added;
+  docs/FINDINGS.md, the plan-next-step skill, benchmark-mode feedback (the D2-c fallback) and assumption
+  A-41 (the planned modules cover the real loss causes) · ROADMAP.md

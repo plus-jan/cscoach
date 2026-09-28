@@ -21,6 +21,9 @@ short Python one-off in the scratchpad (never commit scripts).
    - every `local:` path exists, and every `docs/research/papers/*.md` (except README) is registered and
      has a finished notes block (no TODO);
    - `verified: true` and `verified: notes` require `local`.
-4. **Roadmap:** task IDs are unique, deps refer to existing tasks, and ticked tasks have a PROGRESS line.
+4. **Roadmap:** task IDs (`M*.*`, `MV.*`, `E.*`) are unique, deps refer to existing tasks, and ticked
+   tasks have a PROGRESS line. Decision points D1–D5 are referenced consistently. Dropped tasks `[-]`
+   cite a finding. Findings use unique `F-NN` ids and their required fields.
+   No task is ticked in Part C (it must move to Part A first).
 5. **Data rule:** no spec or task introduces a data source other than CSDS, or demo parsing (ADR-0003).
 6. **No code** in this repo: no source files, scripts, configs or CI (ADR-0004).

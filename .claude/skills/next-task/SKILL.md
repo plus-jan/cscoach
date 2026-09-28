@@ -5,8 +5,9 @@ description: Pick up and complete the next open task from ROADMAP.md following t
 
 This repository is a knowledge base (no code, ADR-0004). Implementation happens in the code repository.
 
-1. Read `CLAUDE.md`, then `ROADMAP.md`. Use the given task ID, or take the first `[ ]`/`[~]` task whose
-   deps are `[x]`. Respect the milestone order note (MV tasks run early; M5+ waits for MV.3/MV.10).
+1. Read `CLAUDE.md`, then `ROADMAP.md` and `docs/FINDINGS.md`. Use the given task ID, or take the first
+   `[ ]`/`[~]` task **in Part A** whose deps are `[x]`. If the requested task is in Part C (provisional),
+   or no Part A task is startable, stop and run `plan-next-step` instead.
 2. Gather context before acting:
    - the spec sections the task names (`docs/specs/`);
    - every `[paper_id]` → the notes block of `docs/research/papers/<id>.md`. If a cited paper has no
@@ -23,6 +24,8 @@ This repository is a knowledge base (no code, ADR-0004). Implementation happens 
    - tick the task in `ROADMAP.md`;
    - add a line to `docs/PROGRESS.md` (date, task, key numbers, report link);
    - update the assumption statuses and evidence (skill `resolve-assumption`) and the parameter values;
+   - add a finding (F-NN) to `docs/FINDINGS.md` if the result changes beliefs or plans (null results
+     too). If the task completes the inputs of a decision point, say so and suggest `plan-next-step`;
    - update the specs/ADRs if behaviour or decisions changed.
 6. Run the `check-knowledge-base` checklist, then commit as `<task-id>: <summary>`.
 7. Summarise for the user: what was done, the numbers with CIs, which assumptions changed status, and

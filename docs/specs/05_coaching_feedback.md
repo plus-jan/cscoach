@@ -37,6 +37,19 @@ identity. Any such source must itself be CSDS-compatible and approved via an ADR
    grounding check (docs/specs/04 §7, A-31).
 5. **Gate:** check the assumption gate for `coaching_feedback` (docs/ASSUMPTIONS.md).
 
+## Benchmark mode (no counterfactual claims)
+
+Used for decision types that D2 does not validate, and for all of them under D2-c:
+- **Compare, don't simulate:** set the player's decision and its outcome in a situation against the
+  distribution of decisions and outcomes of **same-tier players in similar situations** (matched on
+  round state: economy, alive counts, time, side, map, area). Report it as "in comparable situations,
+  players at your level who did X won the round N% of the time vs M% for Y (n = …, CI …)".
+- These are **associations**, not effects; the wording must not imply causation ("players who…", never
+  "if you had…").
+- The same rules apply: recurring patterns over single moments, the grounding check, minimum sample
+  sizes, ≤ 3 focus themes, tier-appropriate baselines.
+- WPA may be shown as a descriptive round-swing timeline.
+
 ## Example (target output — numbers illustrative)
 
 > **Round 7 — buy desync.** You bought for $2,000 while your team saved. Engine estimate: if you had

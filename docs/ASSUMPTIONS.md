@@ -36,5 +36,9 @@ it is short and structured).
 
 ## Workflow
 
+Assumptions are tested inside the research-driven plan (ADR-0006): the decision points in ROADMAP Part B
+consume their results, and each status change that affects the route gets a finding in
+`docs/FINDINGS.md`.
+
 Use the skill `resolve-assumption`: design the test → run it in the code repo → record the evidence →
 update `status`, `evidence`, parameters and specs here → log it in `docs/PROGRESS.md`.
