@@ -1,0 +1,12 @@
+# Snapshot sampler + as-of join (M2.2). Parameters and assumptions: docs/specs/06_parameters.md.
+root: /media/jan/merged/cs2coach
+tome_root: /media/jan/merged/cs2coach/tomes
+header_tome: header.2025-09-01,2026-09-28.full
+cadence_s: 1.0                                    # A-22
+event_channels: [player_death, player_hurt, bomb_state, bomb_action, bomb_defuse, grenade_state]   # docs/specs/02
+status_columns: [health, armor, has_helmet, has_defuser, has_c4, money, current_equipment_cost,
+                 equipment_value_calc, inv_primary, inv_secondary, inv_flashbang, inv_hegrenade,
+                 inv_smokegrenade, inv_molotov, inv_incgrenade, inv_decoy, inv_taser, place_name,
+                 is_spotted, flash_duration, is_defusing]
+seed: 20260928
+workers: 12
