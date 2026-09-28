@@ -1,0 +1,470 @@
+# Assumptions register — SOURCE OF TRUTH (rules: docs/ASSUMPTIONS.md).
+#
+# Fields
+#   id          A-NN, never reused
+#   statement   what is assumed (falsifiable where possible)
+#   type        research | data | game_rule | method | policy | causal | synthetic | constraint
+#   source      where it came from (paper id, "initial choice", CSDS docs, ...)
+#   status      open      - untested; fine for development, NOT for player-facing output it blocks
+#               supported - tested; evidence links the experiment/ADR/doc
+#               refuted   - tested and false; dependent design must change
+#               decided   - deliberate policy choice; evidence links the ADR/derivation
+#   test        roadmap task(s) that test or decide it
+#   parameters  keys in docs/specs/06_parameters.md governed by this assumption
+#   blocks      player-facing capabilities that must not ship while status is open/refuted:
+#               wp_timeline, wpa, xk, economy_feedback, spatial_feedback, player_metrics, coaching_feedback
+#   evidence    links (experiment reports in the code repo, ADRs, papers, docs) — required unless open
+
+# ---------------------------------------------------------------- research hypotheses
+- id: A-01
+  statement: >-
+    WP behaves differently across skill tiers and platforms (e.g. man-advantage conversion), so a WP
+    model fitted on one tier/platform is miscalibrated on others; WP must be tier/platform-conditioned
+    and recalibrated per stratum.
+  type: research
+  source: "research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); [xenopoulos_valuing_actions_csgo] §VI-D names 'similar skill' as a strong assumption of WPA; pooling with a conditioning feature beat per-group models in [xenopoulos_optimal_economy] (maps); DIRECT prior evidence [xenopoulos_pro_vs_amateur_wp] (CS:GO 2021, PureSkill MM: pro model ECE 0.023 vs 0.004 in-domain, no CIs) — supports the direction; replication on CS2 CSDS tiers pending (MV.3)"
+  status: open
+  test: [MV.3]
+  parameters: [WP features (v1), calibration]
+  blocks: [wp_timeline, wpa, coaching_feedback]
+
+- id: A-02
+  statement: >-
+    Predictive drivers differ by tier ("chaos factor"): e.g. mechanics such as counter-strafing
+    matter relatively more in low tiers, utility/structure more in high tiers.
+  type: research
+  source: research_synthesis_de C (unverified, no verified paper)
+  status: open
+  test: [MV.12]
+  blocks: [coaching_feedback]
+
+- id: A-03
+  statement: Counterfactual, prioritised feedback from the engine improves player performance.
+  type: causal
+  source: research_synthesis_de I; project premise; [play_like_champions] reports no human validation of latent-space feedback
+  status: open
+  test: [M9.5, M11.1]
+  blocks: []   # product premise; communicated as such until M11 — does not block shipping analysis
+
+- id: A-04
+  statement: >-
+    The calibrated WP model is a valid value function for counterfactual states (states that
+    differ from observed ones by one player action), so WPA, Shapley credit and counterfactual
+    buy/utility values are meaningful.
+  type: causal
+  source: design (docs/specs/03); [xenopoulos_valuing_actions_csgo] uses the same premise
+  status: open
+  test: [MV.10]
+  blocks: [wpa, economy_feedback, spatial_feedback, coaching_feedback]
+
+- id: A-05
+  statement: >-
+    Crossing xK with WP-if-avoided identifies objectively bad duel decisions; thresholds
+    xK < 0.30 and WP >= 0.85 define "risky duel".
+  type: causal
+  source: research_synthesis_de E; initial choice for thresholds
+  status: open
+  test: [MV.10, M9.5]
+  parameters: ["risky duel: max xK / min WP-if-avoided"]
+  blocks: [coaching_feedback]
+
+# ---------------------------------------------------------------- acceptance policy
+- id: A-06
+  statement: >-
+    Calibration gates (ECE <= 0.02 overall, 0.03 per tier, 0.035 per map; BSS CI low > 0;
+    xK ECE <= 0.03, AUC >= 0.62) are strict enough that WP/xK errors do not materially distort
+    WPA and feedback.
+  type: policy
+  source: initial choice
+  status: open
+  test: [MV.5]
+  parameters: [gates.wp, gates.xk]
+  blocks: [wp_timeline, wpa, xk]
+
+- id: A-07
+  statement: >-
+    Minimum sample sizes (500 rounds/stratum, 1000 duels/stratum, player ESS >= 30) give
+    stable estimates.
+  type: policy
+  source: initial choice
+  status: open
+  test: [MV.5]
+  parameters: [gates.wp.min_rounds_per_stratum, gates.xk.min_duels_per_stratum, gates.player_metric.min_ess]
+  blocks: [player_metrics]
+
+- id: A-08
+  statement: >-
+    Player-metric thresholds (Franks stability >= 0.5, discrimination >= 0.3, independence >= 0.2;
+    supplementary split-half reliability >= 0.5) separate useful from useless metrics.
+  type: policy
+  source: initial choice ([franks_meta_analytics] gives no universal thresholds)
+  status: open
+  test: [MV.5]
+  parameters: [gates.player_metric]
+  blocks: [player_metrics]
+
+- id: A-09
+  statement: ECE with 15 quantile bins is an adequate calibration summary for gating.
+  type: method
+  source: convention
+  status: open
+  test: [MV.5]
+  parameters: [ece]
+  blocks: []
+
+- id: A-10
+  statement: Bootstrap settings (500 resamples, alpha 0.05) give stable interval endpoints.
+  type: method
+  source: convention
+  status: open
+  test: [MV.4]
+  parameters: [bootstrap]
+  blocks: []
+
+# ---------------------------------------------------------------- tiers
+- id: A-11
+  statement: >-
+    Tier cut-offs (FACEIT 1-3/4-6/7-9/10, Premier <10k/10-15k/15-20k/20k+, MM groups) produce tiers that
+    differ in play; otherwise tiering is noise.
+  type: data
+  source: initial choice
+  status: open
+  test: [MV.2]
+  parameters: [FACEIT level → tier, Premier rating → tier, MM skill group → tier]
+  blocks: [wp_timeline, player_metrics, coaching_feedback]
+
+- id: A-12
+  statement: >-
+    A match has one meaningful tier (median of >= 6 players with known rank from player_info); the lobby
+    rank spread is small enough for a single label; matches without enough ranks can be excluded
+    without biasing results.
+  type: data
+  source: initial choice; CSDS docs (old FACEIT matches lack ranks)
+  status: open
+  test: [MV.2]
+  parameters: [match tier rule, min players with known rank]
+  blocks: [wp_timeline, player_metrics]
+
+# ---------------------------------------------------------------- game rules / tooling
+- id: A-13
+  statement: >-
+    Economy values in docs/specs/06 match the CS2 builds in the corpus (predicted start money equals
+    player_status.money at freeze end for >= 99% of player-rounds), per game build. Valve changed the CS2
+    economy around Aug 2025, inside the CSDS window (from 2025-07-18), so values differ by build_num.
+  type: game_rule
+  source: recalled from memory — unverified; economy update noted in [hltv_rating_3]
+  status: open
+  test: [MV.1]
+  parameters: [start money / max money / OT start money, round win, loss bonus ladder, kill reward, T loss after plant bonus / planter / defuser]
+  blocks: [economy_feedback]
+
+- id: A-14
+  statement: >-
+    Round time 115 s, bomb timer 40 s, freeze time 15 s hold for corpus matches (checked from tick /
+    round_state phase durations per platform and build).
+  type: game_rule
+  source: game defaults (recalled) — servers (esp. FACEIT/third-party) may differ
+  status: open
+  test: [MV.1]
+  parameters: [round time / bomb timer / freeze time (s)]
+  blocks: [wp_timeline]
+
+- id: A-15
+  statement: >-
+    Undocumented CSDS codes can be decoded reliably from the data: team_code/winner_team_code → side,
+    win_reason_code → end reason, weapon_code/weapon_name → weapon class, hit_box_code, site_code,
+    rank/rank_type/rank_platform → platform-specific rank scale.
+  type: data
+  source: docs/data/csds_spec.md lists types but not code meanings
+  status: open
+  test: [MV.1, MV.2]
+  parameters: [rank field decoding]
+  blocks: [wp_timeline, xk, economy_feedback, player_metrics]
+
+- id: A-16
+  statement: >-
+    header.tick_rate is correct per match and CSDS `second`/tick alignment (incl. as-of merged
+    positions on events) is accurate enough for sub-second features (duels, counter-strafe).
+  type: data
+  source: CSDS spec (merged columns use as-of merge to nearest earlier tick); [learning_to_move_like_pros] §5 notes PureSkill.gg data has no capture-frequency guarantee and may drop data
+  status: open
+  test: [MV.1]
+  parameters: [tick rate]
+  blocks: [xk]
+
+# ---------------------------------------------------------------- windows & thresholds (estimable from data)
+- id: A-17
+  statement: A kill counts as traded if the killer dies within 5 s.
+  type: data
+  source: initial choice (community convention; HLTV Rating 3.0 uses 5 s [hltv_rating_3])
+  status: open
+  test: [MV.6]
+  parameters: [trade window]
+  blocks: [wpa, coaching_feedback]
+
+- id: A-18
+  statement: WP just before/after an event (1 tick) isolates the event's effect.
+  type: method
+  source: initial choice
+  status: open
+  test: [MV.6]
+  parameters: [wpa]
+  blocks: [wpa]
+
+- id: A-19
+  statement: >-
+    A duel = first damage (player_hurt/bullet_damage) or first mutual is_spotted between two opponents,
+    resolved by a kill within 3 s; unresolved duels can be dropped without biasing xK.
+  type: method
+  source: initial choice
+  status: open
+  test: [MV.6]
+  parameters: [duel window / censored handling, xK features]
+  blocks: [xk]
+
+- id: A-20
+  statement: >-
+    Counter-strafe state can be measured from player_inputs button timelines plus speed_2d, and "stopped"
+    = speed below 34 u/s independent of weapon.
+  type: data
+  source: initial choice — threshold is weapon-dependent in reality
+  status: open
+  test: [MV.6]
+  parameters: [counter-strafe "stopped" speed]
+  blocks: [xk, coaching_feedback]
+
+- id: A-21
+  statement: >-
+    Buy classes are meaningful at player level (eco/force/half/full split at $1,500/$3,000/$4,000) and
+    at team level (eco/low/half/hero/full by team start equipment + spend); CSDS-estimated thresholds
+    replace the CS:GO pro reference values.
+  type: data
+  source: initial choice; team buy types from [xenopoulos_optimal_economy] Table 1 (CS:GO pro)
+  status: open
+  test: [MV.6]
+  parameters: [buy classes, team buy types]
+  blocks: [economy_feedback]
+
+- id: A-22
+  statement: 1 s snapshot cadence (+ event ticks) loses no WP-relevant information and does not distort weighting.
+  type: method
+  source: initial choice
+  status: open
+  test: [MV.6]
+  parameters: [snapshot cadence]
+  blocks: []
+
+- id: A-23
+  statement: Fixed kill-credit split 0.70/0.15/0.15 (killer/assister/flash-assister) is a fair approximation.
+  type: method
+  source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]; learned redistribution [tar2_credit_assignment] forces non-negative credit (unsuitable as-is); HLTV re-weighted its split toward damage/trades/flashes and defines a round-end residual rule [hltv_rating_3]
+  status: open
+  test: [MV.11]
+  parameters: [kill credit split, Shapley permutations]
+  blocks: [wpa, player_metrics]
+
+# ---------------------------------------------------------------- statistical methods
+- id: A-24
+  statement: >-
+    Uncertainty methods give nominal coverage: (a) a match-level cluster bootstrap for test-set metrics
+    (no refit), and (b) a fractional randomized cluster bootstrap with tuned φ for model-uncertainty
+    intervals (WP(x), WPA, counterfactual ΔWP). The plain cluster bootstrap is known to under-cover for
+    (b): 0.71 at nominal 0.90 in simulation.
+  type: method
+  source: ADR-0001; [brill_yurko_wp_difficulty] (verified — refit bootstraps under-cover; fractional bootstrap)
+  status: open
+  test: [MV.4]
+  parameters: [model-uncertainty bootstrap]
+  blocks: [player_metrics, coaching_feedback]
+
+- id: A-25
+  statement: >-
+    Franks et al.'s meta-metrics adapted to within-match data (player-in-match; match halves as
+    "seasons"; rounds resampled) behave sensibly: on data with a known per-player effect, D and S
+    recover it, and they rank metrics consistently with population-level checks.
+  type: method
+  source: "[franks_meta_analytics] (verified definitions); adaptation is ours (ADR-0005)"
+  status: open
+  test: [MV.9]
+  blocks: [player_metrics]
+
+- id: A-26
+  statement: >-
+    Normal-normal empirical-Bayes shrinkage fits per-player metrics (WPA/round is bounded and
+    heavy-tailed); shrinkage improves discrimination and stability as in Franks et al.
+  type: method
+  source: initial choice; [franks_meta_analytics] §5.1 (EB shrinkage improved D and S for NBA 3P%)
+  status: open
+  test: [MV.8]
+  blocks: [player_metrics]
+
+- id: A-27
+  statement: Monotone constraints (alive, HP, equipment; man_advantage) have the assumed directions conditional on other features.
+  type: method
+  source: domain intuition; [pandaskill] uses monotone GBDT
+  status: open
+  test: [MV.7]
+  parameters: [monotone]
+  blocks: [wp_timeline]
+
+- id: A-28
+  statement: >-
+    Calibration design works: isotonic from 5,000 rows else Platt, per-tier calibrators from
+    1,000 rows, fitted on a 10% match fold.
+  type: method
+  source: initial choice
+  status: open
+  test: [MV.7]
+  parameters: [calibration, split]
+  blocks: [wp_timeline]
+
+- id: A-29
+  statement: GBDT hyperparameters in configs are reasonable starting values; final values come from grouped CV.
+  type: method
+  source: initial choice, to be replaced by tuning
+  status: open
+  test: [M3.2]
+  parameters: [lightgbm]
+  blocks: []
+
+# ---------------------------------------------------------------- presentation policy
+- id: A-30
+  statement: Players are best served by 80% intervals and at most 3 focus points per match.
+  type: policy
+  source: initial choice; [gig_economy_esports_coaching] supports few, individual points
+  status: open
+  test: [M9.5]
+  parameters: [interval shown to players, max focus points per match]
+  blocks: [coaching_feedback]
+
+- id: A-31
+  statement: >-
+    The grounding check (every number in text appears in the payload) is sufficient to prevent
+    misleading feedback text.
+  type: method
+  source: initial choice — checks presence, not meaning
+  status: open
+  test: [M9.4, M9.5]
+  blocks: [coaching_feedback]
+
+- id: A-32
+  statement: Targets (>= 2,000 matches, >= 300 per tier; < 30 s per match) suffice for gates and usability.
+  type: policy
+  source: initial choice
+  status: open
+  test: [MV.5, M10.4]
+  blocks: []
+
+# ---------------------------------------------------------------- synthetic data
+- id: A-33
+  statement: >-
+    The synthetic generator's tier behaviour (discipline, kill/plant rates) is invented. Results on
+    synthetic data prove code correctness only — never evidence about CS2.
+  type: synthetic
+  source: docs/specs/04 §7 (synthetic generator)
+  status: decided
+  evidence: [CLAUDE.md "Evidence"]
+  test: []
+  blocks: []
+
+# ---------------------------------------------------------------- corpus (CSDS) properties
+- id: A-34
+  statement: >-
+    The CSDS corpus (matches uploaded by PureSkill.gg users; MM/FACEIT mix) is representative enough of
+    amateur/semi-pro CS2 for the target tiers; selection bias toward improvement-minded users does not
+    distort WP/xK beyond what tier/platform conditioning captures.
+  type: data
+  source: CSDS datasheet (docs/data/README.md)
+  status: open
+  test: [MV.2, MV.3]
+  blocks: [wp_timeline, coaching_feedback]
+
+- id: A-35
+  statement: >-
+    Players cannot be linked across matches (steam_id replaced by per-match alias), so player metrics,
+    reliability and coaching are within-match only.
+  type: constraint
+  source: docs/data/csds_spec.md (Redaction), CSDS datasheet
+  status: supported
+  evidence: [docs/data/csds_spec.md, docs/adr/0005-within-match-player-metrics.md]
+  test: []
+  blocks: []
+
+- id: A-36
+  statement: >-
+    Duplicate matches can be detected from header-derived values and removed before splitting; remaining
+    duplicates do not leak across splits.
+  type: data
+  source: CSDS datasheet
+  status: open
+  test: [M1.3]
+  blocks: [wp_timeline, xk]
+
+- id: A-37
+  statement: >-
+    An empirical area graph (place_name nodes, observed transitions, median transit times) from CSDS
+    telemetry is an adequate substitute for a nav mesh for rotation, trade-distance and utility-delay
+    estimates.
+  type: method
+  source: ADR-0003 (no external data); named-area modelling used by [learning_to_move_like_pros], [x_ego_cs]
+  status: open
+  test: [MV.13]
+  parameters: ["area graph: node definition / edge weight"]
+  blocks: [spatial_feedback, coaching_feedback]
+
+- id: A-38
+  statement: >-
+    The CSDS license (CC BY-NC-SA 4.0 DSA: non-commercial, attribution, share-alike) is compatible with
+    the project's intended use and distribution.
+  type: policy
+  source: CSDS DSA
+  status: open
+  test: [M1.1]
+  blocks: [wp_timeline, wpa, xk, economy_feedback, spatial_feedback, player_metrics, coaching_feedback]
+
+- id: A-39
+  statement: >-
+    Matches from both channel-set versions (30 channels through 2026-07-31, 42 since 2026-08-04) and
+    different ppp_version values are comparable for shared channels; features needing new channels
+    (e.g. player_inputs, bullet_damage) are restricted to v42 matches without biasing results.
+  type: data
+  source: CSDS datasheet
+  status: open
+  test: [MV.1]
+  blocks: [xk]
+
+- id: A-40
+  statement: >-
+    Missing ticks/events are rare and non-disruptive (per CSDS docs); matches failing quality checks can
+    be dropped without biasing tiers/maps.
+  type: data
+  source: CSDS datasheet; challenged by [learning_to_move_like_pros] §5 (no capture-frequency guarantee)
+  status: open
+  test: [M1.3, MV.1]
+  blocks: []
+
+# ---------------------------------------------------------------- route (research-driven planning)
+- id: A-41
+  statement: >-
+    The planned analysis modules (WP/WPA, duels, economy, spatial/utility) cover the main reasons amateur
+    and semi-pro teams lose rounds in CSDS, and the highest-value feedback areas are measurable with CSDS
+    channels.
+  type: research
+  source: "project premise derived from the literature synthesis; to be tested by exploration (ADR-0006)"
+  status: open
+  test: [E.4]
+  blocks: [coaching_feedback]
+
+- id: A-42
+  statement: >-
+    The gated keep rule of the autoresearch loop (docs/specs/07 §2: keep iff the lower bound of the
+    one-sided cluster-bootstrap CI of the improvement over the champion, at level 1 − alpha/budget, is
+    > 0, computed on match-grouped out-of-fold predictions from training matches only) keeps a
+    no-effect change in ≤ 5% of loops (loop-level false-keep rate), and keeps a true improvement of the
+    size that matters for WP (Δlog-loss ≥ 0.002) with ≥ 80% power at the corpus sizes we expect.
+  type: method
+  source: "project design (ADR-0007); selection bias of repeated keep/revert decisions on one validation set"
+  status: open
+  test: [MV.14]
+  parameters: [loop.budget / alpha / n_resamples]
+  blocks: [wp_timeline, xk]
