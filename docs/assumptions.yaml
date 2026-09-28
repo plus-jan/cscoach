@@ -24,6 +24,9 @@
   type: research
   source: "research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); [xenopoulos_valuing_actions_csgo] §VI-D names 'similar skill' as a strong assumption of WPA; pooling with a conditioning feature beat per-group models in [xenopoulos_optimal_economy] (maps); DIRECT prior evidence [xenopoulos_pro_vs_amateur_wp] (CS:GO 2021, PureSkill MM: pro model ECE 0.023 vs 0.004 in-domain, no CIs) — supports the direction; replication on CS2 CSDS tiers pending (MV.3)"
   status: open
+  note: >-
+    2026-09-28 (M3.4, F-14): one tier/platform-conditioned GBDT with a global Platt layer has ECE ≤ 0.013 per tier on
+    the sealed test fold (≤ 0.020 on the newest builds); not a test of transfer between tiers (MV.3).
   test: [MV.3]
   parameters: [WP features (v1), calibration]
   blocks: [wp_timeline, wpa, coaching_feedback]

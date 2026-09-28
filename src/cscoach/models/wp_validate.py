@@ -132,15 +132,14 @@ def evaluate(df: pd.DataFrame, preds: dict, *, B: int, seed: int, min_matches: i
     rows = []
     for name, s in strata(df).items():
         for level, idx in df.groupby(s.values).groups.items():
-            sub = df.loc[idx]
-            if sub["match_id"].nunique() < min_matches:
-                continue
+            sub = df.loc[idx]  # small levels are kept (listed as skipped by the gates), flagged below min_matches
             for m in ("wp_v1", "baseline_wp"):
                 p = preds[m][df.index.get_indexer(idx)]
                 r = metrics(sub, p, n_resamples=B, seed=seed)
                 r["ece"], r["ece_ci"] = ece_ci(p, sub["y_ct_win"], sub["match_id"], n_resamples=B, seed=seed)
                 r["mce"] = mce(p, sub["y_ct_win"])
-                rows.append({"stratum": name, "level": level, "model": m, **r})
+                rows.append({"stratum": name, "level": level, "model": m,
+                             "reportable": bool(sub["match_id"].nunique() >= min_matches), **r})
     return res, pd.DataFrame(rows)
 
 

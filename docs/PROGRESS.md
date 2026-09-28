@@ -130,4 +130,9 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   no log-loss gain; per tier / platform / tier × platform isotonic worse (Δ −0.0002 to −0.0005). Final fit: GBDT on
   6,293 training matches (818 trees), Platt on 897 calibration matches (a 0.96, b 0.01); test/temporal unread. F-13 ·
   reports/experiments/20260928-2206_m3.3_wp_fit/report.md
+- 2026-09-28 · M3.4 · WP validation of models/wp_v1, single sealed look (pre-registered; look 1 of 1): test (1,804
+  matches) log-loss 0.4868 [0.4830, 0.4908], ECE 0.0044 [0.0034, 0.0073], BSS vs logistic 0.068 [0.063, 0.072];
+  temporal (937 matches, newest builds) 0.4807 [0.4756, 0.4864], ECE 0.0036, BSS 0.072 [0.066, 0.077]. All gates pass
+  (worst tier ECE 0.013 / 0.020, worst map 0.030 de_train / 0.024). Bias found: T-wiped post-plant states (1v0 ECE 0.25
+  temporal) from the v30 decided_tick rule. F-14, F-15 · reports/experiments/20260928-2214_m3.4_wp_validation/report.md
 

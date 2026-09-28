@@ -268,3 +268,40 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
   the keep rule for calibration choices (log-loss barely moves when ECE is already small).
 - supersedes: —
 
+### F-14 — WP v1 passes every gate on the sealed test fold and on the newest builds
+- date: 2026-09-28 · task: M3.4 · decision: —
+- question: Does models/wp_v1 (monotone GBDT + global Platt) pass the docs/specs/06 gates on the sealed test fold and
+  the temporal holdout (pre-registered in configs/wp_validate.yaml; one look)?
+- result: test (1,804 matches, 37,306 rounds): log-loss 0.4868 [0.4830, 0.4908] vs logistic 0.5173, Δ 0.0305 [0.0286,
+  0.0322]; ECE 0.0044 [0.0034, 0.0073]; BSS 0.068 [0.063, 0.072]; AUC 0.838. Temporal (937 matches, builds
+  10896–10924, v42): 0.4807 [0.4756, 0.4864], ECE 0.0036, BSS 0.072 [0.066, 0.077] — no drift loss. Worst tier ECE
+  0.013 (test, high) / 0.020 (temporal, high); worst map 0.030 (de_train, 32 matches, CI to 0.058). The out-of-fold
+  numbers of M3.2/M3.3 held on unseen matches. Calibration halves ECE (0.0087 → 0.0044) on test.
+- evidence: `reports/experiments/20260928-2214_m3.4_wp_validation/` (report.md, summary.json, strata_*.csv,
+  reliability_*.csv); `splits/wp_v1/sealed_looks.json` (look 1).
+- confidence: high for the aggregate metrics; medium per small stratum (de_train, semipro in the temporal fold is
+  ungated with 22 matches); the gates themselves are assumptions (A-06/A-07, MV.5).
+- changes: none to statuses (gates stay policy-open). A-01 note: a single tier-conditioned model with global
+  calibration is calibrated per tier on test (≤ 0.013).
+- next step: fix the v30 decided-tick rule (F-15) before WP is used downstream — rationale: the gates pass, but the
+  bias sits in exactly the retake/defuse states that WPA will credit.
+- supersedes: —
+
+### F-15 — v30 snapshots of defuse rounds stop at the T elimination (label-selection bias)
+- date: 2026-09-28 · task: M3.4 · decision: —
+- question: Why is WP mis-calibrated at 1v0 post-plant (temporal ECE 0.25; predicted 0.60, observed 0.85)?
+- result: `rounds.decided_tick` (MV.1 rule for v30) takes the death that eliminated the losing side as the decision
+  even after the plant, when CS2 continues the round until defuse or explosion. In 60 v30 training matches, all 155
+  rounds won by a defuse after the T side was eliminated have no T-wiped snapshot (decided at the elimination); v42
+  127/127 have them (decided at the defuse, median 9.3 s later). The remaining v30 T-wiped post-plant states are
+  almost only lost ones: CT win 2% (v30) vs 91% (v42); with a kit and 10–20 s left 2% (42 rounds) vs 98% (252).
+- evidence: `reports/experiments/20260928-2214_m3.4_wp_validation/diagnose_v30_defuse.py`, `diag_*.csv`,
+  `diag_summary.json` (training matches only).
+- confidence: high (mechanism shown in data and code; `cscoach.data.rounds.decided_ticks`).
+- changes: none yet (fix proposed): for T eliminations after a plant, the deciding event is the defuse or explosion,
+  never the last T death. Affects rounds → snapshots → features → WP table → M3.2/M3.3 fit → a new sealed look.
+- next step (needs approval): a fix task — correct the rule with a test, rebuild the derived tables, refit wp_v2 with
+  the unchanged M3.2/M3.3 configs, and evaluate it once as a new experiment (look 2) — rationale: the defect is in the
+  training labels of ~83% of the matches (v30) in states that matter for WPA.
+- supersedes: —
+

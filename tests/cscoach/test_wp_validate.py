@@ -64,3 +64,23 @@ def test_gate_verdicts_respect_min_rounds():
     assert g["ece_per_tier"]["pass"] and g["ece_per_tier"]["skipped_small"] == ["semipro"]
     assert not g["ece_per_map"]["pass"] and g["ece_per_map"]["failing"] == ["de_x"]
     assert not g["all_pass"]
+
+
+def test_evaluate_keeps_small_strata_so_gates_list_them():
+    from cscoach.models.wp_validate import evaluate
+
+    rng = np.random.default_rng(0)
+    n = 6000
+    df = pd.DataFrame({"match_id": np.repeat([f"m{i:03d}" for i in range(150)], 40)})
+    df["round_uid"] = df["match_id"] + ":" + (np.arange(n) % 20).astype(str)
+    df["tier"] = np.where(df.index < 400, "semipro", "low")  # semipro: 10 matches (< 30)
+    for c in ("ct_alive", "t_alive"):
+        df[c] = rng.integers(1, 6, n)
+    df["ct_hp_sum"], df["t_hp_sum"] = df["ct_alive"] * 100.0, df["t_alive"] * 100.0
+    df["bomb_planted"], df["second_in_round"], df["time_remaining_s"] = False, 30.0, 85.0
+    df["platform"], df["map_name"], df["channel_set"] = "steam", "de_x", "v42"
+    df["y_ct_win"] = (rng.uniform(size=n) < 0.5).astype(int)
+    p = rng.uniform(0.3, 0.7, n)
+    _, st = evaluate(df, {"wp_v1": p, "baseline_wp": p, "wp_v1_uncalibrated": p, "map_only": p}, B=50, seed=1)
+    small = st[(st["stratum"] == "tier") & (st["level"] == "semipro")]
+    assert len(small) == 2 and not small["reportable"].any()

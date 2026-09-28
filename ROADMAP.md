@@ -153,8 +153,12 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   global Platt (lower bound +0.000002; OOF ECE 0.0061 → 0.0031); per-tier/platform isotonic lowered ECE but worsened
   log-loss (−0.0002 to −0.0005) and was not kept. Final: 818 trees; Platt a 0.96, b 0.01 on the calibration fold.
   F-13. Report `reports/experiments/20260928-2206_m3.3_wp_fit/`.
-- [ ] **M3.4 — WP validation report** (docs/specs/04 §2, incl. the temporal split by `build_num`).
+- [x] **M3.4 — WP validation report** (docs/specs/04 §2, incl. the temporal split by `build_num`).
   **DoD:** passes gates.
+  Done (single sealed look, pre-registered): test log-loss 0.4868 [0.4830, 0.4908], ECE 0.0044, BSS vs baseline 0.068
+  [0.063, 0.072]; temporal 0.4807, ECE 0.0036, BSS 0.072 — all gates pass on both folds. Known bias: v30
+  decided_tick cuts defuse rounds at the T elimination (post-plant T-wiped states biased, F-15; fix proposed).
+  F-14. Report `reports/experiments/20260928-2214_m3.4_wp_validation/`.
 
 ## MV — Verification experiments that feed decisions
 

@@ -1,0 +1,132 @@
+{
+  "t_wiped_postplant_first_snapshot": [
+    {
+      "time_bin": "(-1, 5]",
+      "kit": false,
+      "channel_set": "v30",
+      "rounds": 124,
+      "ct_win": 0.0
+    },
+    {
+      "time_bin": "(-1, 5]",
+      "kit": false,
+      "channel_set": "v42",
+      "rounds": 12,
+      "ct_win": 0.0
+    },
+    {
+      "time_bin": "(-1, 5]",
+      "kit": true,
+      "channel_set": "v30",
+      "rounds": 133,
+      "ct_win": 0.0
+    },
+    {
+      "time_bin": "(-1, 5]",
+      "kit": true,
+      "channel_set": "v42",
+      "rounds": 10,
+      "ct_win": 0.0
+    },
+    {
+      "time_bin": "(10, 20]",
+      "kit": false,
+      "channel_set": "v30",
+      "rounds": 365,
+      "ct_win": 0.00821917808219178
+    },
+    {
+      "time_bin": "(10, 20]",
+      "kit": false,
+      "channel_set": "v42",
+      "rounds": 131,
+      "ct_win": 0.7709923664122137
+    },
+    {
+      "time_bin": "(10, 20]",
+      "kit": true,
+      "channel_set": "v30",
+      "rounds": 42,
+      "ct_win": 0.023809523809523808
+    },
+    {
+      "time_bin": "(10, 20]",
+      "kit": true,
+      "channel_set": "v42",
+      "rounds": 252,
+      "ct_win": 0.9841269841269841
+    },
+    {
+      "time_bin": "(20, 41]",
+      "kit": false,
+      "channel_set": "v30",
+      "rounds": 27,
+      "ct_win": 0.3333333333333333
+    },
+    {
+      "time_bin": "(20, 41]",
+      "kit": false,
+      "channel_set": "v42",
+      "rounds": 304,
+      "ct_win": 0.9868421052631579
+    },
+    {
+      "time_bin": "(20, 41]",
+      "kit": true,
+      "channel_set": "v30",
+      "rounds": 23,
+      "ct_win": 0.5652173913043478
+    },
+    {
+      "time_bin": "(20, 41]",
+      "kit": true,
+      "channel_set": "v42",
+      "rounds": 549,
+      "ct_win": 0.994535519125683
+    },
+    {
+      "time_bin": "(5, 10]",
+      "kit": false,
+      "channel_set": "v30",
+      "rounds": 370,
+      "ct_win": 0.0
+    },
+    {
+      "time_bin": "(5, 10]",
+      "kit": false,
+      "channel_set": "v42",
+      "rounds": 34,
+      "ct_win": 0.029411764705882353
+    },
+    {
+      "time_bin": "(5, 10]",
+      "kit": true,
+      "channel_set": "v30",
+      "rounds": 230,
+      "ct_win": 0.008695652173913044
+    },
+    {
+      "time_bin": "(5, 10]",
+      "kit": true,
+      "channel_set": "v42",
+      "rounds": 48,
+      "ct_win": 0.6041666666666666
+    }
+  ],
+  "defuse_after_t_wipe": {
+    "v30": {
+      "rounds": 155,
+      "ct_winner_share": 1.0,
+      "has_t_wiped_snapshot": 0.0,
+      "median_wipe_to_defuse_s": 10.031,
+      "median_decided_minus_wipe_s": 0.0
+    },
+    "v42": {
+      "rounds": 127,
+      "ct_winner_share": 1.0,
+      "has_t_wiped_snapshot": 1.0,
+      "median_wipe_to_defuse_s": 9.328,
+      "median_decided_minus_wipe_s": 9.328
+    }
+  }
+}
