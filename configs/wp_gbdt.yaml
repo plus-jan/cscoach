@@ -16,8 +16,8 @@ loop:
 model:
   label: y_ct_win
   stratum: tier
-  features: [ct_alive, t_alive, ct_hp_sum, t_hp_sum, ct_armor_sum, t_armor_sum, ct_helmets, t_helmets, ct_kits, ct_equip_value, t_equip_value, ct_primaries, t_primaries, ct_flashes, t_flashes, ct_smokes, t_smokes, ct_molotovs, t_molotovs, ct_hes, t_hes, man_advantage, bomb_planted, bomb_site, time_remaining_s, tier, platform, map_name, second_in_round]
-  categorical: [bomb_site, tier, platform, map_name]
+  features: [ct_alive, t_alive, ct_hp_sum, t_hp_sum, ct_armor_sum, t_armor_sum, ct_helmets, t_helmets, ct_kits, ct_equip_value, t_equip_value, ct_primaries, t_primaries, ct_flashes, t_flashes, ct_smokes, t_smokes, ct_molotovs, t_molotovs, ct_hes, t_hes, man_advantage, bomb_planted, bomb_site, time_remaining_s, tier, platform, second_in_round]
+  categorical: [bomb_site, tier, platform]
   monotone: {ct_alive: 1, t_alive: -1, ct_hp_sum: 1, t_hp_sum: -1, ct_equip_value: 1, t_equip_value: -1,
              man_advantage: 1}                                                          # A-27
   num_boost_round: 2000   # A-29
