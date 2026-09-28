@@ -76,3 +76,26 @@ def test_guard_calibration_gate(tmp_path):
     assert run_checks(work, oof=good, gates=gates)["ok"]
     res = run_checks(work, oof=bad, gates=gates)
     assert not res["ok"] and any("ECE" in f for f in res["failures"])
+
+
+def test_verify_caches_oof_per_model_config(work, data, monkeypatch):
+    # a kept candidate is the next champion: its out-of-fold predictions are reused, not refitted
+    from cscoach.loops import gated_verify, tasks
+
+    calls = []
+
+    def counting(train, cfg):
+        calls.append(tuple(cfg["features"]))
+        return oof_predict(train, cfg)
+
+    monkeypatch.setitem(tasks.TASKS, "count", counting)
+    loop = {"task": "count", "data": str(work / "none.parquet"), "work_dir": str(work), "alpha": 0.05, "budget": 15,
+            "n_resamples": 200, "seed": 5}
+    a = {"loop": loop, "model": {"features": ["x1"], "label": "y"}}
+    b = {"loop": loop, "model": {"features": ["x1", "x2"], "label": "y"}}
+    c = {"loop": loop, "model": {"features": ["x1", "x2", "noise1"], "label": "y"}}
+    for cand, champ in ((b, a), (c, b)):
+        path = work / "cfg.yaml"
+        path.write_text(yaml.safe_dump(cand))
+        gated_verify.run(path, "HEAD~1", frame=data, champion_cfg=champ)
+    assert calls == [("x1",), ("x1", "x2"), ("x1", "x2", "noise1")]

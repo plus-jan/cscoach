@@ -13,6 +13,7 @@ dependencies = [
   "botocore[crt]>=1.43.75",
   "scikit-learn>=1.9.1",
   "scipy>=1.18.1",
+  "lightgbm>=4.7.0",
 ]
 
 [dependency-groups]

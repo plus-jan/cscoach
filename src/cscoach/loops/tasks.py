@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
+from cscoach.models.wp_gbdt import gbdt_oof
+
 
 def synthetic_wp_frame(n_matches: int = 400, rounds: int = 20, snaps: int = 8, seed: int = 0,
                        match_sd: float = 0.5) -> pd.DataFrame:
@@ -44,4 +46,4 @@ def oof_predict(train: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     return pd.concat(out).rename(columns={label: "y"})
 
 
-TASKS = {"synthetic_wp": oof_predict}
+TASKS = {"synthetic_wp": oof_predict, "gbdt_wp": gbdt_oof}

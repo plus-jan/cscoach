@@ -4,12 +4,16 @@ Prints ONE number: the lower bound of the one-sided cluster-bootstrap CI (cluste
 improvement of the candidate over the champion on pooled out-of-fold predictions of the **training matches only**,
 at level 1 − alpha/budget. Keep iff > 0. The champion is the task config at ``--champion-ref`` (default HEAD~1, the
 last kept state in the autoresearch commit → verify → keep/revert cycle); the candidate is the working-tree config.
-Every run appends a ledger row (raw delta, lower bound, seeds) to ``<work_dir>/ledger.tsv``.
+Every run appends a ledger row (raw delta, lower bound, seeds) to ``<work_dir>/ledger.tsv``. Out-of-fold predictions
+are cached in ``<work_dir>/oof_cache/`` by (task, model config, split hash, data file), so a kept candidate is not
+refitted when it becomes the champion. ``loop.columns`` (optional) limits the columns read from ``loop.data``.
 """
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
+import json
 import subprocess
 from pathlib import Path
 
@@ -43,6 +47,28 @@ def champion_config(path: Path, ref: str) -> dict:
     return yaml.safe_load(txt)
 
 
+def _oof_key(loop: dict, model: dict, split_sha: str) -> str:
+    data = Path(loop["data"])
+    stamp = [data.stat().st_size, data.stat().st_mtime_ns] if data.exists() else None
+    blob = json.dumps({"task": loop["task"], "model": model, "split": split_sha, "data": [str(data), stamp]},
+                      sort_keys=True, default=str)
+    return hashlib.sha256(blob.encode()).hexdigest()[:16]
+
+
+def cached_oof(task, train: pd.DataFrame, loop: dict, model: dict, split_sha: str) -> pd.DataFrame:
+    path = Path(loop["work_dir"]) / "oof_cache" / f"{_oof_key(loop, model, split_sha)}.parquet"
+    if path.exists():
+        return pd.read_parquet(path)
+    oof = task(train, model)
+    path.parent.mkdir(exist_ok=True)
+    oof.to_parquet(path, index=False)
+    return oof
+
+
+def load_frame(loop: dict) -> pd.DataFrame:
+    return pd.read_parquet(loop["data"], columns=loop.get("columns"))
+
+
 def run(cfg_path: Path, champion_ref: str, frame: pd.DataFrame | None = None, champion_cfg: dict | None = None) -> dict:
     from cscoach.loops.sealed import LoopData
     from cscoach.loops.tasks import TASKS
@@ -52,10 +78,12 @@ def run(cfg_path: Path, champion_ref: str, frame: pd.DataFrame | None = None, ch
     loop = cand_cfg["loop"]
     work = Path(loop["work_dir"])
     if frame is None:
-        frame = pd.read_parquet(loop["data"])
-    train = LoopData(work, frame).training()
+        frame = load_frame(loop)
+    data = LoopData(work, frame)
+    train = data.training()
     task = TASKS[loop["task"]]
-    champ, cand = task(train, champ_cfg["model"]), task(train, cand_cfg["model"])
+    champ = cached_oof(task, train, loop, champ_cfg["model"], data.body["sha256"])
+    cand = cached_oof(task, train, loop, cand_cfg["model"], data.body["sha256"])
     res = improvement_lower_bound(champ, cand, alpha=loop["alpha"], budget=loop["budget"],
                                   n_resamples=loop["n_resamples"], seed=loop["seed"])
     cand.to_parquet(work / "candidate_oof.parquet", index=False)
