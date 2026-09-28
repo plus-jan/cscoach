@@ -132,7 +132,8 @@ def validate_scale_inference(t: pd.DataFrame) -> dict:
         "type_scales": v["type_scale"].value_counts().to_dict(),
         "agree_all": int(agree.sum()),
         "agree_with_any_known_rank": [int((agree & known).sum()), int(known.sum())],
-        "disagreements": v.loc[~agree, ["type_scale", "scale_without_type"]].value_counts().to_dict(),
+        "disagreements": {f"{a} -> {b}": int(c) for (a, b), c in
+                          v.loc[~agree, ["type_scale", "scale_without_type"]].value_counts().items()},
     }
 
 
