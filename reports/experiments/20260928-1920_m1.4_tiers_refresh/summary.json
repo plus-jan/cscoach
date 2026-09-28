@@ -1,0 +1,75 @@
+{
+  "commit": "181cd19",
+  "config": "configs/tiers.yaml",
+  "config_sha256_12": "826aec6dd9f3",
+  "refresh": "20260928-1920",
+  "matches_checked": 15042,
+  "format": {
+    "5v5": 13484,
+    "wingman": 1558
+  },
+  "tier_reason_5v5": {
+    "ok": 10369,
+    "too_few_known": 3042,
+    "platform_unknown": 73
+  },
+  "tier_by_platform_5v5": {
+    "faceit": {
+      "mid": 582,
+      "high": 546,
+      "semipro": 266,
+      "low": 147,
+      "null": 91
+    },
+    "steam": {
+      "low": 5257,
+      "null": 2951,
+      "mid": 1961,
+      "high": 1144,
+      "semipro": 466
+    },
+    "unknown": {
+      "null": 73
+    }
+  },
+  "tier_source_5v5": {
+    "premier": 7580,
+    "competitive": 4199,
+    "faceit": 1632,
+    "unknown": 73
+  },
+  "clean_seeded_5v5_by_tier": {
+    "low": 3869,
+    "null": 2330,
+    "mid": 1913,
+    "high": 1327,
+    "semipro": 602
+  },
+  "tier_spread_5v5": {
+    "0.0": 3875,
+    "1.0": 4589,
+    "2.0": 1593,
+    "3.0": 312,
+    "NaN": 3115
+  },
+  "n_known_5v5_quantiles": {
+    "0.1": 3.0,
+    "0.5": 8.0,
+    "0.9": 10.0
+  },
+  "scale_inference_check": {
+    "checked": 3307,
+    "type_scales": {
+      "premier": 2084,
+      "competitive": 1223
+    },
+    "agree_all": 3208,
+    "agree_with_any_known_rank": [
+      3171,
+      3171
+    ],
+    "disagreements": {
+      "premier -> competitive": 99
+    }
+  }
+}

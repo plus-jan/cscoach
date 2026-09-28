@@ -1,0 +1,15 @@
+platform,tier_source,tier,matches,rounds,current_fraction,test_rounds_expected,fraction_needed_matches,fraction_needed_rounds,fraction_needed,meets_targets
+faceit,faceit,high,496,10303,1.0,2060.6,1.0,1.0,1.0,True
+faceit,faceit,low,111,2301,1.0,460.20000000000005,inf,inf,inf,False
+faceit,faceit,mid,484,10146,1.0,2029.2,1.0,1.0,1.0,True
+faceit,faceit,null,71,1489,1.0,297.8,inf,inf,inf,False
+faceit,faceit,semipro,238,4987,1.0,997.4000000000001,inf,1.0,inf,False
+steam,competitive,high,66,1355,0.35,271.0,inf,0.6457564575645757,inf,False
+steam,competitive,low,1315,25938,0.35,5187.6,0.35,0.35,0.35,True
+steam,competitive,mid,602,12048,0.35,2409.6,0.35,0.35,0.35,True
+steam,competitive,null,1084,21405,0.35,4281.0,0.35,0.35,0.35,True
+steam,premier,high,765,16122,0.35,3224.4,0.35,0.35,0.35,True
+steam,premier,low,2443,51200,0.35,10240.0,0.35,0.35,0.35,True
+steam,premier,mid,827,17566,0.35,3513.2000000000003,0.35,0.35,0.35,True
+steam,premier,null,1175,23927,0.35,4785.400000000001,0.35,0.35,0.35,True
+steam,premier,semipro,364,7756,0.35,1551.2,0.35,0.35,0.35,True

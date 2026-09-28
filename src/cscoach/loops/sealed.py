@@ -15,7 +15,7 @@ import pandas as pd
 
 from cscoach.eval.splits import grouped_split, kfold_groups
 
-SEALED = ("calibration", "test")
+SEALED = ("calibration", "test", "temporal")  # temporal = newest-build holdout (docs/specs/04 §1, A-29)
 
 
 class SealedFoldError(RuntimeError):

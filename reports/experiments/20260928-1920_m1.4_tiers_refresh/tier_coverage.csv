@@ -1,0 +1,16 @@
+platform,tier_source,tier,matches
+faceit,faceit,high,546
+faceit,faceit,low,147
+faceit,faceit,mid,582
+faceit,faceit,null,91
+faceit,faceit,semipro,266
+steam,competitive,high,82
+steam,competitive,low,1942
+steam,competitive,mid,860
+steam,competitive,null,1315
+steam,premier,high,1062
+steam,premier,low,3315
+steam,premier,mid,1101
+steam,premier,null,1636
+steam,premier,semipro,466
+unknown,unknown,null,73

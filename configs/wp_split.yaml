@@ -1,0 +1,9 @@
+# One-time WP split (M3). docs/specs/04 §1; parameters: docs/specs/06.
+root: /media/jan/merged/cs2coach
+tome_root: /media/jan/merged/cs2coach/tomes
+header_tome: header.2025-09-01,2026-09-28.full
+split_name: wp_v1
+fractions: {train: 0.70, calibration: 0.10, test: 0.20}   # A-28
+k: 5                                                       # grouped folds over training matches
+temporal_from_build: 10896                                 # A-29: newest builds (2026-08-24+) = sealed temporal holdout
+seed: 20260928

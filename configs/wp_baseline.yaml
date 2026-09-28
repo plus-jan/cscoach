@@ -1,0 +1,8 @@
+# M3.1 baseline WP (reference only). docs/specs/03 WP, docs/specs/04 §2.
+root: /media/jan/merged/cs2coach
+split_name: wp_v1
+models: [base_rate, map_only, baseline_wp]
+C: 1.0
+n_resamples: 500                     # A-10
+seed: 20260928
+min_matches_per_stratum_report: 30   # reporting only (no gate)

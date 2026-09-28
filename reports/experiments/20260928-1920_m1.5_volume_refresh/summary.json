@@ -1,0 +1,60 @@
+{
+  "commit": "181cd19",
+  "config": "configs/volume.yaml",
+  "config_sha256_12": "3806765b0027",
+  "refresh": "20260928-1920",
+  "current_fraction": 0.35,
+  "targets": {
+    "min_matches_per_bucket": 300,
+    "min_test_rounds_per_stratum": 500,
+    "test_share": 0.2
+  },
+  "clean_seeded_5v5_matches": 10041,
+  "clean_seeded_5v5_tiered": 7711,
+  "maps_with_ge_300": 8,
+  "strata_meeting_targets": {
+    "tier": [
+      5,
+      5
+    ],
+    "tier_platform": [
+      7,
+      10
+    ],
+    "tier_scale": [
+      10,
+      14
+    ],
+    "map": [
+      8,
+      22
+    ]
+  },
+  "fraction_needed_max_over_tier_platform_excl_null": Infinity,
+  "download_by_fraction": {
+    "0.15": {
+      "gb": 0.0,
+      "usd_egress": 0.0
+    },
+    "0.25": {
+      "gb": 0.0,
+      "usd_egress": 0.0
+    },
+    "0.35": {
+      "gb": 0.0,
+      "usd_egress": 0.0
+    },
+    "0.5": {
+      "gb": 149.0,
+      "usd_egress": 13.0
+    },
+    "0.75": {
+      "gb": 397.4,
+      "usd_egress": 36.0
+    },
+    "1.0": {
+      "gb": 640.2,
+      "usd_egress": 58.0
+    }
+  }
+}

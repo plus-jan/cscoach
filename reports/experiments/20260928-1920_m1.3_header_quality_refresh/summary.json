@@ -1,0 +1,57 @@
+{
+  "commit": "181cd19",
+  "config": "configs/quality.yaml",
+  "config_sha256_12": "f7a8960311a8",
+  "refresh": "20260928-1920",
+  "matches": 32498,
+  "dedup_groups_with_copies": 647,
+  "duplicate_rows_non_canonical": 719,
+  "canonical": 31779,
+  "format": {
+    "5v5": 27655,
+    "wingman": 4124
+  },
+  "final_state_canonical": {
+    "regulation": 27267,
+    "incomplete": 1766,
+    "draw": 1691,
+    "overtime": 1055
+  },
+  "final_state_source_canonical": {
+    "header": 16737,
+    "round_state": 15042
+  },
+  "channel_checked": 15166,
+  "flags_all_rows": {
+    "q_platform_unknown": 131,
+    "q_upload_date": 279,
+    "q_player_count": 420,
+    "q_incomplete": 1809,
+    "q_no_round_end": 0,
+    "q_rounds_vs_score": 5,
+    "q_warmup_after_start": 0,
+    "q_tick_gap": 2,
+    "q_abandonment": 2198,
+    "q_header_loser_score": 7168,
+    "channel_error": 0,
+    "matches_with_unknown_id_disconnect": 1006
+  },
+  "clean": 25603,
+  "clean_by_platform": {
+    "steam": 24203,
+    "faceit": 1400
+  },
+  "clean_by_channel_set": {
+    "v30": 21127,
+    "v42": 4476
+  },
+  "subheader_tomes": {
+    "subheader.2025-09-01,2026-09-28.clean": 25603,
+    "subheader.2025-09-01,2026-09-28.clean_full_seeded": 10041,
+    "subheader.2025-09-01,2026-09-28.clean_steam": 24203,
+    "subheader.2025-09-01,2026-09-28.clean_faceit": 1400,
+    "subheader.2025-09-01,2026-09-28.clean_v30": 21127,
+    "subheader.2025-09-01,2026-09-28.clean_v42": 4476,
+    "subheader.2025-09-01,2026-09-28.clean_rank_known": 23519
+  }
+}
