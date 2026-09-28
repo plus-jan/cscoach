@@ -93,9 +93,10 @@ def test_verify_caches_oof_per_model_config(work, data, monkeypatch):
             "n_resamples": 200, "seed": 5}
     a = {"loop": loop, "model": {"features": ["x1"], "label": "y"}}
     b = {"loop": loop, "model": {"features": ["x1", "x2"], "label": "y"}}
-    c = {"loop": loop, "model": {"features": ["x1", "x2", "noise1"], "label": "y"}}
+    c = {"loop": loop, "model": {"features": ["x1", "x2", "noise1"], "label": "y", "note": "long " * 40}}
     for cand, champ in ((b, a), (c, b)):
         path = work / "cfg.yaml"
         path.write_text(yaml.safe_dump(cand))
         gated_verify.run(path, "HEAD~1", frame=data, champion_cfg=champ)
     assert calls == [("x1",), ("x1", "x2"), ("x1", "x2", "noise1")]
+    assert len((work / "ledger.tsv").read_text().splitlines()) == 3  # header + one row per run, however long

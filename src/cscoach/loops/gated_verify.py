@@ -94,7 +94,7 @@ def run(cfg_path: Path, champion_ref: str, frame: pd.DataFrame | None = None, ch
             f.write("time\ttask\tdelta_logloss\tlower_bound\tlevel\tn_matches\tseed\tcandidate_model\n")
         f.write(f"{dt.datetime.now().isoformat(timespec='seconds')}\t{loop['task']}\t{res['delta']:.6f}\t"
                 f"{res['lower_bound']:.6f}\t{res['one_sided_level']:.5f}\t{res['n_matches']}\t{loop['seed']}\t"
-                f"{yaml.safe_dump(cand_cfg['model'], default_flow_style=True).strip()}\n")
+                f"{yaml.safe_dump(cand_cfg["model"], default_flow_style=True, width=10**9).strip()}\n")
     return res
 
 
