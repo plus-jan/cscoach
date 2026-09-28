@@ -17,12 +17,14 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | gates.xk.ece_max | 0.03 | A-06 |
 | gates.xk.auc_min | 0.62 | A-06 |
 | gates.xk.min_duels_per_stratum | 1000 | A-07 |
-| gates.player_metric.reliability_min (within-match split-half) | 0.5 | A-08 |
+| gates.player_metric.stability_min (Franks S, match halves) | 0.5 | A-08 |
+| gates.player_metric.reliability_min (odd/even split-half, supplementary) | 0.5 | A-08 |
 | gates.player_metric.discrimination_min | 0.3 | A-08 |
 | gates.player_metric.independence_min | 0.2 | A-08 |
 | gates.player_metric.min_ess | 30 | A-07 |
 | ece.n_bins / strategy | 15 / quantile | A-09 |
-| bootstrap.n_resamples / alpha | 500 / 0.05 | A-10 |
+| bootstrap.n_resamples / alpha (test metrics, cluster, no refit) | 500 / 0.05 | A-10 |
+| model-uncertainty bootstrap: B / fraction φ (fractional randomized cluster, refit) | 101 / tuned in MV.4 (football reference 0.35) | A-24 |
 | split train/calibration/test (by match) | 0.70 / 0.10 / 0.20 | A-28 |
 
 ## Tiers (canonical: low, mid, high, semipro)
@@ -64,6 +66,7 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | duel window / censored handling | 3.0 s / drop | A-19 |
 | counter-strafe "stopped" speed | 34 u/s (weapon-independent) | A-20 |
 | buy classes eco / force / half / full (per player equipment) | < 1500 / < 3000 / < 4000 / ≥ 4000 | A-21 |
+| team buy types (team start equipment E, team spend S; CS:GO pro reference) | eco: E<3k & S<2k; low: E<3k & 2k≤S<7.5k; half: E<3k & 7.5k≤S<20k; hero low: 3k≤E<20k & S<7.5k; hero half: 3k≤E<20k & 7.5k≤S<17k; full: E+S≥20k | A-21 |
 | area graph: node definition / edge weight | `place_name` / median transit time | A-37 |
 
 ## Models

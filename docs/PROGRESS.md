@@ -15,3 +15,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   (headline AUC 0.926/0.956; domain-matched training matters). New cross-paper findings: outcome-level
   validation of spatial features, WPA telescoping test, CSDS capture-frequency caveat, and a
   re-identification ban · docs/research/papers/README.md
+- 2026-09-28 · M0.2 (partial) · Batch 3: Xenopoulos (WPA 2020, economy/OSE 2021), Franks meta-analytics,
+  Brill/Yurko/Wyner. Spec changes: two uncertainty kinds and a fractional bootstrap (specs/04), real Franks
+  D/S/I adapted within-match, game-level WP + OSE for economy, damage events + victim-negative WPA credit;
+  MV.4 now builds a CSDS-fitted round simulator · docs/research/papers/README.md

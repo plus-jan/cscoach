@@ -22,7 +22,7 @@
     model fitted on one tier/platform is miscalibrated on others; WP must be tier/platform-conditioned
     and recalibrated per stratum.
   type: research
-  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); direct but unread [xenopoulos_pro_vs_amateur_wp]
+  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); [xenopoulos_valuing_actions_csgo] §VI-D names 'similar skill' as a strong assumption of WPA; pooling with a conditioning feature beat per-group models in [xenopoulos_optimal_economy] (maps); direct but unread [xenopoulos_pro_vs_amateur_wp]
   status: open
   test: [MV.3]
   parameters: [WP features (v1), calibration]
@@ -94,10 +94,10 @@
 
 - id: A-08
   statement: >-
-    Player-metric thresholds (within-match reliability >= 0.5, discrimination >= 0.3, independence >= 0.2)
-    separate useful from useless metrics.
+    Player-metric thresholds (Franks stability >= 0.5, discrimination >= 0.3, independence >= 0.2;
+    supplementary split-half reliability >= 0.5) separate useful from useless metrics.
   type: policy
-  source: initial choice (Franks et al. give no universal thresholds)
+  source: initial choice ([franks_meta_analytics] gives no universal thresholds)
   status: open
   test: [MV.5]
   parameters: [gates.player_metric]
@@ -233,9 +233,12 @@
   blocks: [xk, coaching_feedback]
 
 - id: A-21
-  statement: Buy classes eco/force/half/full split at $1,500/$3,000/$4,000 equipment value per player.
+  statement: >-
+    Buy classes are meaningful at player level (eco/force/half/full split at $1,500/$3,000/$4,000) and
+    at team level (eco/low/half/hero/full by team start equipment + spend); CSDS-estimated thresholds
+    replace the CS:GO pro reference values.
   type: data
-  source: initial choice
+  source: initial choice; team buy types from [xenopoulos_optimal_economy] Table 1 (CS:GO pro)
   status: open
   test: [MV.6]
   parameters: [buy_classes]
@@ -262,26 +265,34 @@
 # ---------------------------------------------------------------- statistical methods
 - id: A-24
   statement: >-
-    Match-level cluster bootstrap and Kish ESS give intervals with nominal coverage for WP
-    metrics and player metrics.
+    Uncertainty methods give nominal coverage: (a) a match-level cluster bootstrap for test-set metrics
+    (no refit), and (b) a fractional randomized cluster bootstrap with tuned φ for model-uncertainty
+    intervals (WP(x), WPA, counterfactual ΔWP). The plain cluster bootstrap is known to under-cover for
+    (b): 0.71 at nominal 0.90 in simulation.
   type: method
-  source: ADR-0001; challenged by [brill_yurko_wp_difficulty] (fractional bootstrap)
+  source: ADR-0001; [brill_yurko_wp_difficulty] (verified — refit bootstraps under-cover; fractional bootstrap)
   status: open
   test: [MV.4]
+  parameters: [model-uncertainty bootstrap]
   blocks: [player_metrics, coaching_feedback]
 
 - id: A-25
-  statement: validation/meta_analytics.py approximations behave like Franks et al.'s meta-metrics.
+  statement: >-
+    Franks et al.'s meta-metrics adapted to within-match data (player-in-match; match halves as
+    "seasons"; rounds resampled) behave sensibly: on data with a known per-player effect, D and S
+    recover it, and they rank metrics consistently with population-level checks.
   type: method
-  source: own simplification of [franks_meta_analytics]
+  source: "[franks_meta_analytics] (verified definitions); adaptation is ours (ADR-0005)"
   status: open
   test: [MV.9]
   blocks: [player_metrics]
 
 - id: A-26
-  statement: Normal-normal empirical-Bayes shrinkage fits per-player metrics (WPA/round is bounded and heavy-tailed).
+  statement: >-
+    Normal-normal empirical-Bayes shrinkage fits per-player metrics (WPA/round is bounded and
+    heavy-tailed); shrinkage improves discrimination and stability as in Franks et al.
   type: method
-  source: initial choice
+  source: initial choice; [franks_meta_analytics] §5.1 (EB shrinkage improved D and S for NBA 3P%)
   status: open
   test: [MV.8]
   blocks: [player_metrics]

@@ -21,8 +21,18 @@ every gate is itself an assumption (A-06…A-10) until MV.5 decides it.
 
 Brier, log-loss, Brier skill score vs baseline, ECE + MCE (quantile bins), reliability curves, and ROC
 AUC (secondary). All are stratified by tier, platform, map, round phase (early / mid / late /
-post-plant) and alive state (5v5, 4v5, …, clutches). Every metric and every model difference gets a
-**cluster-bootstrap CI over matches**, plus the ESS.
+post-plant) and alive state (5v5, 4v5, …, clutches).
+
+**Two kinds of uncertainty; don't mix them up** [brill_yurko_wp_difficulty]:
+- **(a) Test-metric CIs** (Brier, ECE, log-loss difference, … on held-out matches, **no refit**): use a
+  match-level cluster bootstrap. Every metric and every model difference gets one, plus the ESS.
+- **(b) Model-uncertainty CIs** (WP(x) itself, WPA, counterfactual ΔWP, feedback items; the model is
+  **refit** on each resample): standard and cluster bootstraps under-cover (0.60 / 0.71 at nominal 0.90
+  in simulation). Use the **fractional randomized cluster bootstrap**, with φ tuned in MV.4 on a
+  CS simulator fitted to CSDS (A-24).
+
+Reference benchmark (pro CS:GO, not comparable 1:1): XGBoost WP log-loss 0.5353 vs a map-only baseline
+of 0.6917 [xenopoulos_valuing_actions_csgo].
 
 ## 3. Promotion rule (challenger vs champion)
 
@@ -35,15 +45,25 @@ Record the promotion in an ADR.
 
 ## 4. Player metrics (within match)
 
-- **Reliability:** odd- vs even-round split-half correlation of per-player values, pooled over matches,
-  with the Spearman–Brown correction.
-- **Discrimination:** share of between-player variance not explained by sampling noise, where
-  within-player sampling variance comes from bootstrapping the player's rounds within the match.
-- **Independence:** 1 − R² of the metric regressed on standard per-match stats (K/D, ADR, KAST).
+Follow the meta-metrics of [franks_meta_analytics], adapted to CSDS (no cross-match identity, ADR-0005):
+"player" = player-in-match, "season" = a segment of the match, "games resampled" = rounds resampled.
+
+- **Discrimination (Franks D):** 1 − mean over players of the within-match sampling variance, divided
+  by the between-player variance. The sampling variance comes from bootstrapping the player's rounds.
+  Computed per match, then averaged over matches within a tier.
+- **Stability (Franks S, adapted):** "seasons" = the two match halves (the side switch changes the
+  context). S = 1 − E[V_between-halves − sampling var] / (V_total − E[sampling var]), in [0, 1].
+- **Reliability (supplementary, not Franks):** odd/even-round split-half correlation with the
+  Spearman–Brown correction, i.e. how repeatable the metric is in the same context.
+- **Independence (Franks I):** a latent Gaussian-copula correlation of the metrics (rank likelihood).
+  I = 1 − R² of the metric's latent variable on the reference set (K/D, ADR, KAST, HLTV-style rating).
+  Plain OLS on raw values is only a quick approximation.
 - **Population stability:** the metric's distribution per tier is stable across revision months
   (e.g. via the Wasserstein distance).
+- **Purpose:** say whether a metric serves *attribution* (chance and context count as signal) or
+  *prediction/habit* (they count as noise), and apply the gates accordingly.
 
-Metrics below the gates stay internal. The approximations differ from Franks et al. (A-25, MV.9).
+Metrics below the gates stay internal (A-08). Whether this adaptation behaves sensibly is A-25 (MV.9).
 
 ## 5. Coaching validity
 
@@ -84,16 +104,38 @@ and CV its coefficient of variation. **ESS** = N / DEFF.
   match-level questions).
 - Tests: ESS ≈ the number of clusters when values are constant within clusters; DEFF = 1 when ICC = 0.
 
-**Cluster bootstrap.** Resample whole clusters (matches) with replacement B times, recompute the
-statistic, and take percentile CIs. For model comparisons, bootstrap the *difference* on the same
-resample. Test: the CI is much wider than the naive iid CI when ICC is high.
-The fractional bootstrap [brill_yurko_wp_difficulty] is the challenger for WP intervals (A-24, MV.4).
+**Cluster bootstrap (test metrics, no refit).** Resample whole clusters (matches) with replacement B
+times, recompute the statistic, and take percentile CIs. For model comparisons, bootstrap the
+*difference* on the same resample. Test: the CI is much wider than the naive iid CI when ICC is high.
 
-**Split-half reliability.** Order each player's rounds, split odd/even, correlate the half-means across
-players (r), then apply Spearman–Brown: 2r/(1 + r).
+**Fractional randomized cluster bootstrap (model uncertainty, refit)** [brill_yurko_wp_difficulty].
+For b = 1..B:
+1. sample ⌈φ·G⌉ matches with replacement;
+2. within each sampled match, resample its snapshots (or rounds) with replacement;
+3. refit the model;
+4. predict at the query states.
 
-**Bootstrap discrimination.** 1 − mean_i(Var_boot(mean of player i)) / Var_between(player means),
-clipped to [0, 1].
+Take the α/2 and 1 − α/2 quantiles. Clip the interval to [0, 1], widening it to 0 or 1 when the estimate
+is < 0.025 or > 0.975. Tune φ so that the nominal coverage is reached **in the MV.4 simulator** (the
+reference value from football is φ ≈ 0.35 for 90%). Test: coverage on synthetic data with known truth.
+
+**Franks discrimination (within match).** For each player i: Var_boot(mean of i), with rounds resampled.
+D = 1 − mean_i Var_boot / Var_between(player means), clipped to [0, 1].
+
+**Franks stability (halves).** Per player, the two half means x̄_i1 and x̄_i2 and their bootstrap
+sampling variances v_i1 and v_i2:
+- numerator: mean_i[Var(x̄_i1, x̄_i2) − mean(v_i1, v_i2)];
+- denominator: Var(all half means) − mean(all v).
+
+S = 1 − numerator/denominator, clipped to [0, 1]. Test: S ≈ 1 for a constant per-player effect with
+noise, and S ≈ 0 when the half means are independent.
+
+**Split-half reliability (supplementary).** Order each player's rounds, split odd/even, correlate the
+half-means across players (r), then apply Spearman–Brown: 2r/(1 + r).
+
+**Franks independence.** Transform each metric to normal scores (ẑ = Φ⁻¹(F̂(x))). Estimate the latent
+correlation matrix C (rank-likelihood Gaussian copula, e.g. Hoff's `sbgcop` or an equivalent). Then
+I = 1 − R², with R² = C_mM C_MM⁻¹ C_Mm.
 
 **Normal–normal shrinkage (per tier prior).**
 - Per player: mean x̄_i, n_i; σ² = pooled within-player variance; se_i² = σ²/n_i;

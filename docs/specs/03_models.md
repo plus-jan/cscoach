@@ -67,14 +67,41 @@ For an event at tick *t_e*: `wpa_team = WP_team(state after the event) − WP_te
 pre/post offsets from A-18. Credit is split by fixed shares (A-23) or by Shapley values over
 contributors, with value function *v(S)* = WP of the counterfactual state where only the contributors
 in S acted. Efficiency: Σ credit = ΔWP. Validity of counterfactual states: A-04, tested in MV.10.
-Refs: [xenopoulos_valuing_actions_csgo], [hltv_rating_3] (Round Swing), [tar2_credit_assignment].
+- **Actions:** kills *and* damage events (`player_hurt`), bomb plant/defuse, and utility effects.
+- **Victim credit:** the damaged or killed player is credited with −V, as in
+  [xenopoulos_valuing_actions_csgo]; the attacker gets +V.
+- **Uncertainty:** WPA and ΔWP intervals are model-uncertainty CIs (fractional bootstrap,
+  docs/specs/04 §2(b)).
+
+Refs: [xenopoulos_valuing_actions_csgo] (the original WPA for CS; notes that it assumes teams of similar
+skill → A-01), [hltv_rating_3] (Round Swing), [tar2_credit_assignment] (WP as a potential; telescoping).
 
 ## Economy {#economy}
 
 Rules engine from docs/specs/06 (A-13), **verified against `player_status.money`** round by round.
-Buy classes (A-21). Counterfactual buys: re-evaluate the freeze-end WP with alternative equipment
-vectors, and simulate next-round money for both outcomes. Expected value over the two-round horizon
-= Σ_outcomes P(outcome) · WP_next. Refs: [xenopoulos_optimal_economy].
+
+**Game-level WP** (`gwp`), after [xenopoulos_optimal_economy]:
+- P(match win | state at round start);
+- features: scores, score difference, each side's start equipment, money, buy type, map (one-hot),
+  tier/platform, and overtime state;
+- outcomes: 3 classes where draws are possible, otherwise binary.
+
+**Buy types (A-21):**
+- per player: from the freeze-end equipment value;
+- per team: from team start equipment and spend (eco / low / half / hero / full, as defined in the
+  source; thresholds re-estimated on CSDS).
+
+**Counterfactual buys:**
+- swap the team's buy type or equipment vector and re-evaluate gwp; the best alternative is the "optimal
+  buy";
+- **Optimal Spending Error** per team-match = mean over rounds of (gwp(chosen) − gwp(optimal))²;
+- individual desync = a player's buy class differs from the team's, with the gwp cost of that
+  deviation;
+- fallback when gwp is not yet validated: the two-round horizon Σ_outcomes P(round outcome) ·
+  WP_next-round-start.
+
+Caveat: the buy type is confounded with money and team strength, so the counterfactual validity of
+these values is A-04 (MV.10).
 
 ## Spatial {#spatial}
 

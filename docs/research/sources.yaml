@@ -179,9 +179,12 @@
   arxiv: "1609.09830"
   url: https://arxiv.org/abs/1609.09830
   questions: [H]
-  use_in_project: docs/specs/04 §4 (player-metric checks), MV.9, A-25
-  local: null
-  verified: search
+  claim: "Stability, discrimination, independence; r = 0.70 offensive-zone possession vs points (synthesis)"
+  verified_claim: "D = 1 − mean bootstrap sampling var / between-player var; S = 1 − E[within-player between-season var − sampling var]/(total − sampling var); I = 1 − R² in a Gaussian-copula latent model; EB shrinkage improves D and S. The synthesis's 'r = 0.70' was not found in the paper."
+  use_in_project: docs/specs/04 §4/§7 (player-metric checks), MV.9, A-25, A-08
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/franks_meta_analytics.md
+  verified: true
 
 - id: play_like_champions
   title: "Play Like Champions: Counterfactual Feedback Generation in Latent Space"
@@ -232,39 +235,45 @@
 - id: brill_yurko_wp_difficulty
   title: "Exploring the Difficulty of Estimating Win Probability: A Simulation Study"
   authors: Ryan S. Brill, Ronald Yurko, Abraham J. Wyner
-  venue: Journal of Quantitative Analysis in Sports (2024/25)
+  year: 2025
+  venue: Journal of Quantitative Analysis in Sports (arXiv v5)
   arxiv: "2406.16171"
   url: https://arxiv.org/abs/2406.16171
   questions: [H]
-  search_note: "Clustered play-by-play data inflates bias/variance and lowers ESS; proposes fractional bootstrap for WP CIs"
-  use_in_project: ADR-0001, docs/specs/04 §7 (ESS, bootstrap), MV.4 (fractional bootstrap challenger), A-24
+  verified_claim: "Clustered outcomes inflate WP bias/variance; ESS 56% of games at 4,101 games; refit bootstrap 90% CIs under-cover (standard 0.60, cluster 0.71, randomized cluster 0.76); fractional randomized cluster bootstrap φ=0.35 reaches 0.90 (width 6.3 pp); φ must be tuned on a realistic simulator."
+  use_in_project: ADR-0001, docs/specs/04 §2/§7 (two uncertainty kinds, fractional bootstrap), MV.4, A-24
   replaces: "'Andersen 2021' ESS reference in the synthesis, which could not be found"
-  local: null
-  verified: search
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/brill_yurko_wp_difficulty.md
+  verified: true
 
 - id: xenopoulos_valuing_actions_csgo
   title: "Valuing Player Actions in Counter-Strike: Global Offensive"
-  authors: Peter Xenopoulos et al.
+  authors: Peter Xenopoulos, Harish Doraiswamy, Claudio Silva
   year: 2020
   venue: IEEE Big Data 2020
   arxiv: "2011.01324"
   url: https://arxiv.org/abs/2011.01324
-  questions: [A, D]
-  search_note: "Data model, graph distance on maps, WPA framework for CS:GO; >70M events"
-  use_in_project: WP/WPA design reference (M3, M5)
-  local: null
-  verified: search
+  questions: [A, D, H]
+  verified_claim: "Pro LAN CS:GO, temporal split (55M/18M states); XGBoost WP log-loss 0.5353, Brier 0.1842, AUC 0.7913 vs map-average 0.6917; equipment > HP > players in importance; WPA from damage events, victim credited −V; WPA month-to-month r 0.40 (KDR 0.38, n.s.), corr with KDR 0.73; authors state WPA assumes similar skill levels."
+  use_in_project: WP/WPA reference design (docs/specs/03), benchmark (M3.1), A-01, victim credit (M5.2)
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/xenopoulos_valuing_actions_csgo.md
+  verified: true
 
 - id: xenopoulos_optimal_economy
   title: Optimal Team Economic Decisions in Counter-Strike
-  authors: Peter Xenopoulos et al.
+  authors: Peter Xenopoulos, Bruno Coelho, Claudio Silva
+  year: 2021
+  venue: IJCAI 2021 AISA Workshop
   arxiv: "2109.12990"
   url: https://arxiv.org/abs/2109.12990
   questions: [F]
-  note: "Likely origin of the 'Optimal Spending Error' metric mentioned in the synthesis"
-  use_in_project: M6.3 counterfactual buys
-  local: null
-  verified: search
+  verified_claim: "Game-level WP at round start (scores, equipment, money, buy type; 3-class); 6,538 online pro matches, temporal split; log-loss 0.730 (XGBoost, one-hot map) vs 0.793 logistic; team buy types defined by equipment+spend; OSE = MSE between chosen and optimal buy game-WP, r = −0.45 with round win rate; teams eco too often."
+  use_in_project: docs/specs/03#economy (gwp, OSE), M6.2/M6.3, A-21, A-01 (pooling evidence)
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/xenopoulos_optimal_economy.md
+  verified: true
 
 - id: awpy
   title: awpy (Counter-Strike parsing & analytics, incl. map/nav data)

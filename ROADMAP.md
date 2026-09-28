@@ -15,7 +15,7 @@ they are open.
 ## M0 — Knowledge base (this repository)
 
 - [x] **M0.1 — Specs, roadmap, agent manual, skills.**
-- [~] **M0.2 — Research sources verified** (9 papers + CSDS spec verified; see `docs/research/papers/README.md`).
+- [~] **M0.2 — Research sources verified** (13 papers + CSDS spec verified; see `docs/research/papers/README.md`).
   Remaining PDFs are requested from the user.
 - [x] **M0.3 — Assumptions register** (`docs/assumptions.yaml`) + parameter spec (`docs/specs/06`).
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
@@ -69,10 +69,16 @@ they are open.
   tier-conditioned and per-tier models, with cluster-bootstrap CIs.
   **DoD:** A-01 supported/refuted; ADR-0002 confirmed or replaced.
 - [ ] **MV.4 — Uncertainty method coverage.**
-  deps: M0 (synthetic), M3.1 (real). Refs: [A-10, A-24], [brill_yurko_wp_difficulty].
-  Simulate data with known true WP (synthetic generator, docs/specs/04 §7). Measure the coverage of the
-  cluster bootstrap, the fractional bootstrap and the ESS-based intervals at the nominal level.
-  **DoD:** chosen method (ADR); bootstrap settings decided.
+  deps: M2.3 (CSDS state tables), M3.1. Refs: [A-10, A-24], [brill_yurko_wp_difficulty].
+  1. Build a **CS round simulator fitted to CSDS**: a state-space model of kill and plant transitions
+     depending on alive counts, HP, equipment, time and bomb, per tier. Its true WP is known by
+     simulation.
+  2. Generate datasets shaped like CSDS (same number of matches, rounds and snapshots).
+  3. Measure the coverage and width of the model-uncertainty intervals: standard, cluster, randomized
+     cluster and fractional (φ grid) bootstraps. Measure the coverage of the test-metric CIs.
+  4. Estimate the accuracy-based ESS, and compare it with the Kish ESS.
+  **DoD:** φ and B chosen for nominal coverage (ADR); coverage per WP bin reported (the paper found
+  undercoverage near WP 0.3/0.7).
 - [ ] **MV.5 — Derive gates and minimum sizes (policy).**
   deps: MV.4, M3.1. Refs: [A-06, A-07, A-08, A-09, A-32].
   Error propagation: how much ECE shifts WPA/feedback rankings. Plot reliability vs. rounds per player
@@ -93,8 +99,10 @@ they are open.
   Distribution of per-round WPA; posterior predictive checks; alternatives (Student-t, beta-binomial).
   **DoD:** chosen model (ADR).
 - [ ] **MV.9 — Meta-analytics fidelity.**
-  deps: [franks_meta_analytics] full text. Refs: [A-25].
-  Compare our within-match approximations with the definitions in the paper.
+  deps: M8 inputs, MV.4 simulator. Refs: [A-25], [franks_meta_analytics] (full text available).
+  Implement D, S (match halves) and I (Gaussian copula) as in docs/specs/04 §4/§7. Check them on
+  simulated players with known effects, then compute them for the candidate metrics per tier.
+  **DoD:** A-25 status; list of metrics passing the gates.
 - [ ] **MV.10 — Counterfactual validity of WP (architecture-deciding).**
   deps: M3.4. Refs: [A-04, A-05].
   Test WP on "near-twin" states that differ by one action (e.g. duel taken vs. avoided, matched on the
@@ -110,7 +118,8 @@ they are open.
 
 ## M3 — Win Probability v1 (the backbone)
 
-- [ ] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map.
+- [ ] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map, reported next to the pro CS:GO
+  benchmark in [xenopoulos_valuing_actions_csgo] (log-loss 0.535 XGBoost / 0.692 map-only).
 - [ ] **M3.2 — GBDT WP** (monotone, tier/platform features), with hyperparameters tuned by grouped
   CV [A-29]. Refs: [pandaskill].
 - [ ] **M3.3 — Calibration layer** per tier/platform [A-28].
@@ -128,7 +137,8 @@ they are open.
 ## M5 — WPA & credit assignment (requires MV.10 not refuted)
 
 - [ ] **M5.1 — Event WPA** [A-18].
-- [ ] **M5.2 — Attribution rules** incl. trades [A-17] and eco adjustment [A-23].
+- [ ] **M5.2 — Attribution rules** incl. damage events, victim-negative credit, trades [A-17] and eco
+  adjustment [A-23]. Refs: [xenopoulos_valuing_actions_csgo].
 - [ ] **M5.3 — Shapley credit.** **DoD:** tests for efficiency, symmetry and the null player, plus the
   WPA telescoping test (docs/specs/04 §7). Refs: [tar2_credit_assignment].
 - [ ] **M5.4 — xK × WPA decision matrix** [A-05].
@@ -136,8 +146,10 @@ they are open.
 ## M6 — Economy
 
 - [ ] **M6.1 — Rules engine** (verified in MV.1) [A-13].
-- [ ] **M6.2 — Buy classification** [A-21].
-- [ ] **M6.3 — Team sync + counterfactual buys.** Refs: [xenopoulos_optimal_economy].
+- [ ] **M6.2 — Buy classification**, player-level and team-level [A-21].
+- [ ] **M6.3 — Game-level WP + Optimal Spending Error + team sync** (docs/specs/03#economy).
+  Refs: [xenopoulos_optimal_economy]. **DoD:** gwp passes its calibration gate; OSE per team-match
+  with CIs; desync cost per player.
 
 ## M7 — Spatial analytics (CSDS-only)
 
