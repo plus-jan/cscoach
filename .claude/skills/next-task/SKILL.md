@@ -3,8 +3,8 @@ name: next-task
 description: Pick up and complete the next open task from ROADMAP.md following the repo's accuracy rules. Use when asked to "continue the project", "do the next task", or work on a roadmap ID like M3.2 or MV.3.
 ---
 
-The knowledge base is the source of truth. Implementation happens in the project repository: the
-autoresearch fork (ADR-0007), which also contains this knowledge base once M0.6 is done.
+The knowledge base is the source of truth. Implementation happens in this project repository
+(`plus-jan/cscoach`, the autoresearch fork, ADR-0007), next to the knowledge base.
 
 1. Read `CLAUDE.md`, then `ROADMAP.md` and `docs/FINDINGS.md`. Use the given task ID, or take the first
    `[ ]`/`[~]` task **in Part A** whose deps are `[x]`. If the requested task is in Part C (provisional),
@@ -16,9 +16,8 @@ autoresearch fork (ADR-0007), which also contains this knowledge base once M0.6 
    - every `[A-NN]` → `docs/assumptions.yaml` (status, criterion, what it blocks);
    - the relevant parameters in `docs/specs/06_parameters.md`;
    - data: `docs/data/README.md` + `docs/data/csds_spec.md` (CSDS only, official libraries only).
-3. If code is needed and the fork is not available in the session (M0.6 open), stop. Ask the user to
-   fork `uditgoenka/autoresearch` and grant access. Never add implementation code to
-   `plus-jan/cscoach-template`.
+3. Implementation code goes to `src/cscoach/`, tests to `tests/cscoach/`, configs to `configs/`,
+   reports to `reports/experiments/`. Never into `docs/` or the upstream autoresearch paths.
 4. In the project repo: write the tests first (the reference algorithms in docs/specs/04 §7 list the
    required properties), implement, run the checks, and produce a reproducible report (CLAUDE.md
    "Evidence"). Choose the execution mode from `docs/specs/07_autoresearch_protocol.md` §7:

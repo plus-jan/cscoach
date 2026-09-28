@@ -1,6 +1,6 @@
 # ADR-0007 — The project repository is a fork of autoresearch; code lives next to the knowledge base
 
-- Status: accepted (migration pending: the fork must be created by the user, see M0.6)
+- Status: accepted (fork `plus-jan/cscoach` created 2026-09-28; migrated in M0.6)
 - Date: 2026-09-28
 - Roadmap task: M0.6
 - Supersedes: ADR-0004
@@ -19,7 +19,7 @@ which our evidence standard (CLAUDE.md) does not accept.
 ## Decision
 - A fork of autoresearch (proposed name `plus-jan/cscoach`) becomes the **single project repository**:
   the upstream tooling (kept in its upstream paths so upstream merges stay cheap) + this knowledge base
-  (migrated with its git history) + the implementation (`src/cscoach/`, `tests/`, `configs/`,
+  (migrated with its git history) + the implementation (`src/cscoach/`, `tests/cscoach/`, `configs/`,
   `reports/`) once work starts.
 - The knowledge base (`CLAUDE.md`, `ROADMAP.md`, `docs/`, `.claude/skills/<cscoach skills>`) remains the
   source of truth. The upstream `docs/*.md` files describe autoresearch itself, not cscoach.
@@ -41,7 +41,6 @@ which our evidence standard (CLAUDE.md) does not accept.
   gated model search; upstream safety hooks (privacy-block protects the AWS credentials).
 - Negative: upstream files (docs, tests, CI) sit next to ours and must be kept apart
   (`scripts/kbcheck.py` checks only cscoach paths); upstream CI runs on our PRs.
-- Follow-ups: M0.6 (create the fork and migrate), M2.5 (gated loop harness), MV.14 (simulation of the
-  false-keep rate of the gated loop, A-42). Until the fork exists, this repository
-  (`plus-jan/cscoach-template`) stays the knowledge base and the migration is done with
-  `scripts/migrate_to_autoresearch_fork.sh`.
+- Follow-ups: M0.6 (migration, done with `scripts/migrate_to_autoresearch_fork.sh`), M2.5 (gated loop
+  harness), MV.14 (simulation of the false-keep rate of the gated loop, A-42).
+  `plus-jan/cscoach-template` gets a pointer to this repository and is archived.

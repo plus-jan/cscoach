@@ -1,14 +1,13 @@
-# cscoach — CS2 coaching engine (knowledge base)
+# cscoach — CS2 coaching engine
 
 A knowledge base for AI agents building a **data-driven, statistically validated coaching engine** for
 amateur and semi-pro Counter-Strike 2 players. It covers calibrated round **Win Probability**, **WPA**
 credit, **Expected Kills (xK)**, and economy and spatial analytics, turned into counterfactual,
 actionable feedback.
 
-The project is being moved to a **fork of [autoresearch](https://github.com/uditgoenka/autoresearch)**
-(ADR-0007): the fork holds the loop tooling, this knowledge base and the implementation. Loops run only
-under [`docs/specs/07_autoresearch_protocol.md`](docs/specs/07_autoresearch_protocol.md). Until the
-fork exists (M0.6), this repository is the knowledge base. The only data source is the **PureSkill.gg
+This repository is a **fork of [autoresearch](https://github.com/uditgoenka/autoresearch)** (ADR-0007):
+it holds the loop tooling, the knowledge base and (later) the implementation. Loops run only under
+[`docs/specs/07_autoresearch_protocol.md`](docs/specs/07_autoresearch_protocol.md). The only data source is the **PureSkill.gg
 CSDS corpus**, used through the official `pureskillgg-dsdk` libraries (ADR-0003).
 
 | Start here | |

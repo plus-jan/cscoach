@@ -3,10 +3,11 @@
 This repository is the **knowledge base** for **cscoach**: a data-driven coaching engine for amateur and
 semi-pro Counter-Strike 2 players. It holds the concepts an agent needs to build, validate and extend the
 system: goals, specs, data description, assumptions, roadmap, research.
-The project repository is a **fork of `uditgoenka/autoresearch`** (ADR-0007, supersedes ADR-0004). It
-contains the autoresearch loop tooling, this knowledge base and, later, the implementation (`src/cscoach/`).
-Until the fork exists (task M0.6), this repository is the knowledge base only. Either way the knowledge
-base is the source of truth: agents that implement report results back here.
+This repository, `plus-jan/cscoach`, is the project repository: a **fork of `uditgoenka/autoresearch`**
+(ADR-0007, supersedes ADR-0004). It contains the autoresearch loop tooling, this knowledge base and,
+later, the implementation (`src/cscoach/`). The knowledge base is the source of truth: agents that
+implement report results back into it in the same change set. (`plus-jan/cscoach-template` is the
+archived former home of the knowledge base.)
 
 The engine turns **PureSkill.gg CSDS match data** into calibrated **Win Probability (WP)**, **Win
 Probability Added (WPA)**, **Expected Kills (xK)**, economy and spatial metrics, and then into
@@ -34,7 +35,8 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
 | `docs/adr/` | Architecture Decision Records | before changing a decision |
 | `docs/PROGRESS.md` | Log of completed work and key numbers | after every task |
 | `.claude/skills/` | Workflows: next-task, plan-next-step, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base | as named |
-| `scripts/` | `kbcheck.py` (consistency check, also in CI), `migrate_to_autoresearch_fork.sh` (M0.6), `sync_upstream.sh` | before every commit / migration / upstream merge |
+| `scripts/kbcheck.py`, `scripts/sync_upstream.sh` | Consistency check (also in CI); upstream autoresearch merge | before every commit / upstream merge |
+| `scripts/migrate_to_autoresearch_fork.sh` | One-off migration used for M0.6 (kept for the record) | — |
 | autoresearch (in the fork) | Upstream tooling: `.claude/skills/autoresearch`, `.claude/commands/autoresearch*`, `.claude/hooks/autoresearch`, `claude-plugin/`, `guide/`; upstream `docs/*.md` describe autoresearch, not cscoach | with spec 07 |
 
 ## How to work
@@ -115,8 +117,8 @@ list it in the papers README and ask the user for the PDF (skill `add-paper`).
 
 ## When blocked
 
-- No fork / no access to the project repository → ask the user to fork `uditgoenka/autoresearch` and
-  grant access (M0.6); meanwhile work in the knowledge base.
+- No access to `plus-jan/cscoach` in the session → ask the user to grant it; never work in the archived
+  `plus-jan/cscoach-template`.
 - Missing CSDS access → ask the user (ADX subscription approval + AWS credentials). Meanwhile, build
   and test logic on synthetic data, and mark the task `[~]` with what still needs real data.
 - An assumption turns out false → set it to `refuted` with evidence, stop dependent work, and propose the

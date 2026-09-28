@@ -27,9 +27,8 @@ only after it exits 0 (run it, read the result, then commit). Check the remainin
    cite a finding. Findings use unique `F-NN` ids and their required fields.
    No task is ticked in Part C (it must move to Part A first).
 5. **Data rule:** no spec or task introduces a data source other than CSDS, or demo parsing (ADR-0003).
-6. **Code placement** (ADR-0007): implementation lives in the autoresearch fork (`src/cscoach/`,
-   `tests/`, `configs/`), never in `docs/`. In `plus-jan/cscoach-template` only `scripts/` (kbcheck,
-   migration, upstream sync) and `.github/workflows/kb-check.yml` are allowed. No data artefacts (`.pdf`, `.parquet`,
-   `.dem`) anywhere.
+6. **Code placement** (ADR-0007): implementation lives in `src/cscoach/`, tests in `tests/cscoach/`,
+   configs in `configs/`, reports in `reports/experiments/`; never in `docs/` or in the upstream
+   autoresearch paths. No data artefacts (`.pdf`, `.parquet`, `.dem`) anywhere.
 7. **Loops** (docs/specs/07): no assumption status, parameter, gate, finding or tick is justified by a
    loop metric or a persona command; only by a report meeting the CLAUDE.md "Evidence" standard.

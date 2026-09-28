@@ -38,3 +38,8 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   `parameters` keys that did not match docs/specs/06; fixed). Migration dry run against upstream v2.2.2:
   both histories merged, kbcheck and the four upstream test suites green. The fork itself still has to be
   created by the user · docs/specs/07_autoresearch_protocol.md
+- 2026-09-28 · M0.6 (partial) · Migration run on the fork `plus-jan/cscoach` (branch
+  `claude/cscoach-migration`): upstream autoresearch v2.2.2 (050e30d) + knowledge base with history
+  (c3d8f62); upstream README → guide/AUTORESEARCH.md; cscoach skills tracked; safety hooks enabled in
+  .claude/settings.json. Local checks: kbcheck OK; upstream tests hooks/orchestrator/regression/maintenance
+  all pass. Tick after the PR is merged with CI green · docs/adr/0007-autoresearch-fork.md
