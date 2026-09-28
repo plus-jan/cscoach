@@ -275,6 +275,18 @@
   parameters: [wp.map_prefixes]
   blocks: []
 
+- id: A-48
+  statement: >-
+    Player ranks mapped to tier units (piecewise linear over the A-11 cut-offs) are comparable enough across the
+    Premier, skill-group and FACEIT scales for a rank-prior WP feature, and the mean over a side's alive players is
+    meaningful when at least half of them have a known rank.
+  type: method
+  source: M3.2 design choice; rank-prior idea from [xenopoulos_pro_vs_amateur_wp]
+  status: open
+  test: [M3.2]
+  parameters: [rank prior scale, rank_min_known_share]
+  blocks: []
+
 # ---------------------------------------------------------------- windows & thresholds (estimable from data)
 - id: A-17
   statement: A kill counts as traded if the killer dies within 5 s.

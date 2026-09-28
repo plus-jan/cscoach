@@ -12,6 +12,12 @@ in ``n_players_no_side``, never guessed.
 - time: ``time_remaining_s`` = round clock (``round_time_s`` from freeze end) before the plant, bomb clock
   (``bomb_timer_s`` from the plant tick) after it (A-44, measured in MV.1: 115 s / 41 s).
 - weapons: v1 counts ``primaries`` (inv_primary > 0); weapon classes need the weapon-code decoding (MV.1).
+- rank prior (M3.2, docs/specs/03 WP, A-48): each player's rank from ``player_info`` of the snapshot's round
+  (Premier rating / skill group in ``rank``, FACEIT level in ``rank_platform``; 0 = unknown) on the match's scale
+  (``rank_scale`` = M1.4 ``tier_source``), mapped to tier units (piecewise linear over the A-11 cut-offs: cut-off i
+  → i, extrapolated with the neighbouring segment width, clipped to [0, 4]); ``ct_rank_alive`` / ``t_rank_alive`` =
+  mean over the side's alive players with a known rank, missing unless at least ``rank_min_known_share`` of them are
+  known; ``rank_diff_alive`` = CT − T (missing when either side is).
 
 Leakage: inputs are rows with tick ≤ t plus the round's freeze-end tick; ``DENYLIST`` names (docs/specs/02) never
 appear as columns (tested). Labels are attached only in the modelling table. Data provided by PureSkill.gg.
@@ -41,6 +47,31 @@ def denylisted(columns) -> list[str]:
     return [c for c in columns if any(re.search(p, c) for p in DENYLIST)]
 
 
+RANK_SOURCE = {"premier": "rank", "competitive": "rank", "faceit": "rank_platform"}
+
+
+def rank_units(values, scale: str, cutoffs: dict) -> np.ndarray:
+    v = np.asarray(values, dtype="float64")
+    if scale not in RANK_SOURCE or scale not in cutoffs:
+        return np.full(v.shape, np.nan)
+    c1, c2, c3 = cutoffs[scale]
+    u = np.interp(v, [c1 - (c2 - c1), c1, c2, c3, c3 + (c3 - c2)], [0.0, 1.0, 2.0, 3.0, 4.0])  # clips at 0 and 4
+    return np.where(np.isnan(v), np.nan, u)
+
+
+def rank_table(pi: pd.DataFrame, scale: str | None, cfg: dict) -> pd.DataFrame:
+    """Tier-unit rank per (round, player) from that round's ``player_info`` rows (A-48)."""
+    col = RANK_SOURCE.get(scale or "")
+    if col is None or col not in pi or "tier_cutoffs" not in cfg:
+        return pd.DataFrame({"round": pd.Series(dtype="int64"), "player_id_fixed": pd.Series(dtype="float64"),
+                             "rank_units": pd.Series(dtype="float64")})
+    r = pi[["round", "player_id_fixed", col]].dropna(subset=["player_id_fixed"]).drop_duplicates(
+        ["round", "player_id_fixed"], keep="last")
+    raw = pd.to_numeric(r[col], errors="coerce").astype("float64")
+    return pd.DataFrame({"round": r["round"].to_numpy(), "player_id_fixed": r["player_id_fixed"].astype("float64").to_numpy(),
+                         "rank_units": rank_units(raw.where(raw > 0).to_numpy(), scale, cfg["tier_cutoffs"])})
+
+
 def side_table(pi: pd.DataFrame, spawn: pd.DataFrame | None, cfg: dict) -> pd.DataFrame:
     primary = (pi.assign(player_id_fixed=pi["player_id_fixed"].astype("float64"), side=pi["team_code"].map(cfg["code_side"]))
                .dropna(subset=["side", "player_id_fixed"]).drop_duplicates(["round", "player_id_fixed"], keep="last")
@@ -66,6 +97,8 @@ def build_features(snap: pd.DataFrame, pi: pd.DataFrame, bomb: pd.DataFrame, rou
     base = snap.drop_duplicates(keys)[keys + ["source"]].reset_index(drop=True)
     no_side = p[p["side"].isna()].groupby(keys).size().rename("n_players_no_side")
     alive = p[p["is_alive"].astype(bool) & p["side"].notna()].copy()
+    ranks = rank_table(pi, ctx.get("rank_scale"), cfg)
+    alive = alive.merge(ranks.astype({"round": alive["round"].dtype}), on=["round", "player_id_fixed"], how="left")
     alive["primaries"] = (alive["inv_primary"].fillna(0) > 0).astype(int)
     for name, cols in UTILITY.items():
         alive[name] = alive[[c for c in cols if c in alive]].fillna(0).sum(axis=1)
@@ -82,6 +115,12 @@ def build_features(snap: pd.DataFrame, pi: pd.DataFrame, bomb: pd.DataFrame, rou
             col = f"{side}_{name}"
             out[col] = out[col].fillna(0) if col in out else 0
     out = out.drop(columns=["t_kits"])  # only CT can carry a defuse kit
+    grp = alive.groupby(keys + ["side"])["rank_units"]
+    rk = grp.mean().where(grp.count() >= cfg.get("rank_min_known_share", 0.5) * grp.size()).unstack("side")
+    rk = rk.reindex(columns=["CT", "T"]).rename(columns={"CT": "ct_rank_alive", "T": "t_rank_alive"}).reset_index()
+    rk.columns.name = None
+    out = out.merge(rk, on=keys, how="left")
+    out["rank_diff_alive"] = out["ct_rank_alive"] - out["t_rank_alive"]
     out["n_players_no_side"] = out["n_players_no_side"].fillna(0).astype(int)
     out["man_advantage"] = out["ct_alive"] - out["t_alive"]
 
@@ -134,8 +173,10 @@ def _one(args):
     if not snap_path.exists():
         return {"match_id": match_id, "ok": False, "reason": "no snapshots"}
     loader = GameDsLoader(reader=DsReaderFs(root_path=root, manifest_key=key))
+    pi_cols = {c["name"] for c_ in loader.manifest["channels"] if c_["channel"] == "player_info" for c in c_["columns"]}
     ch = loader.get_channels([
-        {"channel": "player_info", "columns": ["round", "player_id_fixed", "team_code"]},
+        {"channel": "player_info", "columns": [c for c in ["round", "player_id_fixed", "team_code", "rank", "rank_platform"]
+                                               if c in pi_cols]},
         {"channel": "bomb_state", "columns": ["round", "tick", "event_type", "player_id_fixed"]},
         {"channel": "player_spawn", "columns": ["round", "tick", "player_id_fixed", "player_team_code"]},
     ])
@@ -157,14 +198,15 @@ def build(cfg: dict, match_ids: list[str] | None = None) -> pd.DataFrame:
     out_dir.mkdir(parents=True, exist_ok=True)
     h = curator(cfg).get_dataframe(cfg["header_tome"])[["match_id", "key", "tick_rate", "map_name", "platform", "build_num"]]
     q = pd.read_parquet(root / "manifest" / "match_quality.parquet")[["match_id", "channel_set"]]
-    t = pd.read_parquet(root / "manifest" / "match_tiers.parquet")[["match_id", "tier"]]
+    t = pd.read_parquet(root / "manifest" / "match_tiers.parquet")[["match_id", "tier", "tier_source"]]
     have = {p.stem for p in (root / "derived" / "snapshots").glob("*.parquet")}
     ids = set(match_ids) if match_ids is not None else have
     m = h[h["match_id"].isin(ids & have)].merge(q, on="match_id").merge(t, on="match_id", how="left")
     jobs = []
     for r in m.itertuples():
         ctx = {"match_id": r.match_id, "tick_rate": int(r.tick_rate), "map_name": r.map_name, "platform": r.platform,
-               "tier": None if pd.isna(r.tier) else r.tier, "build_num": int(r.build_num), "channel_set": r.channel_set}
+               "tier": None if pd.isna(r.tier) else r.tier, "build_num": int(r.build_num), "channel_set": r.channel_set,
+               "rank_scale": None if pd.isna(r.tier_source) else r.tier_source}
         jobs.append((cfg["root"], r.key, r.match_id, ctx, cfg, str(out_dir)))
     with ProcessPoolExecutor(cfg.get("workers", 12)) as pool:
         return pd.DataFrame(list(pool.map(_one, jobs, chunksize=4)))

@@ -5,4 +5,9 @@ header_tome: header.2025-09-01,2026-09-28.full
 code_side: {2: T, 3: CT}      # A-15 (F-05)
 round_time_s: 115.0           # A-44 (verified in MV.1)
 bomb_timer_s: 41.0            # A-44 (measured plant → explode, MV.1)
+tier_cutoffs:                 # rank prior in tier units (A-48); same as configs/tiers.yaml (A-11, tested)
+  premier: [10000, 15000, 20000]
+  competitive: [7, 13, 17]
+  faceit: [4, 7, 10]
+rank_min_known_share: 0.5       # A-48: a side's rank needs half of its alive players ranked
 workers: 12

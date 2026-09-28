@@ -25,7 +25,8 @@ COLUMNS = ["match_id", "round_uid", "round", "tick", "second_in_round", "ct_aliv
            "ct_armor_sum", "t_armor_sum", "ct_helmets", "t_helmets", "ct_kits", "ct_equip_value", "t_equip_value",
            "ct_money_sum", "t_money_sum", "ct_primaries", "t_primaries", "ct_flashes", "t_flashes", "ct_smokes",
            "t_smokes", "ct_molotovs", "t_molotovs", "ct_hes", "t_hes", "man_advantage", "bomb_planted", "bomb_site",
-           "time_remaining_s", "map_name", "platform", "tier", "channel_set", "build_num"]
+           "time_remaining_s", "ct_rank_alive", "t_rank_alive", "rank_diff_alive", "map_name", "platform", "tier",
+           "channel_set", "build_num"]
 _STRINGS = {"match_id", "round_uid", "bomb_site", "map_name", "platform", "tier", "channel_set"}
 _INTS = {"round", "tick", "build_num"}
 # one schema for all matches: per-match files differ (int vs double counts, all-null tier/bomb_site)

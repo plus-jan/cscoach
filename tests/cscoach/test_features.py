@@ -119,3 +119,68 @@ def test_spawn_fills_missing_player_info_but_never_overrides():
     f = build_features(snaps(), pi, bomb(), rounds(), CTX, CFG, spawn=spawn).set_index("tick")
     assert f.loc[1000, "ct_alive"] == 2 and f.loc[1000, "n_players_no_side"] == 0  # player 1 from spawn
     assert f.loc[1000, "t_alive"] == 2  # player 0 stays CT (player_info wins), so T = players 2, 3
+
+
+# ---------------------------------------------------------------- rank prior (M3.2, A-48)
+CUTS = {"premier": [10000, 15000, 20000], "competitive": [7, 13, 17], "faceit": [4, 7, 10]}
+RCFG = {**CFG, "tier_cutoffs": CUTS, "rank_min_known_share": 0.5}
+
+
+def test_rank_units_piecewise_linear_over_tier_cutoffs():
+    from cscoach.data.features import rank_units
+
+    u = rank_units(np.array([5000, 10000, 12500, 20000, 25000, 40000, np.nan]), "premier", CUTS)
+    np.testing.assert_allclose(u, [0.0, 1.0, 1.5, 3.0, 4.0, 4.0, np.nan])
+    np.testing.assert_allclose(rank_units(np.array([1, 4, 10]), "faceit", CUTS), [0.0, 1.0, 3.0])
+    np.testing.assert_allclose(rank_units(np.array([18]), "competitive", CUTS), [3.25])
+    assert np.isnan(rank_units(np.array([12.0]), "unknown", CUTS)).all()
+
+
+def ranked_info(extra_round2=False):
+    pi = player_info().assign(rank=[12000, 14000, 16000, 0], rank_platform=0)
+    if extra_round2:  # later rounds must not change earlier snapshots
+        pi = pd.concat([pi, pi.assign(round=2, rank=[25000, 25000, 5000, 5000])], ignore_index=True)
+    return pi
+
+
+def test_rank_prior_of_alive_players_per_side():
+    f = build_features(snaps(), ranked_info(), bomb(), rounds(), {**CTX, "rank_scale": "premier"}, RCFG).set_index("tick")
+    r = f.loc[1000]
+    assert r["ct_rank_alive"] == pytest.approx(1.6)   # (1.4 + 1.8) / 2
+    assert r["t_rank_alive"] == pytest.approx(2.2)    # player 3 unranked (0) is ignored
+    assert r["rank_diff_alive"] == pytest.approx(-0.6)
+    assert f.loc[1640, "t_rank_alive"] == pytest.approx(2.2)  # player 3 dead
+
+
+def test_rank_prior_uses_only_the_snapshot_round():
+    ctx = {**CTX, "rank_scale": "premier"}
+    a = build_features(snaps(), ranked_info(), bomb(), rounds(), ctx, RCFG)
+    b = build_features(snaps(), ranked_info(extra_round2=True), bomb(), rounds(), ctx, RCFG)
+    pd.testing.assert_frame_equal(a, b)
+
+
+def test_rank_prior_missing_without_ranks_or_scale():
+    f = build_features(snaps(), player_info(), bomb(), rounds(), CTX, RCFG)
+    assert f[["ct_rank_alive", "t_rank_alive", "rank_diff_alive"]].isna().all().all()
+    g = build_features(snaps(), ranked_info(), bomb(), rounds(), {**CTX, "rank_scale": "unknown"}, RCFG)
+    assert g["rank_diff_alive"].isna().all()
+
+
+def test_feature_rank_cutoffs_match_tier_config():
+    import yaml
+
+    feats = yaml.safe_load(open("configs/features.yaml"))["tier_cutoffs"]
+    assert feats == yaml.safe_load(open("configs/tiers.yaml"))["tier_cutoffs"]  # one A-11 scale
+
+
+def test_rank_prior_needs_half_of_the_alive_side_known():
+    # one known rank among the side's alive players is not the side's rank (A-48)
+    pi = player_info().assign(rank=[12000, 0, 16000, 0], rank_platform=0)
+    f = build_features(snaps(), pi, bomb(), rounds(), {**CTX, "rank_scale": "premier"}, RCFG).set_index("tick")
+    assert f.loc[1000, "ct_rank_alive"] == pytest.approx(1.4)   # 1 of 2 known: share 0.5
+    three = snaps()
+    three = pd.concat([three, three[three["player_id_fixed"] == 1].assign(player_id_fixed=4.0)], ignore_index=True)
+    pi3 = pd.concat([pi, pd.DataFrame({"round": [1], "player_id_fixed": [4], "team_code": [3], "rank": [0],
+                                       "rank_platform": [0]})], ignore_index=True)
+    g = build_features(three, pi3, bomb(), rounds(), {**CTX, "rank_scale": "premier"}, RCFG).set_index("tick")
+    assert np.isnan(g.loc[1000, "ct_rank_alive"]) and np.isnan(g.loc[1000, "rank_diff_alive"])  # 1 of 3 known
