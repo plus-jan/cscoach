@@ -1,7 +1,8 @@
 """Snapshot sampler and as-of join of ``player_status`` (M2.2).
 
 Snapshot ticks per round (docs/specs/02 "snapshots"): every event tick of the configured channels plus a fixed
-cadence (``cadence_s``, A-22) from the freeze-end tick (included) up to the round-end tick (excluded). Each
+cadence (``cadence_s``, A-22) from the freeze-end tick (included) up to the tick the round was decided (excluded;
+``rounds.decided_tick``, MV.1 — the v30 ``round_end.tick`` lies ~6.7 s after the decision). Each
 snapshot gets one row per player with the latest ``player_status`` row whose tick is ≤ the snapshot tick
 (same round only; a row from another round is never carried over). ``staleness_ticks`` records the gap.
 
@@ -123,7 +124,8 @@ def _one(args):
         + [{"channel": "player_status", "columns": ["round", "tick", "player_id_fixed", *cols]}]
     )
     tick_rate = int(loader.get_channel({"channel": "header", "columns": ["tick_rate"]})["tick_rate"].iloc[0])
-    rounds = pd.read_parquet(rounds_path, columns=["round", "freeze_end_tick", "end_tick"])
+    rounds = (pd.read_parquet(rounds_path, columns=["round", "freeze_end_tick", "decided_tick"])
+              .rename(columns={"decided_tick": "end_tick"}))  # window ends when the round was decided
     events = {c: ch[c] for c in ev_names}
     deaths = ch["player_death"]
     snap = snapshots(rounds, events, ch["player_status"], cols, deaths, tick_rate=tick_rate,

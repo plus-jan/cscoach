@@ -5,7 +5,7 @@ import pytest
 
 from cscoach.data.rounds import build_rounds, check_rounds, sides_by_round
 
-CFG = {"regulation_rounds": 24, "overtime_half_rounds": 3, "flip_winner_after_swap": ["v30"],
+CFG = {"regulation_rounds": 24, "overtime_half_rounds": 3, "flip_winner_after_swap": ["v30"], "v30_end_offset_ticks_64": 429,
        "code_side": {2: "T", 3: "CT"}}
 
 
@@ -124,3 +124,25 @@ def test_overtime_recovers_true_winners(channel_set):
     assert ["A" if w == "start_ct" else "B" for w in r["winner_team"]] == truth
     assert list(r.loc[r["side_swap_before"], "round"]) == [13, 28, 34]
     assert check_rounds(r, final_hi=19, final_lo=15, header_winner=19)["ok"]
+
+
+def test_decided_tick_v42_is_end_tick():
+    from cscoach.data.rounds import decided_ticks
+
+    r = pd.DataFrame({"round": [1], "end_tick": [5000], "winner_side": ["CT"], "freeze_end_tick": [1000]})
+    d = decided_ticks(r, deaths=pd.DataFrame(columns=["round", "tick", "player_team_code"]),
+                      bomb=pd.DataFrame(columns=["round", "tick", "event_type"]), players={1: {"T": 5, "CT": 5}},
+                      channel_set="v42", tick_rate=64, cfg={**CFG, "v30_end_offset_ticks_64": 429})
+    assert list(d) == [5000]
+
+
+def test_decided_tick_v30_uses_event_or_constant_offset():
+    from cscoach.data.rounds import decided_ticks
+
+    r = pd.DataFrame({"round": [1, 2, 3], "end_tick": [5429, 9525, 20000], "winner_side": ["T", "CT", "CT"],
+                      "freeze_end_tick": [1000, 6000, 11000]})
+    bomb = pd.DataFrame({"round": [1], "tick": [5000], "event_type": ["bomb_exploded"]})
+    deaths = pd.DataFrame({"round": [2] * 5, "tick": [7000, 7100, 7200, 7300, 9000], "player_team_code": [2] * 5})
+    d = decided_ticks(r, deaths=deaths, bomb=bomb, players={1: {"T": 5, "CT": 5}, 2: {"T": 5, "CT": 5}, 3: {"T": 5, "CT": 5}},
+                      channel_set="v30", tick_rate=64, cfg={**CFG, "v30_end_offset_ticks_64": 429})
+    assert list(d) == [5000, 9000, 20000 - 429]  # explosion; 5th T death (event earlier than end - 429); time-out

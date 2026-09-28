@@ -39,6 +39,7 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | premier_min_rating (type-free scale inference) | 19 | A-15 |
 | rounds.code_side (`team_code`, `winner_team_code`) | 2 = T, 3 = CT | A-15 |
 | rounds.flip_winner_after_swap (channel sets) | v30 (first round of every half: side swaps and overtime-block starts) | A-15 |
+| rounds.v30_end_offset_ticks_64 (v30 `round_end.tick` after the decision; decided_tick = min(end − offset, deciding event)) | 429 ticks at 64 Hz (6.7 s) | A-16 |
 | match tier rule | median of known player tiers | A-12 |
 | min players with known rank | 6 | A-12 |
 

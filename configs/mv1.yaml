@@ -1,0 +1,7 @@
+# MV.1 collector (verification experiment; no loop).
+root: /media/jan/merged/cs2coach
+tome_root: /media/jan/merged/cs2coach/tomes
+header_tome: header.2025-09-01,2026-09-28.full
+per_channel_set: 200
+seed: 20260928
+workers: 12

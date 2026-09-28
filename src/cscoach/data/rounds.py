@@ -12,7 +12,11 @@ Decoding (M2.1 report, A-15):
 - ``round_state`` scores are not used for winners (their convention differs by parser and swaps on display);
   they are the independent check: final team scores must equal the last ``round_state`` scores and the header
   winner score.
-- ``win_reason_code``: v30 only carries 8/9 (winner side); v42 carries the full reason (mapping: MV.1).
+- ``win_reason_code``: v30 only carries 8/9 (winner side); v42 carries the full reason (MV.1 table).
+- ``decided_tick`` (MV.1): the tick the round was decided. v42 ``round_end.tick`` is that tick (explosion/defuse
+  gap 0; ``round_officially_ended`` a constant 448 ticks later). The v30 ``round_end.tick`` is 19–20 ticks before
+  ``round_officially_ended``, i.e. ~6.7 s after the decision; there ``decided_tick`` = min(end − 429 ticks at 64 Hz,
+  deciding event: explosion, defuse, or the death that eliminated the losing side). Snapshots end here.
 - ``is_overtime``: rounds after ``regulation_rounds`` (the ``pop_overtime`` rule, max_rounds_csgo = 24).
 
 Data provided by PureSkill.gg.
@@ -80,6 +84,27 @@ def build_rounds(re_: pd.DataFrame, rs: pd.DataFrame, pi: pd.DataFrame, rstart: 
     return r[cols]
 
 
+def decided_ticks(r: pd.DataFrame, *, deaths: pd.DataFrame, bomb: pd.DataFrame, players: dict, channel_set: str,
+                  tick_rate: int, cfg: dict) -> pd.Series:
+    if channel_set not in cfg["flip_winner_after_swap"]:  # v42: round_end.tick is exact
+        return r["end_tick"].astype("int64").rename("decided_tick")
+    offset = int(round(cfg["v30_end_offset_ticks_64"] * tick_rate / 64))
+    side_code = {"T": 2, "CT": 3}
+    out = []
+    for rnd, end, winner in zip(r["round"], r["end_tick"], r["winner_side"]):
+        cand = [int(end) - offset]
+        b = bomb[(bomb["round"] == rnd) & bomb["event_type"].isin(["bomb_exploded", "bomb_defused"])]
+        if len(b):
+            cand.append(int(b["tick"].min()))
+        loser = "T" if winner == "CT" else "CT"
+        n = players.get(rnd, {}).get(loser, 0)
+        dl = deaths[(deaths["round"] == rnd) & (deaths["player_team_code"] == side_code[loser])]["tick"].sort_values()
+        if n > 0 and len(dl) >= n:
+            cand.append(int(dl.iloc[n - 1]))
+        out.append(min(cand))
+    return pd.Series(out, index=r.index, name="decided_tick", dtype="int64")
+
+
 def check_rounds(r: pd.DataFrame, *, final_hi: int, final_lo: int, header_winner: int) -> dict:
     a = int((r["winner_team"] == "start_ct").sum())
     b = int(len(r) - a)
@@ -110,9 +135,17 @@ def _one(args):
             {"channel": "round_state", "columns": ["round", "tick", "event_type", "is_warmup"]},
             {"channel": "round_start", "columns": ["round", "tick"]},
             {"channel": "player_info", "columns": ["round", "player_id_fixed", "team_code"]},
+            {"channel": "player_death", "columns": ["round", "tick", "player_team_code"]},
+            {"channel": "bomb_state", "columns": ["round", "tick", "event_type"]},
+            {"channel": "header", "columns": ["tick_rate"]},
         ])
         r = build_rounds(ch["round_end"], ch["round_state"], ch["player_info"], ch["round_start"],
                          channel_set=channel_set, cfg=cfg)
+        pi = ch["player_info"][ch["player_info"]["team_code"].isin([2, 3])]
+        players = {rnd: {cfg["code_side"][c]: int(n) for c, n in g.groupby("team_code").size().items()}
+                   for rnd, g in pi.groupby("round")}
+        r["decided_tick"] = decided_ticks(r, deaths=ch["player_death"], bomb=ch["bomb_state"], players=players,
+                                          channel_set=channel_set, tick_rate=int(ch["header"]["tick_rate"].iloc[0]), cfg=cfg)
     except Exception as err:
         return {"match_id": match_id, "ok": False, "reason": f"error: {err!r}"[:200]}
     r.insert(0, "match_id", match_id)
