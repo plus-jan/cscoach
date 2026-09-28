@@ -12,6 +12,7 @@ dependencies = [
   "pyyaml>=6.0.3",
   "botocore[crt]>=1.43.75",
   "scikit-learn>=1.9.1",
+  "scipy>=1.18.1",
 ]
 
 [dependency-groups]
