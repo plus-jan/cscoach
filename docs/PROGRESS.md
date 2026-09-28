@@ -101,3 +101,17 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
 - 2026-09-28 · MV.14 · Gated loop false-keep simulation (A-33, known truth; 200 loops × 15 variants per cell):
   corrected FKR 0.045 [0.016, 0.074] and power 0.94 at 6,900 training matches (pooled FKR 0.050); uncorrected FKR
   ≈ 0.3; power < 80% below ~5,000 matches. A-42 supported; `loop.min_train_matches` 5,000. F-09 · reports/experiments/20260928-1720_mv14_false_keep/report.md
+- 2026-09-28 · M2.3 · Feature distributions per platform × tier on the refreshed data (10,036 clean seeded matches,
+  206,424 rounds, 21.7 M snapshots; v30 8,253 / v42 1,783): freeze-end CT equipment value rises with tier (median of per-match means,
+  Steam 18.7k low → 19.7k semipro, FACEIT 19.6k → 20.5k) and unspent CT money falls (Steam 10.8k → 8.8k); plant
+  share 0.46–0.52; round length 61–65 s; `time_remaining_s` < 0 in 0.005% of rows, no-side 0.4% ·
+  reports/experiments/20260928-1949_m2.3_feature_distributions/summary.json
+- 2026-09-28 · M2.4 (re-run) · Leakage audit on the refreshed data (10,038 matches, 206,470 freeze-end snapshots):
+  max AUC 0.626 [0.623, 0.628] (ct_equip_value) → gate passes; man_advantage peaks at 0.877 (60–80 s). F-10 ·
+  reports/experiments/20260928-2001_m2.4_leakage_audit_refresh/summary.json
+- 2026-09-28 · M3 · WP table `derived/wp_table_v1.parquet` (21,726,857 rows) now streamed with a fixed schema
+  (the in-memory build was OOM-killed; peak 2.7 GB); sealed split `splits/wp_v1` (seed 20260928).
+- 2026-09-28 · M3.1 · Baseline WP, grouped 5-fold out-of-fold on 6,347 training matches (13.7 M rows, 130,622
+  rounds): logistic log-loss 0.516 [0.514, 0.518], Brier 0.175, ECE 0.0085, ESS 148k; map-only 0.693, base rate 0.693
+  (pro CS:GO: XGBoost 0.535 / map-only 0.692). ECE per tier 0.009–0.015; worst in lopsided alive states (1v0 0.18)
+  and late rounds (0.038). F-11 · reports/experiments/20260928-2007_m3.1_baseline_wp/summary.json

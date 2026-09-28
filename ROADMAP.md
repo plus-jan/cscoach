@@ -92,14 +92,15 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [x] **M2.2 — Snapshot sampler** (event ticks + cadence [A-22]); as-of join of `player_status` ≤ tick.
   **DoD:** leakage test (removing future rows changes nothing). Done: `cscoach.data.snapshots`; leakage check
   300/300 real matches + unit tests; dead players from `player_death` (F-06). Report `reports/experiments/20260928-1623_m2.2_snapshots/`.
-- [~] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
+- [x] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature
   distributions per tier/platform in PROGRESS.
-  Partial (2026-09-28): `cscoach.data.features` + denylist and truncation tests done; side from `player_info`
-  (99.97% vs death-time side) with `player_spawn` fill; ghost rows of absent players removed from snapshots.
-  Open: distributions per tier/platform after the M1.5 top-up refresh.
+  Done: `cscoach.data.features` + denylist and truncation tests; side from `player_info` (99.97% vs death-time side)
+  with `player_spawn` fill; ghost rows of absent players removed from snapshots. Distributions on the refreshed data
+  (10,036 matches, 21.7 M snapshots). Report `reports/experiments/20260928-1949_m2.3_feature_distributions/`.
 - [x] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end. Done:
   `cscoach.verify.leakage_audit`; max freeze-end AUC 0.630 (ct_equip_value, CI 0.615–0.644), 300 matches; re-run
-  with M2.3 on the refreshed data. Report `reports/experiments/20260928-1705_m2.4_leakage_audit/`.
+  with M2.3 on the refreshed data: max 0.626 (10,038 matches, F-10). Reports `reports/experiments/20260928-1705_m2.4_leakage_audit/`,
+  `reports/experiments/20260928-2001_m2.4_leakage_audit_refresh/`.
 - [x] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
   `cscoach.loops.gated_verify` (prints the budget-corrected CI lower bound of the improvement vs the
   champion on match-grouped out-of-fold predictions, training matches only) and `cscoach.loops.guard`
@@ -136,8 +137,11 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
 
 ## M3 — Win Probability v1 (backbone; needed under every branch)
 
-- [ ] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map, reported next to the pro CS:GO
+- [x] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map, reported next to the pro CS:GO
   benchmark in [xenopoulos_valuing_actions_csgo] (log-loss 0.535 XGBoost / 0.692 map-only).
+  Done: `cscoach.models.wp_data` (table, sealed split `wp_v1`), `cscoach.models.wp_baseline`; logistic baseline
+  out-of-fold log-loss 0.516 [0.514, 0.518] on 6,347 training matches (map-only 0.693); F-11. Report
+  `reports/experiments/20260928-2007_m3.1_baseline_wp/`.
 - [ ] **M3.2 — GBDT WP** (monotone, tier/platform features, rank-prior features via ablation), with
   hyperparameters tuned by grouped CV [A-29]. Refs: [pandaskill], [xenopoulos_pro_vs_amateur_wp].
 - [ ] **M3.3 — Calibration layer** per tier/platform [A-28].

@@ -197,3 +197,33 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: after the top-up refresh, M2.3 and the M2.4 re-run, then M3.1 — rationale: the loop harness is ready and
   valid at the expected size, so M3.2 tuning can use it once the baseline exists.
 - supersedes: —
+
+### F-10 — No single-feature leakage at freeze end on the refreshed data
+- date: 2026-09-28 · task: M2.4 · decision: —
+- question: Does F-08 hold on the full refreshed state table (A-46: AUC > 0.99)?
+- result: yes. Best: ct_equip_value AUC 0.626 [0.623, 0.628] (206,470 freeze-end snapshots, 10,038 matches, cluster
+  bootstrap); CT buy features 0.61–0.63. Man advantage peaks at 0.877 (60–80 s).
+- evidence: `reports/experiments/20260928-2001_m2.4_leakage_audit_refresh/summary.json`; commit c2c26db; config
+  `configs/leakage_audit.yaml` (b736f104b99f).
+- confidence: high (full refreshed sample, narrow CIs).
+- changes: none.
+- next step: M3.1 on the refreshed table — rationale: the state table is clean for the WP baseline.
+- supersedes: F-08
+
+### F-11 — A six-feature logistic WP already beats the pro CS:GO XGBoost log-loss; map alone carries nothing
+- date: 2026-09-28 · task: M3.1 · decision: —
+- question: What do the base-rate, map-only and logistic baselines reach on CSDS (reference for M3.2)?
+- result: out-of-fold on 6,347 training matches (13.7 M rows): logistic 0.516 [0.514, 0.518] vs map-only 0.693
+  [0.693, 0.693] (Δ 0.177 [0.175, 0.179]); base rate 0.693. ECE 0.0085 overall, per tier 0.009–0.015, per platform
+  0.008–0.011, per map ≤ 0.027 (except cs_office). Poor calibration where a linear model cannot fit: alive states
+  with a side wiped out (1v0 0.18, 3v0 0.15), 5v4 0.056, late rounds 0.038, early 0.023. The pro benchmark (0.535)
+  is on a different game, tier mix and sampling, so the comparison is context only.
+- evidence: `reports/experiments/20260928-2007_m3.1_baseline_wp/` (summary.json, strata.csv); commit a19c505; config
+  `configs/wp_baseline.yaml`; split `wp_v1` (sealed folds unread).
+- confidence: medium (training folds only; no gates are applied at M3.1).
+- changes: none. Open data issue: `cs_office` (hostage map, 44 training matches) is in the eligible set and should
+  be excluded from bomb-defusal WP.
+- next step: M3.2 GBDT WP (non-linear alive × time × bomb interactions) — rationale: the calibration misses sit in
+  exactly the interactions a tree model captures.
+- supersedes: —
+

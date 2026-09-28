@@ -1,0 +1,71 @@
+{
+  "commit": "a19c505",
+  "config": "configs/wp_baseline.yaml",
+  "config_sha256_12": "df4336abab3a",
+  "split": "wp_v1",
+  "training_matches": 6347,
+  "training_rows": 13731701,
+  "overall": {
+    "base_rate": {
+      "rows": 13731701,
+      "matches": 6347,
+      "rounds": 130622,
+      "logloss": 0.6930285800916862,
+      "logloss_ci": [
+        0.6929214716063605,
+        0.6931274385656773
+      ],
+      "brier": 0.24994070107672597,
+      "brier_ci": [
+        0.2498871516265725,
+        0.24999012579801105
+      ],
+      "ece": 0.002950459670797251
+    },
+    "map_only": {
+      "rows": 13731701,
+      "matches": 6347,
+      "rounds": 130622,
+      "logloss": 0.6928776538160147,
+      "logloss_ci": [
+        0.6926490960994163,
+        0.6930824232470159
+      ],
+      "brier": 0.24986412785268824,
+      "brier_ci": [
+        0.24975030678947907,
+        0.249966085730708
+      ],
+      "ece": 0.005418109876882609
+    },
+    "baseline_wp": {
+      "rows": 13731701,
+      "matches": 6347,
+      "rounds": 130622,
+      "logloss": 0.5159836885996353,
+      "logloss_ci": [
+        0.5141702805034365,
+        0.5179509946382124
+      ],
+      "brier": 0.17498230939400689,
+      "brier_ci": [
+        0.17426952561803488,
+        0.17573857817729466
+      ],
+      "ece": 0.008546777311305213,
+      "ess_rounds_residual": 148185.84084887741
+    }
+  },
+  "delta_logloss_map_only_minus_baseline": {
+    "mean": 0.17689396521637957,
+    "ci": [
+      0.17494561525192673,
+      0.1787251387781341
+    ]
+  },
+  "benchmark_pro_csgo": {
+    "xgboost": 0.5353,
+    "map_only": 0.6917,
+    "source": "xenopoulos_valuing_actions_csgo"
+  }
+}
