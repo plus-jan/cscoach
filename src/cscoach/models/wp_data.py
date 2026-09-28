@@ -1,6 +1,7 @@
 """WP modelling table and the sealed WP split (M3).
 
-- ``build_table``: one row per snapshot of the eligible matches (clean, seeded, reconciled rounds) with the state
+- ``build_table``: one row per snapshot of the eligible matches (clean, seeded, reconciled rounds, bomb-defusal maps
+  ``map_prefixes``, A-47) with the state
   features and the label ``y_ct_win`` (attached only here, docs/specs/02); written once to
   ``<root>/derived/wp_table_v1.parquet``.
 - ``build_split``: the one-time WP split in ``<root>/splits/wp_v1/split.json`` (docs/specs/04 §1): matches of the newest
@@ -42,17 +43,23 @@ def _one(args):
     return pa.Table.from_pandas(f[SCHEMA.names], preserve_index=False).cast(SCHEMA)
 
 
-def eligible(root: Path) -> pd.DataFrame:
+def eligible(root: Path, map_prefixes: tuple[str, ...] | None = None) -> pd.DataFrame:
     chk = pd.read_parquet(root / "manifest" / "rounds_check.parquet")
     e = chk[chk["ok"] & chk["clean"] & chk["in_seeded_sample"].fillna(False).astype(bool)]
     have = {p.stem for p in (root / "derived" / "state_features").glob("*.parquet")}
-    return e[e["match_id"].isin(have)]
+    e = e[e["match_id"].isin(have)]
+    if map_prefixes:  # hostage maps (cs_*) have other win conditions and no bomb (A-47)
+        maps = pd.read_parquet(root / "manifest" / "match_quality.parquet", columns=["match_id", "map_name"])
+        keep = maps.loc[maps["map_name"].str.startswith(tuple(map_prefixes)), "match_id"]
+        e = e[e["match_id"].isin(keep)]
+    return e
 
 
-def build_table(root: Path, workers: int = 12, batch_rows: int = 1_000_000) -> Path:
+def build_table(root: Path, workers: int = 12, batch_rows: int = 1_000_000,
+                map_prefixes: tuple[str, ...] | None = None) -> Path:
     """Streams the per-match parts into row groups of ~``batch_rows`` (the full table does not fit in memory as
     pandas); written to a temporary file and renamed, so an interrupted build leaves no partial table."""
-    ids = list(eligible(root)["match_id"])
+    ids = list(eligible(root, map_prefixes)["match_id"])
     out = root / "derived" / "wp_table_v1.parquet"
     tmp = out.with_suffix(".parquet.tmp")
     buf, n = [], 0
@@ -81,7 +88,7 @@ def build_split(root: Path, cfg: dict) -> dict:
     from cscoach.data.quality import curator
 
     h = curator(cfg).get_dataframe(cfg["header_tome"])[["match_id", "build_num"]]
-    g = eligible(root)[["match_id"]].merge(q, on="match_id").merge(t, on="match_id", how="left").merge(h, on="match_id")
+    g = eligible(root, tuple(cfg.get("map_prefixes") or ()))[["match_id"]].merge(q, on="match_id").merge(t, on="match_id", how="left").merge(h, on="match_id")
     g["tier"] = g["tier"].fillna("null")
     temporal = set(g.loc[g["build_num"] >= cfg["temporal_from_build"], "match_id"])
     rest = g[~g["match_id"].isin(temporal)].copy()
@@ -105,7 +112,7 @@ def main(argv=None) -> int:
     cfg = yaml.safe_load(args.config.read_text())
     root = Path(cfg["root"])
     if args.step == "table":
-        print(build_table(root))
+        print(build_table(root, map_prefixes=tuple(cfg.get("map_prefixes") or ())))
     else:
         body = build_split(root, cfg)
         print(json.dumps(pd.Series(body["split"]).value_counts().to_dict()))

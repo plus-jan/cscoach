@@ -20,7 +20,7 @@ def _features(match_id: str, n: int, *, int_counts: bool, tier) -> pd.DataFrame:
     return f
 
 
-def _root(tmp_path, matches):
+def _root(tmp_path, matches, maps=None):
     (tmp_path / "derived" / "state_features").mkdir(parents=True)
     (tmp_path / "derived" / "rounds").mkdir(parents=True)
     (tmp_path / "manifest").mkdir()
@@ -30,6 +30,9 @@ def _root(tmp_path, matches):
             tmp_path / "derived" / "rounds" / f"{m}.parquet", index=False)
     pd.DataFrame({"match_id": list(matches), "ok": True, "clean": True, "in_seeded_sample": True}).to_parquet(
         tmp_path / "manifest" / "rounds_check.parquet", index=False)
+    maps = maps or {}
+    pd.DataFrame({"match_id": list(matches), "map_name": [maps.get(m, "de_dust2") for m in matches]}).to_parquet(
+        tmp_path / "manifest" / "match_quality.parquet", index=False)
     return tmp_path
 
 
@@ -46,3 +49,11 @@ def test_build_table_streams_mixed_schemas(tmp_path):
     assert str(schema.field("tier").type) == "string" and str(schema.field("tick").type) == "int64"
     assert t.loc[t["match_id"] == "m2", "tier"].eq("high").all() and t.loc[t["match_id"] == "m1", "tier"].isna().all()
     assert not list(root.glob("derived/*.tmp"))
+
+
+def test_build_table_keeps_only_bomb_defusal_maps(tmp_path):
+    # hostage maps (cs_*) have other win conditions and no bomb (A-47)
+    root = _root(tmp_path, {"m1": _features("m1", 4, int_counts=True, tier=None),
+                            "m2": _features("m2", 4, int_counts=True, tier=None)}, maps={"m2": "cs_office"})
+    t = pd.read_parquet(build_table(root, workers=1, map_prefixes=("de_",)))
+    assert set(t["match_id"]) == {"m1"}
