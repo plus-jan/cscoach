@@ -16,6 +16,8 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 import yaml
 
 COLUMNS = ["match_id", "round_uid", "round", "tick", "second_in_round", "ct_alive", "t_alive", "ct_hp_sum", "t_hp_sum",
@@ -23,6 +25,12 @@ COLUMNS = ["match_id", "round_uid", "round", "tick", "second_in_round", "ct_aliv
            "ct_money_sum", "t_money_sum", "ct_primaries", "t_primaries", "ct_flashes", "t_flashes", "ct_smokes",
            "t_smokes", "ct_molotovs", "t_molotovs", "ct_hes", "t_hes", "man_advantage", "bomb_planted", "bomb_site",
            "time_remaining_s", "map_name", "platform", "tier", "channel_set", "build_num"]
+_STRINGS = {"match_id", "round_uid", "bomb_site", "map_name", "platform", "tier", "channel_set"}
+_INTS = {"round", "tick", "build_num"}
+# one schema for all matches: per-match files differ (int vs double counts, all-null tier/bomb_site)
+SCHEMA = pa.schema([(c, pa.string() if c in _STRINGS else pa.int64() if c in _INTS
+                     else pa.bool_() if c == "bomb_planted" else pa.float32()) for c in COLUMNS]
+                   + [("y_ct_win", pa.int8())])
 
 
 def _one(args):
@@ -31,10 +39,7 @@ def _one(args):
     r = pd.read_parquet(Path(root) / "derived" / "rounds" / f"{m}.parquet", columns=["round", "winner_side"])
     f = f.merge(r, on="round")
     f["y_ct_win"] = (f.pop("winner_side") == "CT").astype("int8")
-    for c in f.columns:
-        if f[c].dtype == "float64":
-            f[c] = f[c].astype("float32")
-    return f
+    return pa.Table.from_pandas(f[SCHEMA.names], preserve_index=False).cast(SCHEMA)
 
 
 def eligible(root: Path) -> pd.DataFrame:
@@ -44,13 +49,23 @@ def eligible(root: Path) -> pd.DataFrame:
     return e[e["match_id"].isin(have)]
 
 
-def build_table(root: Path, workers: int = 12) -> Path:
+def build_table(root: Path, workers: int = 12, batch_rows: int = 1_000_000) -> Path:
+    """Streams the per-match parts into row groups of ~``batch_rows`` (the full table does not fit in memory as
+    pandas); written to a temporary file and renamed, so an interrupted build leaves no partial table."""
     ids = list(eligible(root)["match_id"])
-    with ProcessPoolExecutor(workers) as pool:
-        parts = list(pool.map(_one, [(str(root), m) for m in ids], chunksize=32))
-    t = pd.concat(parts, ignore_index=True)
     out = root / "derived" / "wp_table_v1.parquet"
-    t.to_parquet(out, index=False)
+    tmp = out.with_suffix(".parquet.tmp")
+    buf, n = [], 0
+    with ProcessPoolExecutor(workers) as pool, pq.ParquetWriter(tmp, SCHEMA) as w:
+        for part in pool.map(_one, [(str(root), m) for m in ids], chunksize=32):
+            buf.append(part)
+            n += part.num_rows
+            if n >= batch_rows:
+                w.write_table(pa.concat_tables(buf))
+                buf, n = [], 0
+        if buf:
+            w.write_table(pa.concat_tables(buf))
+    tmp.replace(out)
     return out
 
 

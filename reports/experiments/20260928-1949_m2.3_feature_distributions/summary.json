@@ -1,0 +1,15 @@
+{
+  "commit": "c2c26db",
+  "config": "configs/features.yaml",
+  "scope": "clean seeded canonical 5v5 matches with reconciled rounds, after the M1.5 top-up",
+  "matches": 10036,
+  "rounds": 206424,
+  "snapshots": 21726857,
+  "fe_5v5_share_median": 1.0,
+  "time_remaining_neg_share_mean": 5.012624321837809e-05,
+  "no_side_share_mean": 0.0042529130693906335,
+  "by_channel_set_matches": {
+    "v30": 8253,
+    "v42": 1783
+  }
+}
