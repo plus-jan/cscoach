@@ -65,16 +65,17 @@ the assumption ID next to each key. Changing a value = updating this table + the
 
 | Key | Initial value | Assumption |
 |---|---|---|
-| start money / max money / OT start money | 800 / 16000 / 12500 | A-13 |
-| rounds per half (regulation 24) / OT half | 12 / 3 | A-13 |
-| round win: elimination / time (CT) / defused / exploded | 3250 / 3250 / 3500 / 3500 | A-13 |
-| loss bonus ladder | 1400, 1900, 2400, 2900, 3400 | A-13 |
-| loss counter at half start / on win | 1 / decrement | A-13 |
-| T loss after plant bonus / planter / defuser | 800 / 300 / 300 | A-13 |
-| kill reward default / SMG / P90 / shotgun / XM1014 / AWP / knife / Zeus / CZ75 | 300 / 600 / 300 / 900 / 600 / 100 / 1500 / 0 / 100 | A-13 |
-| round time / bomb timer / freeze time (s) | 115 / 40 / 15 | A-14 |
-| tick rate | read `header.tick_rate` (expect 64) | A-16 |
-| `pop_overtime` max rounds | 24 | A-13 |
+| start money / max money / OT start money | 800 / 16000 / 10000 (MV.1; was 12500) | A-45 |
+| rounds per half (regulation 24) / OT half | 12 / 3 | A-45 |
+| round win: elimination / time (CT) / defused / exploded | 3250 / 3250 / 3500 / 3500 | A-45 |
+| loss bonus ladder | 1400, 1900, 2400, 2900, 3400 | A-45 |
+| loss counter at half/OT-block start / on loss / on win | 1 / +1 (cap 5) / −2 (floor 0) (MV.1; was "decrement") | A-45 |
+| T loss after plant bonus / planter / defuser | 600 (MV.1; was 800) / 300 / 300 | A-45 |
+| CT team bonus per T killed in the round (win or loss, max 5) | 50 (MV.1, new) | A-45 |
+| kill reward default / SMG / P90 / shotgun / XM1014 / AWP / knife / Zeus / CZ75 | 300 / 600 / 300 / 900 / 600 / 100 / 1500 / 100 / 300 (MV.1; Zeus was 0, CZ75 was 100) | A-45 |
+| round time / bomb timer / freeze time (s) | 115 / 41 (plant → explode event, MV.1; was 40) / 15 or 20 per match (MV.1; was 15) | A-44 |
+| tick rate | read `header.tick_rate` (64 in all checked matches, MV.1) | A-16 |
+| `pop_overtime` max rounds | 24 | A-45 |
 
 ## Features, windows, valuation
 

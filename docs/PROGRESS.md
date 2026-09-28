@@ -86,3 +86,8 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   context; denylist + truncation tests. 300 matches: 703,293 rows, 0.5 s/match; freeze-end 5v5 in 93.4% of rounds;
   0.4% of snapshots with a player without side. Found: ghost rows of absent players (fixed in snapshots),
   `time_remaining_s` < 0 in 0.6% of rows (timers → MV.1). Distributions per tier/platform after the top-up.
+- 2026-09-28 · MV.1 · Codes decoded (sides, win reasons v42, hit groups, weapon item indices; site from place_name),
+  timers (round 115 s, bomb 41 s, freeze 15/20 s), ticks (64 Hz, gaps ≤ 7 ticks, merges ≤ 1 tick), economy rules
+  (loss counter −2 per win, plant bonus 600, CT +50 per T kill, OT 10,000; money 96.2–97.1% with one credit).
+  v30 round ends 6.7 s late → `decided_tick`. A-13/A-14 refuted → A-44/A-45; A-15/A-16 supported. F-07 ·
+  docs/data/csds_decoding.md · reports/experiments/20260928-1657_mv1_decoding/report.md

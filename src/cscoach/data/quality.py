@@ -11,7 +11,7 @@ Nothing is dropped and the raw collection is only read: duplicates and defects b
   warmup rows after the first round end, tick gaps, abandonment (a human disconnects before the last
   round end and never spawns again).
 
-Parameters: ``configs/quality.yaml`` (docs/specs/06, assumptions A-13, A-36, A-40, A-43).
+Parameters: ``configs/quality.yaml`` (docs/specs/06, assumptions A-45, A-36, A-40, A-43).
 Data provided by PureSkill.gg.
 """
 from __future__ import annotations

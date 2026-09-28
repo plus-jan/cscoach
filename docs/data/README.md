@@ -92,6 +92,8 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
 14. **Dead players (M2.2, F-06):** `player_status` stops at a player's death and resumes after the round end;
    derive alive/dead from `player_death`, never from the last `player_status` row.
 
+**Decoding tables and verified game rules:** [`csds_decoding.md`](csds_decoding.md) (MV.1).
+
 ## Access procedure (for the implementing agent)
 
 **Current setup (M1.2):** ADX dataset `f49be2ef387af522a7b6f000158113e0` (`…-csds-0`, us-east-1; a

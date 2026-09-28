@@ -9,7 +9,7 @@ in ``n_players_no_side``, never guessed.
 - bomb: ``bomb_planted`` from ``bomb_state`` ``bomb_planted`` with tick ≤ t; ``bomb_site_code`` is the raw
   per-map entity code (A/B mapping in MV.1).
 - time: ``time_remaining_s`` = round clock (``round_time_s`` from freeze end) before the plant, bomb clock
-  (``bomb_timer_s`` from the plant tick) after it (A-14, verified in MV.1).
+  (``bomb_timer_s`` from the plant tick) after it (A-44, measured in MV.1: 115 s / 41 s).
 - weapons: v1 counts ``primaries`` (inv_primary > 0); weapon classes need the weapon-code decoding (MV.1).
 
 Leakage: inputs are rows with tick ≤ t plus the round's freeze-end tick; ``DENYLIST`` names (docs/specs/02) never

@@ -3,7 +3,7 @@ root: /media/jan/merged/cs2coach                 # raw CSDS collection (read onl
 tome_root: /media/jan/merged/cs2coach/tomes      # derived tomes (may be rebuilt)
 header_tome: header.2025-09-01,2026-09-28.full
 wingman_max_unique_steamids: 5                   # A-43 (used when header.is_wingman is null)
-wins_needed: {5v5: 13, wingman: 9}               # A-13, A-43
-overtime_half_rounds: 3                          # A-13 (OT MR3)
+wins_needed: {5v5: 13, wingman: 9}               # A-45, A-43
+overtime_half_rounds: 3                          # A-45 (OT MR3)
 max_tick_gap_s: 1.0                              # A-40
 workers: 12

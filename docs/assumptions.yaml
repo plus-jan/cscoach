@@ -160,10 +160,13 @@
     economy around Aug 2025, inside the CSDS window (from 2025-07-18), so values differ by build_num.
   type: game_rule
   source: recalled from memory — unverified; economy update noted in [hltv_rating_3]
-  status: open
+  status: refuted
+  evidence: [docs/data/csds_decoding.md, reports/experiments/20260928-1657_mv1_decoding/report.md]
+  note: >-
+    2026-09-28 (MV.1, F-07): the recalled values do not match: T plant bonus 600 (not 800), OT start 10000 (not 12500), loss counter -2 per win, CT +50 per T killed (new), Zeus 100, CZ75 300. One rule set for builds 10521-10924. Corrected values in docs/specs/06 reconcile 96.2-97.1% of player-rounds with one personal credit allowed (86-87% exact); >= 99% needs per-player credit tracking (M6.1).
   test: [MV.1]
-  parameters: [start money / max money / OT start money, round win, loss bonus ladder, kill reward, T loss after plant bonus / planter / defuser]
-  blocks: [economy_feedback]
+  parameters: []
+  blocks: []  # superseded by A-45 (corrected rules)
 
 - id: A-14
   statement: >-
@@ -171,10 +174,13 @@
     round_state phase durations per platform and build).
   type: game_rule
   source: game defaults (recalled) — servers (esp. FACEIT/third-party) may differ
-  status: open
+  status: refuted
+  evidence: [docs/data/csds_decoding.md, reports/experiments/20260928-1657_mv1_decoding/report.md]
+  note: >-
+    2026-09-28 (MV.1, F-07): round time 115.0 s holds; bomb 41.0 s plant->explode (not 40); freeze 15 s or 20 s per match (not always 15). Parameters corrected.
   test: [MV.1]
-  parameters: [round time / bomb timer / freeze time (s)]
-  blocks: [wp_timeline]
+  parameters: []
+  blocks: []  # superseded by A-44 (measured timers)
 
 - id: A-15
   statement: >-
@@ -183,10 +189,12 @@
     rank/rank_type/rank_platform → platform-specific rank scale.
   type: data
   source: docs/data/csds_spec.md lists types but not code meanings
-  status: open
+  status: supported
+  evidence: [docs/data/csds_decoding.md, reports/experiments/20260928-1657_mv1_decoding/report.md]
   test: [MV.1, MV.2]
   parameters: [rank field decoding, premier_min_rating]
   note: >-
+    2026-09-28 (MV.1, F-07): team/winner codes (2 T, 3 CT), win_reason_code (v42), hit_box_code (Source hit groups 0-8), weapon_code (item definition index) decoded; site_code is a per-server entity index, so sites come from the planter's place_name. v30 caveats: stale winner at half starts, no reason codes, 1.2% hit-box garbage.
     2026-09-28 (M1.4, F-03): rank fields decoded (rank_type 11/12/7, FACEIT level in rank_platform); the
     type-free rule for v30 agrees with rank_type in 2,079/2,079 v42 matches with known ranks.
     2026-09-28 (M2.1, F-05): team_code/winner_team_code 2 = T, 3 = CT; v30 winner side is stale in the first
@@ -200,10 +208,40 @@
     positions on events) is accurate enough for sub-second features (duels, counter-strafe).
   type: data
   source: CSDS spec (merged columns use as-of merge to nearest earlier tick); [learning_to_move_like_pros] §5 notes PureSkill.gg data has no capture-frequency guarantee and may drop data
-  status: open
+  status: supported
+  evidence: [docs/data/csds_decoding.md, reports/experiments/20260928-1657_mv1_decoding/report.md]
+  note: >-
+    2026-09-28 (MV.1): tick rate 64 in all 400 matches; second = tick/64; tick coverage >= 99.4%, max gap 7 ticks; merged event positions exact for 99.6% of kills, <= 1 tick stale. v30 round_end.tick is ~6.7 s after the decision (corrected via decided_tick).
   test: [MV.1]
   parameters: [tick rate]
   blocks: [xk]
+
+- id: A-44
+  statement: >-
+    Round time 115 s from freeze end, bomb 41 s from the bomb_planted to the bomb_exploded event, and a freeze time
+    of 15 or 20 s per match hold for all corpus matches (measured per channel set and platform).
+  type: game_rule
+  source: MV.1 measurement (supersedes A-14)
+  status: supported
+  evidence: [docs/data/csds_decoding.md, reports/experiments/20260928-1657_mv1_decoding/report.md]
+  test: [MV.1]
+  parameters: [round time / bomb timer / freeze time (s)]
+  blocks: [wp_timeline]
+
+- id: A-45
+  statement: >-
+    The MV.1 economy rules (docs/data/csds_decoding.md: loss counter +1/-2, T plant bonus 600, CT +50 per T killed,
+    OT start 10000, weapon kill rewards) predict player_status.money at the next round start for >= 99% of
+    player-rounds once per-player credits are modelled; one rule set covers builds 10521-10924.
+  type: game_rule
+  source: MV.1 measurement (supersedes A-13)
+  status: open
+  note: >-
+    2026-09-28 (MV.1, F-07): 86-87% exact, 96.2-97.1% with one personal credit allowed; the remaining credits are
+    identified (deciding kill, planter, defuser) but not yet tracked per player (M6.1).
+  test: [MV.1, M6.1]
+  parameters: [start money / max money / OT start money, round win, loss bonus ladder, kill reward, T loss after plant bonus / planter / defuser, CT team bonus per T killed]
+  blocks: [economy_feedback]
 
 # ---------------------------------------------------------------- windows & thresholds (estimable from data)
 - id: A-17
@@ -456,6 +494,10 @@
   type: data
   source: CSDS datasheet
   status: open
+  note: >-
+    2026-09-28 (MV.1, F-07): shared codes, tick rate and economy identical; v30 needs the documented fixes
+    (winner side at half starts, end tick, event-derived end reasons, hit-box filter, type-free rank scale).
+    Whether restricting v42-only features biases results is not yet tested.
   test: [MV.1]
   blocks: [xk]
 

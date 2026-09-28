@@ -142,7 +142,7 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
 
 ## MV — Verification experiments that feed decisions
 
-- [ ] **MV.1 — Game rules & decoding on CSDS.**
+- [x] **MV.1 — Game rules & decoding on CSDS.**
   deps: M2.1. Refs: [A-13, A-14, A-15, A-16, A-39].
   Reconcile the economy engine against `player_status.money` per `build_num`/platform (target ≥ 99% of
   player-rounds). Locate the Aug 2025 economy change [hltv_rating_3] and version the rules by build.
@@ -150,7 +150,9 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   `weapon_code`, `hit_box_code` and `site_code`. Check the tick rate, the staleness of as-of merges, and
   **tick coverage and gaps per match** (independent report of possible drops:
   [learning_to_move_like_pros]). Compare the v30 and v42 channel sets.
-  **DoD:** decoding tables committed to `docs/data/`; parameters and statuses updated.
+  **DoD:** decoding tables committed to `docs/data/`; parameters and statuses updated. Done:
+  docs/data/csds_decoding.md; A-13/A-14 refuted (parameters corrected), A-15/A-16 supported; v30 end tick fixed
+  (`decided_tick`); F-07. Report `reports/experiments/20260928-1657_mv1_decoding/`.
 - [ ] **MV.2 — Tier label validity & corpus composition.** → feeds **D1**.
   deps: M1.4. Refs: [A-11, A-12, A-15, A-34].
   Rank scales per platform/`rank_type`, lobby spread, and coverage of rank data. Check that the tiers
@@ -287,7 +289,8 @@ Items carry the decision(s) that would activate, change or drop them. Details ma
 - [ ] **M5.4 — xK × WPA decision matrix** [A-05]. *Dropped under D2-c.*
 
 ## M6 — Economy · *activation: D3*
-- [ ] **M6.1 — Rules engine** (verified in MV.1) [A-13].
+- [ ] **M6.1 — Rules engine** (verified in MV.1) [A-13]. Rules: docs/data/csds_decoding.md. Add per-player credits
+  (deciding kill, planter, defuser, post-decision kills) to reach ≥ 99% money reconciliation (MV.1: 96–97%).
 - [ ] **M6.2 — Buy classification**, player-level and team-level [A-21].
 - [ ] **M6.3 — Game-level WP + Optimal Spending Error + team sync** (docs/specs/03#economy).
   Refs: [xenopoulos_optimal_economy]. **DoD:** gwp passes its calibration gate; OSE per team-match

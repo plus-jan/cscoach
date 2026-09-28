@@ -2,8 +2,8 @@
 root: /media/jan/merged/cs2coach
 tome_root: /media/jan/merged/cs2coach/tomes
 header_tome: header.2025-09-01,2026-09-28.full
-regulation_rounds: 24                 # A-13 (pop_overtime max_rounds_csgo)
-overtime_half_rounds: 3               # A-13 (MR3 overtime)
+regulation_rounds: 24                 # A-45 (pop_overtime max_rounds_csgo; verified in M2.1)
+overtime_half_rounds: 3               # A-45 (MR3 overtime; swaps at 28, 34, 40)
 code_side: {2: T, 3: CT}              # A-15 (team_code / winner_team_code)
 flip_winner_after_swap: [v30]         # A-15: v30 parser reports a stale side in the first round of every half
 v30_end_offset_ticks_64: 429          # MV.1: v30 round_end.tick lies 429 ticks (64 Hz) after the decision

@@ -152,3 +152,21 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
   right for 99.97% of 45,629 deaths (victim side at death), `player_spawn` for 99.24%; on 343 disagreements
   `player_info` was right 328 times → primary `player_info`, spawn only fills missing rows.
 - supersedes: —
+
+### F-07 — Codes decoded; v30 round ends are 6.7 s late; the economy differs from the recalled rules
+- date: 2026-09-28 · task: MV.1 · decision: —
+- question: Can the CSDS codes, timers and economy be verified on the corpus (A-13–A-16, A-39)?
+- result: see docs/data/csds_decoding.md. Codes: sides 2/3, win reasons (v42), Source hit groups 0–8, item
+  definition indices (identical in v30/v42); `site_code` is not a stable site id (use the planter's `place_name`).
+  v30 `round_end.tick` lies ~6.7 s after the decision (v42 exact) → snapshots included post-decision states
+  (7.6 % of all snapshot rows in the 300-match sample; v42 unaffected) until `decided_tick`. Timers: round 115 s, bomb 41 s, freeze 15 or 20 s per match.
+  Economy (one rule set for builds 10521–10924): loss counter −2 per win (96.7 % vs 79.1 % for −1), T plant bonus
+  600, CT +50 per T killed, OT start 10,000, Zeus 100, CZ75 300; money reconciles for 86–87 % of player-rounds
+  exactly and 96.2–97.1 % with one personal credit. Ticks: 64 Hz, coverage ≥ 99.4 %, merges ≤ 1 tick stale.
+- evidence: `reports/experiments/20260928-1657_mv1_decoding/` (report.md, analyze.py, summary.json); docs/data/csds_decoding.md.
+- confidence: high for codes, ticks and timers; medium for the economy (97 %, per-player credits missing).
+- changes: A-13, A-14 refuted → A-44 (supported), A-45 (open); A-15, A-16 supported; A-39 note; docs/specs/06
+  (economy, timers); `rounds.decided_tick`; `bomb_timer_s` 41; M6.1 note (per-player credits).
+- next step: after the top-up, refresh everything and finish M2.3 (distributions per tier/platform), then M2.4
+  (leakage audit) — rationale: remaining Part A tasks before M3; the end-tick fix changes every snapshot table.
+- supersedes: —
