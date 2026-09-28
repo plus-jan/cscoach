@@ -363,6 +363,10 @@
   type: policy
   source: initial choice
   status: open
+  note: >-
+    2026-09-28 (M1.5, F-04): at full_channel_fraction 0.15 the overall and map targets are met; 4 of 10
+    tier x platform buckets are; FACEIT low, competitive-scale high/semipro cannot reach 300 matches even with
+    all data (structural; revisit the bucket definition with MV.2).
   test: [MV.5, M10.4]
   blocks: []
 

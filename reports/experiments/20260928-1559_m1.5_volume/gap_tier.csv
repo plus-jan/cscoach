@@ -1,0 +1,6 @@
+tier,matches,rounds,test_rounds_expected,fraction_needed_matches,fraction_needed_rounds,fraction_needed,meets_targets
+high,414,8676,1735.2,0.15,0.15,0.15,True
+low,1610,32987,6597.400000000001,0.15,0.15,0.15,True
+mid,709,14754,2950.8,0.15,0.15,0.15,True
+null,998,20048,4009.6000000000004,0.15,0.15,0.15,True
+semipro,199,4268,853.6,0.22613065326633167,0.15,0.22613065326633167,False

@@ -78,7 +78,9 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   spread [A-11, A-12, A-15]. **DoD:** tier coverage table; unknowns are null, never guessed. Done:
   `cscoach.data.tiers`; seeded 5v5 coverage 3,095 / 4,176 (low 1,706, mid 748, high 431, semipro 210);
   F-03. Report `reports/experiments/20260928-1554_m1.4_tiers/`.
-- [ ] **M1.5 — Data volume check** against the target [A-32]. **DoD:** gap analysis per stratum.
+- [x] **M1.5 — Data volume check** against the target [A-32]. **DoD:** gap analysis per stratum. Done:
+  `cscoach.data.volume`; at f = 0.15 overall and 5 maps meet the targets, 4 of 10 tier × platform buckets do
+  (steam semipro and all FACEIT buckets short); top-up options and structural gaps in F-04. Report `reports/experiments/20260928-1559_m1.5_volume/`.
 
 ## M2 — Round reconstruction & snapshots
 

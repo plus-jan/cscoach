@@ -72,3 +72,6 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   faceit low/mid/high/semipro/null 18/84/84/46/13; steam competitive 578/292/31/0/508; steam premier
   1,110/372/316/164/543; unknown 17 null. Spread ≥ 2 tiers 17.5%. F-03 (legacy download = 100% de_mirage) ·
   reports/experiments/20260928-1554_m1.4_tiers/report.md
+- 2026-09-28 · M1.5 · Volume check (clean seeded 5v5, f = 0.15): 3,930 matches, 2,932 tiered, 5 maps ≥ 300 ✓;
+  tier × platform ≥ 300: steam low/mid/high ✓ (1,596/638/333), steam semipro 157 ✗, faceit 14/71/81/42 ✗.
+  Top-up: f = 0.35 → 210 GB ≈ $19; + all FACEIT → 248 GB ≈ $22; f = 1 → 888 GB ≈ $80. F-04 · reports/experiments/20260928-1559_m1.5_volume/report.md

@@ -96,3 +96,20 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: M1.5 (volume check per stratum) — rationale: semipro is below the A-32 target and tiers exist only
   for full-channel matches, so the top-up size must be decided before E.x/M3.
 - supersedes: —
+
+### F-04 — Volume: Steam low–high suffice; Steam semipro and FACEIT need a top-up; some gaps are structural
+- date: 2026-09-28 · task: M1.5 · decision: top-up size (user)
+- question: Does the seeded full-channel sample (f = 0.15) meet the A-32/A-07 targets per stratum, and what
+  would a top-up cost?
+- result: clean seeded 5v5: 3,930 matches (2,932 tiered), 5 maps ≥ 300 → overall targets met. Tier × platform:
+  steam low 1,596, mid 638, high 333 meet ≥ 300 matches and ≥ 2,500 rounds; steam semipro 157 (needs f ≈ 0.29);
+  faceit low 14, mid 71, high 81, semipro 42 (need f ≈ 0.56–0.63 or all FACEIT; low and semipro stay < 300 even
+  at f = 1). Competitive-scale high 31 (≈ 207 at f = 1), no competitive semipro. Maps anubis/overpass/cache need
+  f ≈ 0.24–0.32. Exact extra download: f = 0.35 → 210 GB (≈ $19); f = 0.35 + all FACEIT → 248 GB (≈ $22);
+  f = 1.0 → 888 GB (≈ $80).
+- evidence: `reports/experiments/20260928-1559_m1.5_volume/` (report.md, summary.json, gap_*.csv); configs `configs/volume.yaml`, `configs/export.yaml`.
+- confidence: medium (projections assume the seeded sample's composition; counts ± √n).
+- changes: A-32 note (gap analysis). No status change.
+- next step: user decision on the top-up (recommended: f = 0.35 + all FACEIT, platform-stratified); then the
+  first open Part A tasks M2.1/MV.1 — rationale: E.x and M3 need rounds; the top-up can run in parallel.
+- supersedes: —

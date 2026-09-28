@@ -1,0 +1,11 @@
+platform,tier,matches,rounds,test_rounds_expected,fraction_needed_matches,fraction_needed_rounds,fraction_needed,meets_targets
+faceit,high,81,1700,340.0,0.5555555555555556,0.22058823529411764,0.5555555555555556,False
+faceit,low,14,319,63.800000000000004,inf,inf,inf,False
+faceit,mid,71,1487,297.40000000000003,0.6338028169014085,0.25218560860793543,0.6338028169014085,False
+faceit,null,11,245,49.0,inf,inf,inf,False
+faceit,semipro,42,882,176.4,inf,0.42517006802721086,inf,False
+steam,high,333,6976,1395.2,0.15,0.15,0.15,True
+steam,low,1596,32668,6533.6,0.15,0.15,0.15,True
+steam,mid,638,13267,2653.4,0.15,0.15,0.15,True
+steam,null,987,19803,3960.6000000000004,0.15,0.15,0.15,True
+steam,semipro,157,3386,677.2,0.28662420382165604,0.15,0.28662420382165604,False
