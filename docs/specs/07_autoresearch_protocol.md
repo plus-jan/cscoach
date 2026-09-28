@@ -52,12 +52,15 @@ A loop configuration therefore looks like:
 Goal: <task id> — <what should improve>
 Scope: src/cscoach/<module>/**, configs/<model>.yaml
 Metric: lower CI bound of Δlog-loss vs champion (higher is better)
-Verify: python -m cscoach.loops.gated_verify --task <id> --config configs/<model>.yaml
-Guard: python -m pytest -q && python -m cscoach.loops.guard --task <id>
+Verify: uv run python -m cscoach.loops.gated_verify --config configs/<model>.yaml
+Guard: uv run python -m pytest -q && uv run python -m cscoach.loops.guard --config configs/<model>.yaml --pytest
 Iterations: 15
 ```
 
-(`cscoach.loops.*` is built in task M2.5; until then modelling loops must not run.)
+(`cscoach.loops.*` was built in M2.5. The task config has a `loop` block — task, data, work_dir, alpha, budget,
+n_resamples, seed, gates — and a `model` block; the champion is the `model` block at `HEAD~1`, so loops compare
+config-driven variants only. The split is written once with `cscoach.loops.sealed.make_split`. Loops on CSDS still wait
+for MV.14.)
 
 ## 3. Budget, ledger and the sealed test
 

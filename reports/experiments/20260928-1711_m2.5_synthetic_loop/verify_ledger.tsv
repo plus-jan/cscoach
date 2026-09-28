@@ -1,0 +1,6 @@
+time	task	delta_logloss	lower_bound	level	n_matches	seed	candidate_model
+2026-09-28T17:11:10	synthetic_wp	0.020709	0.017229	0.99667	2100	20260928	{C: 1.0, features: [x1, x2], label: y}
+2026-09-28T17:11:11	synthetic_wp	0.000047	-0.000168	0.99667	2100	20260928	{C: 1.0, features: [x1, x2, noise1], label: y}
+2026-09-28T17:11:12	synthetic_wp	-0.014164	-0.016772	0.99667	2100	20260928	{C: 0.0005, features: [x1, x2], label: y}
+2026-09-28T17:11:13	synthetic_wp	-0.082955	-0.095733	0.99667	2100	20260928	{C: 1.0, features: [x1, x2, noise2], label: y, miscalibrate: 0.12}
+2026-09-28T17:11:14	synthetic_wp	-0.000081	-0.000291	0.99667	2100	20260928	{C: 1.0, features: [x1, x2, noise2, noise3], label: y}

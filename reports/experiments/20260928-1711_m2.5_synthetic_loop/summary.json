@@ -1,0 +1,24 @@
+{
+  "variants": 5,
+  "kept": 1,
+  "as_expected": true,
+  "split_sha256": "ed471ee21efe3bddc9a6c7de0af280a505a9c728b7286847a35cb4a2c185b366",
+  "seed": 20260928,
+  "alpha": 0.05,
+  "budget": 15,
+  "one_sided_level": 0.9966666666666667,
+  "n_resamples": 2000,
+  "git_log": [
+    "d9bdb1c Revert \"variant 5: add noise features 2+3\"",
+    "0088e5a variant 5: add noise features 2+3",
+    "39ccb5d Revert \"variant 4: miscalibrated output (+0.12)\"",
+    "e8873fd variant 4: miscalibrated output (+0.12)",
+    "4cfb83f Revert \"variant 3: heavy regularisation C=0.0005\"",
+    "22f7ff9 variant 3: heavy regularisation C=0.0005",
+    "c6b01c7 Revert \"variant 2: add noise feature\"",
+    "5c512dc variant 2: add noise feature",
+    "7d40bea variant 1: add informative feature x2",
+    "8c642e9 champion: features x1"
+  ],
+  "note": "synthetic data (A-33): proves code correctness only"
+}

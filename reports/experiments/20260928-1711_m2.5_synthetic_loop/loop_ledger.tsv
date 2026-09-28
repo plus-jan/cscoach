@@ -1,0 +1,6 @@
+iteration	variant	lower_bound	guard	decision	expected
+1	add informative feature x2	0.017229	ok	keep	keep
+2	add noise feature	-0.000168	ok	revert	revert
+3	heavy regularisation C=0.0005	-0.016772	GUARD FAIL: ECE 0.0634 > 0.02 overall | GUARD FAIL: ECE 0.0634 > 0.03 in stratum high | GUARD FAIL: ECE 0.0699 > 0.03 in stratum low | GUARD FAIL: ECE 0.0621 > 0.03 in stratum mid | GUARD FAILED	revert	revert
+4	miscalibrated output (+0.12)	-0.095733	GUARD FAIL: ECE 0.1181 > 0.02 overall | GUARD FAIL: ECE 0.1204 > 0.03 in stratum high | GUARD FAIL: ECE 0.1175 > 0.03 in stratum low | GUARD FAIL: ECE 0.1163 > 0.03 in stratum mid | GUARD FAILED	revert	revert
+5	add noise features 2+3	-0.000291	ok	revert	revert

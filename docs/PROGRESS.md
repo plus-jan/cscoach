@@ -94,3 +94,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
 - 2026-09-28 · M2.4 · Leakage audit (300 clean seeded matches, 6,215 freeze-end snapshots): max single-feature AUC
   0.630 [0.615, 0.644] (ct_equip_value) ≪ 0.99 → gate passes; best mid-round feature man_advantage 0.874. F-08 ·
   reports/experiments/20260928-1705_m2.4_leakage_audit/report.md
+- 2026-09-28 · M2.5 · Gated loop harness: metrics/splits (docs/specs/04 §7), sealed data path with access log,
+  gated_verify (one-sided cluster-bootstrap lower bound of Δlog-loss at 1 − α/budget), guard (split hash, sealed reads,
+  ECE gates, leakage tests). Synthetic loop (A-33): 5 variants, 1 kept, all as expected. ECE small-sample bias noted
+  for MV.5 (A-07) · reports/experiments/20260928-1711_m2.5_synthetic_loop/report.md

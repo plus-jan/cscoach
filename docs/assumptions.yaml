@@ -88,6 +88,10 @@
   type: policy
   source: initial choice
   status: open
+  note: >-
+    2026-09-28 (M2.5, synthetic, method property): per-stratum ECE (15 quantile bins) is biased upward by noise
+    (~0.8*0.5/sqrt(rows per bin)); a well-specified model exceeded 0.03 with ~2,700 clustered rows per stratum and
+    passed with ~8,000 independent rows. 500 rows per stratum is too small for the ECE gates; decide in MV.5.
   test: [MV.5]
   parameters: [gates.wp.min_rounds_per_stratum, gates.xk.min_duels_per_stratum, gates.player_metric.min_ess]
   blocks: [player_metrics]

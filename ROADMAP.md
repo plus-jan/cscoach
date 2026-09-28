@@ -100,11 +100,13 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [x] **M2.4 — Leakage audit:** no single feature reaches AUC > 0.99 for the label at freeze end. Done:
   `cscoach.verify.leakage_audit`; max freeze-end AUC 0.630 (ct_equip_value, CI 0.615–0.644), 300 matches; re-run
   with M2.3 on the refreshed data. Report `reports/experiments/20260928-1705_m2.4_leakage_audit/`.
-- [ ] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
+- [x] **M2.5 — Gated loop harness** (docs/specs/07 §2). deps: M2.2 (leakage test). Loops on CSDS start only after MV.14.
   `cscoach.loops.gated_verify` (prints the budget-corrected CI lower bound of the improvement vs the
   champion on match-grouped out-of-fold predictions, training matches only) and `cscoach.loops.guard`
   (tests, leakage, split integrity, sealed folds untouched, per-stratum calibration gates) [A-42].
-  **DoD:** unit tests incl. "sealed fold read → failure"; a synthetic end-to-end loop run (A-33).
+  **DoD:** unit tests incl. "sealed fold read → failure"; a synthetic end-to-end loop run (A-33). Done:
+  `cscoach.eval.*`, `cscoach.loops.*`; synthetic loop 5 variants, 1 kept, all decisions as expected; ECE small-sample
+  bias noted for MV.5. Report `reports/experiments/20260928-1711_m2.5_synthetic_loop/`.
 
 ## E — Exploration (let the data propose hypotheses)
 
