@@ -1,0 +1,35 @@
+# M3.3 calibration layer — gated loop task config (docs/specs/07 §2). The `model` block at HEAD~1 is the champion.
+# The `gbdt` block is the M3.2 champion (configs/wp_gbdt.yaml at 81562fd); only `calibration` is varied here.
+# docs/specs/03 WP model 3, docs/specs/04 §7, docs/specs/06 (A-28).
+loop:
+  task: gbdt_wp_calibrated
+  data: /media/jan/merged/cs2coach/derived/wp_table_v1.parquet
+  work_dir: /media/jan/merged/cs2coach/splits/wp_v1
+  columns: [match_id, y_ct_win, ct_alive, t_alive, ct_hp_sum, t_hp_sum, ct_armor_sum, t_armor_sum, ct_helmets, t_helmets, ct_kits,
+  ct_equip_value, t_equip_value, ct_money_sum, t_money_sum, ct_primaries, t_primaries, ct_flashes, t_flashes, ct_smokes,
+  t_smokes, ct_molotovs, t_molotovs, ct_hes, t_hes, man_advantage, bomb_planted, bomb_site, time_remaining_s, second_in_round,
+  ct_rank_alive, t_rank_alive, rank_diff_alive, tier, platform, map_name, channel_set]
+  alpha: 0.05             # A-42
+  budget: 15              # A-42
+  n_resamples: 2000       # A-42
+  seed: 20260928
+  gates: {ece_max: 0.02, ece_max_per_stratum: 0.03, min_rows_per_stratum: 500, stratum: tier}   # A-06
+model:
+  label: y_ct_win
+  stratum: tier
+  calibration: {method: none, by: null, isotonic_min_rows: 5000, min_rows_per_group: 1000}   # A-28
+  gbdt:
+    label: y_ct_win
+    stratum: tier
+    features: [ct_alive, t_alive, ct_hp_sum, t_hp_sum, ct_armor_sum, t_armor_sum, ct_helmets, t_helmets, ct_kits, ct_equip_value,
+      t_equip_value, ct_primaries, t_primaries, ct_flashes, t_flashes, ct_smokes, t_smokes, ct_molotovs, t_molotovs, ct_hes,
+      t_hes, man_advantage, bomb_planted, bomb_site, time_remaining_s, tier, platform, map_name, second_in_round]
+    categorical: [bomb_site, tier, platform, map_name]
+    monotone: {ct_alive: 1, t_alive: -1, ct_hp_sum: 1, t_hp_sum: -1, ct_equip_value: 1, t_equip_value: -1, man_advantage: 1}
+    num_boost_round: 2000
+    early_stopping_rounds: 100
+    es_fraction: 0.1
+    train_row_fraction: 0.25
+    seed: 20260928
+    params: {learning_rate: 0.03, num_leaves: 31, min_data_in_leaf: 200, bagging_fraction: 0.8, bagging_freq: 1, feature_fraction: 0.8,
+      lambda_l2: 1.0, num_threads: 16}

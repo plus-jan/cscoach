@@ -11,6 +11,7 @@ Data provided by PureSkill.gg.
 from __future__ import annotations
 
 import hashlib
+import json
 
 import lightgbm as lgb
 import numpy as np
@@ -83,3 +84,31 @@ def gbdt_oof(train: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     res = pd.concat(out).rename(columns={label: "y"})
     res.attrs["best_iterations"] = iters
     return res
+
+
+def fold_order(train: pd.DataFrame, label: str = "y") -> pd.DataFrame:
+    """The training frame in the row order of ``gbdt_oof`` (fold by fold), with ``y`` = the label."""
+    parts = [train[train["fold"] == k] for k in sorted(train["fold"].unique())]
+    out = pd.concat(parts).reset_index(drop=True)
+    out["y"] = out[label].to_numpy()
+    return out
+
+
+_MEMO: dict = {}
+
+
+def calibrated_oof(train: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Loop task for M3.3: GBDT out-of-fold predictions (``cfg["gbdt"]``), then cross-fitted calibration
+    (``cfg["calibration"]``, docs/specs/04 §7) by fold. The GBDT result is memoised per process, so champion and
+    candidate variants that differ only in calibration share one fit."""
+    from cscoach.models.calibration import crossfit
+
+    key = (json.dumps(cfg["gbdt"], sort_keys=True), len(train), str(train["match_id"].iloc[0]),
+           str(train["match_id"].iloc[-1]))
+    if key not in _MEMO:
+        _MEMO.clear()
+        _MEMO[key] = gbdt_oof(train, cfg["gbdt"])
+    base = _MEMO[key]
+    frame = fold_order(train, cfg["gbdt"]["label"])
+    frame["p"] = base["p"].to_numpy()
+    return base.assign(p=crossfit(frame, cfg["calibration"]))

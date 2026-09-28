@@ -19,17 +19,10 @@ from cscoach.loops.gated_verify import cached_oof, champion_config
 from cscoach.loops.sealed import LoopData
 from cscoach.loops.tasks import TASKS
 from cscoach.models.wp_baseline import cluster_ci, metrics, oof, strata
+from cscoach.models.wp_gbdt import fold_order  # noqa: F401 (re-exported)
 
 STRATA_COLUMNS = ["round_uid", "second_in_round", "bomb_planted", "ct_alive", "t_alive", "ct_hp_sum", "t_hp_sum",
                   "time_remaining_s", "tier", "platform", "map_name", "channel_set"]
-
-
-def fold_order(train: pd.DataFrame, label: str = "y") -> pd.DataFrame:
-    """The training frame in the row order of a loop task's out-of-fold predictions (fold by fold)."""
-    parts = [train[train["fold"] == k] for k in sorted(train["fold"].unique())]
-    out = pd.concat(parts).reset_index(drop=True)
-    out["y"] = out[label].to_numpy()
-    return out
 
 
 def main(argv=None) -> int:
