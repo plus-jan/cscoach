@@ -13,6 +13,9 @@ tier (categorical), map (categorical).
 **Features v2** (M7): nav-distance of nearest T to each site, CT site coverage,
 area-control share, defuser-to-bomb distance, smokes active on key edges.
 
+Refs: [champ_matchmaking] (condition on domain/tier; naive pooling hurts), [pandaskill]
+(monotone GBDT + ECE), [xenopoulos_valuing_actions_csgo] (pending full text).
+
 **Models**
 1. `baseline_wp`: logistic regression on alive_ct, alive_t, hp_sum_ct, hp_sum_t,
    bomb_planted, time_remaining_s (+ interactions alive×planted). Reference only.
@@ -25,6 +28,9 @@ area-control share, defuser-to-bomb distance, smokes active on key edges.
 symmetric states (sanity only; CS2 is not side-symmetric).
 
 ## xK — expected kills (duel model) {#xk}
+
+Refs: [same_player_verification_cs2] (mechanics features: pre-shot speed drop, crosshair
+corrections, firing rhythm; LightGBM ≫ MLP at this scale).
 
 **Duel definition** (M4.1): the first damage or first mutual visibility event between
 two opposing players starts a duel; it resolves when one of them dies within
@@ -59,6 +65,9 @@ Utility delay = shortest-path time with smoke/molotov-blocked edges removed − 
 Converted to WPA via WP model sensitivity to `time_remaining_s` and positional features.
 
 ## Player-level aggregation
+
+Refs: [pandaskill] (performance → percentile per role; FFA OpenSkill rating independent of team
+outcome; meta rating for isolated pools), [franks_meta_analytics] (pending full text).
 
 Raw per-player sums/means → empirical-Bayes shrinkage toward tier prior
 (`coaching/shrinkage.py`) → reported with 80% credible intervals. Only metrics passing

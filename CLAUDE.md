@@ -15,7 +15,8 @@ validated on held-out *matches*, and stable across samples must never reach a pl
    dependencies are done (or run the `/next-task` skill). Every task has an ID
    (e.g. `M4.2`), target modules, and a Definition of Done (DoD).
 2. **Read the spec first**: `docs/specs/*` define data contracts, model math and
-   acceptance gates. Code must match the spec; if the spec is wrong, update the spec
+   acceptance gates. Then read the *cscoach notes* of the papers the spec/task cites
+   (`docs/research/papers/README.md` → "By research question"). Code must match the spec; if the spec is wrong, update the spec
    *in the same commit* and add an ADR in `docs/adr/` for non-trivial decisions.
 3. **Stubs are the contract**: functions raising `NotImplementedError("M<x>.<y>: ...")`
    are placeholders whose signatures and docstrings are the interface. Keep the
@@ -61,13 +62,24 @@ These exist because the naive version of every metric here is silently wrong.
 - **Never invent numbers in coaching text.** Natural-language feedback may only
   reference values computed by the engine (see `docs/specs/05_coaching_feedback.md`).
 
+## Research references
+
+Full-text papers live in `docs/research/papers/<id>.md` (index + usage rules in its README).
+- Consult them **before** designing a model, feature, metric, validation step or feedback format;
+  roadmap tasks and spec sections name the relevant ids as `[id]`.
+- Cite papers by `sources.yaml` id. Trust order: paper full text > its cscoach notes > `sources.yaml`
+  > `research_synthesis_de.md` (the German synthesis contains known errors — see paper notes).
+- Only entries with `verified: true` may justify a design decision. PDF-converted numbers may be
+  garbled: check before quoting. Never put literature numbers into player-facing text.
+- New PDFs: add to `sources.yaml`, run `python scripts/pdf_to_md.py <pdf>`, fill the notes block.
+
 ## Layout
 
 ```
 configs/            YAML configs: data sources, tiers, economy rules, models, validation gates
 data/               raw/ (demos), interim/ (parsed parquet), processed/ (model tables) — git-ignored
 docs/specs/         THE specs: architecture, data contracts, models, validation, coaching
-docs/research/      Literature synthesis (German original) + source registry w/ verification status
+docs/research/      Source registry (sources.yaml), papers/ full-text md + notes, German synthesis
 docs/adr/           Architecture Decision Records
 src/cscoach/
   schemas/          Data contracts (column specs + validators) for every table
@@ -112,5 +124,6 @@ cscoach validate --model wp --run <dir>   # evaluate against configs/validation.
 
 - Missing real data → build/extend the synthetic generator and proceed; mark the task
   `[~]` (partially done) with a note on what needs real-data verification.
-- Unverified research claim → check `docs/research/sources.yaml`; claims marked
-  `unverified` must not be used as design justification without checking the source.
+- Unverified research claim → check `docs/research/sources.yaml`; entries without
+  `verified: true` must not be used as design justification. If the full text is missing, list
+  the paper under "Still missing" in `docs/research/papers/README.md` and ask the user for the PDF.

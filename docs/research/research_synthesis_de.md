@@ -3,6 +3,13 @@
 > Quelle: vom Projektinhaber bereitgestellte Literatursynthese. Behalten als Referenz.
 > Zahlen und Quellen sind **nicht verifiziert** — siehe `sources.yaml` und Task M0.5.
 > Englische, umsetzungsorientierte Ableitungen stehen in `docs/specs/`.
+>
+> **Bekannte Fehler (geprüft gegen Volltexte, siehe `papers/*.md` → cscoach notes):**
+> - Same-Player Verification: Hauptergebnis AUC **0,931** (0,955 = ein einzelner Split); Korrelation mit Rang wird **nicht** untersucht; Datensatz ist **nicht** öffentlich.
+> - VALORANT: 21.229 (nicht 29.506) Runden genutzt; Evaluation nur auf 100 Runden, nur Accuracy.
+> - CHAMP: Vorhersage **vor** dem Match (Matchmaking), nicht Echtzeit-WP; "Kill-Crushing" ist ein MOBA-Matchmaking-Maß, keine CS-Rang-Erkenntnis.
+> - Coaching-Studie heißt *Understanding Game Coaching on Gig Platforms*; "Kaltstart" bezieht sich auf Kundengewinnung der Coaches.
+> - "Andersen 2021" nicht auffindbar → ersetzt durch Brill, Yurko & Wyner (`brill_yurko_wp_difficulty`).
 
 Die Entwicklung eines datengesteuerten Coachingsystems für Amateur- und Semi-Profi-Spieler in Counter-Strike 2 (CS2) erfordert eine präzise Orchestrierung von maschinellen Lernmodellen, strenger statistischer Validierung und der Verarbeitung von Telemetriedaten. Der Rahmen – Runden-Siegwahrscheinlichkeiten (Win Probability), Attribution von Erwartungswerten (Expected Value), Evaluierung von Duellen (Expected Kills) und wirtschaftliche Kontextualisierung – schließt die Lücke zwischen traditioneller Sportanalytik (z. B. _Expected Threat_ im Fußball) und den hochfrequenten, komplexen räumlichen Umgebungen taktischer Shooter.
 

@@ -1,7 +1,8 @@
 # 05 — Coaching feedback
 
-Research basis (docs/research): players value *situated interpretation* over raw
-dashboards; descriptive "you lost 15% WPA" is not prescriptive. Feedback must be
+Research basis [gig_economy_esports_coaching] (read its notes): players value individualised,
+*situated* diagnosis over raw dashboards and distrust generic tips; authority must be visible
+(benchmarks vs. own tier, linked replay evidence); insights expire with patches; descriptive "you lost 15% WPA" is not prescriptive. Feedback must be
 **counterfactual, specific, few, and honest about uncertainty**.
 
 ## Feedback item lifecycle
@@ -29,6 +30,9 @@ dashboards; descriptive "you lost 15% WPA" is not prescriptive. Feedback must be
 
 ## Tone & constraints
 
+- Tag every feedback item with `game_build`; mark items from older builds as possibly stale.
+- Offer a coach-facing export (per-player file, longitudinal trends) — coaches want AI for
+  analysis and bookkeeping, not as a replacement [gig_economy_esports_coaching].
 - Tier-appropriate: compare to the player's tier baseline, not pros.
 - No claims when ESS below threshold; say "not enough data yet".
 - Link each item to a demo tick for review (`demo_tick`).

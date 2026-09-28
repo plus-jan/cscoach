@@ -21,3 +21,4 @@ reports/experiments/**
 *.parquet
 .env
 .claude/settings.local.json
+docs/research/papers/pdf/

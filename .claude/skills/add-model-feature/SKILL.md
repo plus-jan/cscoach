@@ -3,7 +3,8 @@ name: add-model-feature
 description: Add a new feature to the WP or xK model safely (leakage check, ablation, validation). Use when proposing or implementing a new model input.
 ---
 
-1. Define the feature precisely in `docs/specs/03_models.md` (source columns, tick
+1. Check `docs/research/papers/README.md` for prior evidence on the feature (cite `[id]`).
+   Define the feature precisely in `docs/specs/03_models.md` (source columns, tick
    window — must use only data with tick <= snapshot tick).
 2. Implement in `src/cscoach/features/`; add unit tests incl. a leakage test (feature
    unchanged when future ticks are removed from the input).

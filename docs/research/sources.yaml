@@ -1,75 +1,113 @@
-# Source registry. Every design claim in docs/specs must cite an entry here.
-# verified: null = not yet checked (task M0.5); true = existence + cited numbers confirmed;
-# false = could not be confirmed / numbers wrong (do not use as justification).
-# Note: the original synthesis (research_synthesis_de.md) was produced by an AI research
-# assistant; several arXiv IDs, author attributions and numbers need confirmation.
+# Source registry. Every design claim in docs/specs must cite an entry here by `id`.
+#
+# verified:  null  = not yet checked
+#            search = existence/metadata confirmed via web search only (numbers NOT checked)
+#            true  = full text read; `claim` below matches the paper (see local file notes)
+#            false = could not be confirmed / claim wrong — do not use as justification
+# local:     path to the markdown full text (docs/research/papers/<id>.md), null if missing
+# claim:     what the ORIGINAL synthesis claimed; `verified_claim` = what the paper says.
+#
+# Add PDFs with: python scripts/pdf_to_md.py <file.pdf>   (maps by `arxiv` or --id)
 
 - id: same_player_verification_cs2
   title: Same-Player Verification for Account Consistency in Counter-Strike 2
+  note_title_v2: "v2 retitled: Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2"
   year: 2026
-  venue: arXiv (preprint)
-  url: https://arxiv.org/html/2608.24893v1
+  venue: arXiv preprint (submitted to IEEE)
+  arxiv: "2608.24893"
+  url: https://arxiv.org/abs/2608.24893
   questions: [A, C]
-  claim: "Tree models on mechanical fingerprints reach ROC AUC 0.955; 1,330 demos, 12 amateur tiers (Perfect World Arena)"
-  use_in_project: features separating execution vs decision (M4.2), tier differences
-  verified: null
+  claim: "Tree models on mechanical fingerprints reach ROC AUC 0.955; 1,330 demos, 13,300 obs, tiers C..Diamond (Perfect World Arena)"
+  use_in_project: execution-vs-decision features (M4.2), tier differences (M3.5), player fingerprint features
+  local: docs/research/papers/same_player_verification_cs2.md
+  verified: true
+  license: arXiv (submitted to IEEE) — not verified for redistribution
+  verified_claim: "Mean ROC AUC 0.931 (6 person-disjoint splits; 0.955 = single analysis split); 0.986 with K=10 history demos. Identity verification only — does NOT test rank/tier separation. Data not released."
 
 - id: valorant_round_outcome_tactical
   title: Round Outcome Prediction in VALORANT Using Tactical Features from Video Analysis
   authors: Hayakawa et al.
   year: 2025
-  venue: IEEE CoG
+  venue: IEEE CoG 2025 (short paper)
+  arxiv: "2510.17199"
   url: https://arxiv.org/abs/2510.17199
   questions: [B, G]
   claim: "80.55% accuracy from mid-round vs 72.28% baseline; 29,506 rounds"
-  verified: null
+  use_in_project: evidence that tactical/spatial events add WP signal beyond material (M7.2)
+  local: docs/research/papers/valorant_round_outcome_tactical.md
+  verified: true
+  license: arXiv — not verified for redistribution
+  verified_claim: "21,229 rounds used (of 29,506). Overall accuracy 80.55% vs 72.28%; 85-91% after 25 s. Evaluated on 100 rounds, accuracy only, no calibration."
 
 - id: champ_matchmaking
-  title: "CHAMP: Cross-domain Hybrid Architecture for Matchmaking"
-  authors: Wang et al.
+  title: "CHAMP: Cross-domain Hybrid Architecture for Matchmaking and Prediction in Online Multi-Player Games"
+  authors: Kai Wang, Ge Fan, Chaoyun Zhang, Yuyang Jiang, Yuze Liu
   year: 2026
-  url: https://arxiv.org/pdf/2609.04870
+  venue: arXiv preprint
+  arxiv: "2609.04870"
+  url: https://arxiv.org/abs/2609.04870
   questions: [B, C]
   claim: "Cold-start via cross-mode behaviour; -20.73% kill-crushing rate in low tiers"
-  verified: null
+  use_in_project: cold start across platforms (MM -> FACEIT), tier distribution shift (M1.3, M3.5)
+  local: docs/research/papers/champ_matchmaking.md
+  verified: true
+  license: arXiv — not verified for redistribution
+  verified_claim: "PRE-MATCH win prediction (not in-game). ACC 0.6773 on Elite. Naive pooling without domain conditioning hurts (0.6039 < 0.6559 single-domain). Online -20.73% 5-min kill-crushing for Novice tier (MOBA)."
 
 - id: gig_economy_esports_coaching
-  title: The Gig Economy of Esports Coaching
+  title: Understanding Game Coaching on Gig Platforms
+  note_title: "cited in the synthesis as 'The Gig Economy of Esports Coaching'"
   year: 2026
-  url: https://arxiv.org/html/2609.12695v1
+  venue: arXiv preprint
+  arxiv: "2609.12695"
+  url: https://arxiv.org/abs/2609.12695
   questions: [C, I]
   claim: "Coaches create value through situated interpretation, not raw stats"
   use_in_project: feedback design (docs/specs/05)
-  verified: null
+  local: docs/research/papers/gig_economy_esports_coaching.md
+  verified: true
+  license: CC BY 4.0
+  verified_claim: "20 Fiverr coaches, 17 games (1 CS:GO). Value = individualised diagnosis; AI welcome for replay-pattern surfacing, progress tracking, summaries; resisted as replacement; generic tips distrusted."
 
 - id: pandaskill
-  title: PandaSkill - Player Performance and Skill Rating in Esports
-  authors: De Bois et al.
+  title: "PandaSkill - Player Performance and Skill Rating in Esports: Application to League of Legends"
+  authors: Maxime De Bois, Flora Parmentier, Raphaël Puget, Matthew Tanti, Jordan Peltier
   year: 2025
+  venue: arXiv preprint
+  arxiv: "2501.10049"
   url: https://arxiv.org/abs/2501.10049
+  code: https://github.com/PandaScore/PandaSkill (CC BY-SA 4.0)
   questions: [D]
-  claim: "Performance → percentile transform + OpenSkill; decouples role performance from team win"
-  code: GitHub (link to confirm)
-  verified: null
+  claim: "Performance -> percentile transform + OpenSkill; decouples role performance from team win"
+  use_in_project: player rating independent of team outcome (M8), role-wise normalisation
+  local: docs/research/papers/pandaskill.md
+  verified: true
+  license: arXiv (code CC BY-SA 4.0)
+  verified_claim: "Per-role monotone XGBoost -> percentile PScore; ECE 0.93%; FFA OpenSkill + meta rating; 37,388 pro LoL games; expert concordance 80.63% majority."
 
 - id: contextual_xt_spatial
-  title: Contextual Expected Threat (xT) using Spatial Event Data
-  authors: Everett et al.
+  title: Contextual Expected Threat using Spatial Event Data
+  authors: Gregory Everett et al.
   year: 2022
-  venue: StatsBomb Conference
-  url: https://blogarchive.statsbomb.com/uploads/2022/09/Gregory-Everett-et-al-%E2%80%93-Contextual-Expected-Threat-xT-using-Spatial-Event-Data.pdf
+  venue: StatsBomb Conference 2022
+  url: https://statsbomb.com/wp-content/uploads/2022/09/Gregory-Everett-et-al-%E2%80%93-Contextual-Expected-Threat-xT-using-Spatial-Event-Data.pdf
   questions: [D, G]
   claim: "CNN spatial xT: 19.2% log-loss reduction on ball transitions"
-  verified: null
+  search_note: "Introduces 'Threat Above Expected' (TAx); EPL 2021/22"
+  local: null
+  verified: search
 
 - id: tar2_credit_assignment
-  title: "TAR2: Joint Temporal and Agent Credit Assignment"
+  title: "TAR^2: Temporal-Agent Reward Redistribution for Optimal Policy Preservation in Multi-Agent RL"
   year: 2025
+  venue: arXiv preprint
+  arxiv: "2502.04864"
   url: https://arxiv.org/abs/2502.04864
   questions: [D]
   claim: "Transformer + Shapley-based temporal/agent reward redistribution"
   use_in_project: M5.3 Shapley credit
-  verified: null
+  local: null
+  verified: search
 
 - id: xk_budapest_major_reddit
   title: xK analysis / Deep Dive into Budapest Major 2025
@@ -79,89 +117,155 @@
   url: https://www.reddit.com/r/counterstrike2/comments/1qa2x93/deep_dive_into_budapest_major_2025/
   questions: [E]
   claim: "20+ pre-shot variables; AK-47 +6.67 xK/game, MP9 -1.87 xK"
-  note: "Year given as 2024 in synthesis but event is 2025 — inconsistent"
+  note: "Web search could NOT confirm this post exists. Year given as 2024 but event was Nov-Dec 2025."
+  local: null
   verified: null
 
 - id: hltv_rating_3
-  title: HLTV Rating 3.0 (and third-party explainer by SkinClub)
+  title: Introducing Rating 3.0 (HLTV) + third-party explainers
   year: 2025
-  url: https://community.skin.club/en/news/hltv-rating-3-0-cs2-update
+  url: https://www.hltv.org/news/42485/introducing-rating-30
+  also: [https://www.hltv.org/news/43047/rating-30-adjustments-go-live, https://community.skin.club/en/news/hltv-rating-3-0-cs2-update]
   questions: [D, F]
-  claim: "Round Swing: entry kill in 5v5 ≈ +20% WP; 1v2 clutch up to 50%; eco-adjusted kill values"
-  note: "Prefer HLTV's own announcement article as primary source"
-  verified: null
+  claim: "Round Swing: entry kill in 5v5 ~ +20% WP; eco-adjusted kill values"
+  search_note: "Round Swing = WP change per kill given map, side, economy, alive, bomb; credit split by final damage, damage share, flash assists, trades. One of six sub-ratings."
+  local: null
+  verified: search
 
 - id: learning_to_move_like_pros
   title: Learning to Move Like Professional Counter-Strike Players
-  authors: Durst et al.
+  authors: David Durst et al.
   year: 2024
-  venue: ACM SIGGRAPH / SCA
+  venue: SCA 2024 / Computer Graphics Forum
+  arxiv: "2408.13934"
   url: https://arxiv.org/abs/2408.13934
   questions: [G, I]
   claim: "Transformer behaviour cloning (MLMove), <0.5 ms/step, 123 h pro data"
-  verified: null
+  search_note: "CS:GO Retakes on Dust II; CSKnow dataset"
+  local: null
+  verified: search
 
 - id: x_ego_cs
-  title: "X-Ego: Acquiring team-level tactical situational awareness"
+  title: "X-Ego: Acquiring Team-Level Tactical Situational Awareness via Cross-Egocentric Contrastive Video Representation Learning"
+  authors: Yunzhe Wang, Soham Hans, Volkan Ustun
   year: 2025
+  arxiv: "2510.19150"
   url: https://arxiv.org/abs/2510.19150
+  code: https://github.com/HATS-ICT/x-ego (MIT)
   questions: [G, J]
-  claim: "124 h, 45 pro matches on Mirage, cross-egocentric contrastive learning; dataset released"
-  verified: null
+  claim: "124 h, 45 pro matches, CS2, cross-egocentric contrastive learning; dataset released"
+  local: null
+  verified: search
 
 - id: franks_meta_analytics
   title: "Meta-Analytics: Tools for Understanding the Statistical Properties of Sports Metrics"
-  authors: Franks, D'Amour, Cervone, Bornn
+  authors: Alexander Franks, Alexander D'Amour, Daniel Cervone, Luke Bornn
   year: 2016
-  venue: Journal of Quantitative Analysis in Sports
+  venue: Journal of Quantitative Analysis in Sports 12(4):151-165
+  arxiv: "1609.09830"
+  url: https://arxiv.org/abs/1609.09830
   questions: [H]
   use_in_project: validation/meta_analytics.py, docs/specs/04 §4
-  verified: null
+  local: null
+  verified: search
 
 - id: play_like_champions
   title: "Play Like Champions: Counterfactual Feedback Generation in Latent Space"
+  authors: Andrzej Białecki, Adam Mastalerz, Han Zhou
   year: 2026
-  url: https://arxiv.org/pdf/2607.00190
+  arxiv: "2607.00190"
+  url: https://arxiv.org/abs/2607.00190
   questions: [I]
-  claim: "VAE + optimal transport + flow matching for recourse on 23,476 SC2 replays"
+  claim: "VAE + optimal transport + flow matching for recourse on 23,476 amateur+pro SC2 replays"
+  search_note: "Search says Guided VAE on 23,305 PROFESSIONAL tournament replays"
   use_in_project: M9.2 counterfactual recourse (conceptual)
-  verified: null
+  local: null
+  verified: search
 
 - id: pureskill_cs2_dataset
   title: PureSkill.gg Competitive CS2 Gameplay Data Set
   year: 2023
-  url: https://www.kaggle.com/datasets/billpureskillgg/cs2-2023-11-23
+  url: https://docs.pureskill.gg/datascience/adx/cs2/csds/
+  also: [https://www.kaggle.com/datasets/billpureskillgg/cs2-2023-11-23]
   questions: [J]
-  claim: "~1,300 amateur/MM matches with skill labels"
+  license: CC BY-NC-SA 4.0 (non-commercial!)
+  search_note: "Kaggle sample: 1,300 matches (MM, FACEIT, others), 31 files per match (csds); full set on AWS Data Exchange"
   use_in_project: M1.2 primary amateur training data
-  verified: null
+  local: null
+  verified: search
 
 - id: demoparser2
   title: demoparser2
   authors: LaihoE
   url: https://github.com/LaihoE/demoparser
+  license: MIT
   questions: [J]
   use_in_project: ingest/demo_parser.py
-  verified: null
+  local: null
+  verified: search
 
 - id: dynamic_xt
-  title: Dynamic Expected Threat (DxT)
-  authors: Hassani et al.
+  title: "Dynamic Expected Threat (DxT) Model: Addressing the Deficit of Realism in Football Action Evaluation"
+  authors: Karim Hassani, Mohammed Ramdani, Marwane Lotfi
   year: 2025
+  venue: Applied Sciences 15(8):4151 (open access)
+  url: https://www.mdpi.com/2076-3417/15/8/4151
   questions: [D, G]
-  note: "URL not given in synthesis — locate"
-  verified: null
+  use_in_project: M7.4 off-ball/spatial credit
+  local: null
+  verified: search
 
-- id: ess_clustered_outcomes
-  title: Effective sample size in clustered outcomes (Andersen 2021) / Brill & Yurko on WP calibration
+- id: brill_yurko_wp_difficulty
+  title: "Exploring the Difficulty of Estimating Win Probability: A Simulation Study"
+  authors: Ryan S. Brill, Ronald Yurko, Abraham J. Wyner
+  venue: Journal of Quantitative Analysis in Sports (2024/25)
+  arxiv: "2406.16171"
+  url: https://arxiv.org/abs/2406.16171
   questions: [H]
-  note: "Exact references not given — locate. Design effect formula (Kish) is standard."
-  verified: null
+  search_note: "Clustered play-by-play data inflates bias/variance and lowers ESS; proposes fractional bootstrap for WP CIs"
+  use_in_project: ADR-0001, validation/ess.py, validation/bootstrap.py (consider fractional bootstrap)
+  replaces: "'Andersen 2021' ESS reference in the synthesis, which could not be found"
+  local: null
+  verified: search
 
-# Candidates not in the synthesis (likely "seed papers"; check and add if useful)
+- id: xenopoulos_valuing_actions_csgo
+  title: "Valuing Player Actions in Counter-Strike: Global Offensive"
+  authors: Peter Xenopoulos et al.
+  year: 2020
+  venue: IEEE Big Data 2020
+  arxiv: "2011.01324"
+  url: https://arxiv.org/abs/2011.01324
+  questions: [A, D]
+  search_note: "Data model, graph distance on maps, WPA framework for CS:GO; >70M events"
+  use_in_project: WP/WPA design reference (M3, M5)
+  local: null
+  verified: search
+
+- id: xenopoulos_optimal_economy
+  title: Optimal Team Economic Decisions in Counter-Strike
+  authors: Peter Xenopoulos et al.
+  arxiv: "2109.12990"
+  url: https://arxiv.org/abs/2109.12990
+  questions: [F]
+  note: "Likely origin of the 'Optimal Spending Error' metric mentioned in the synthesis"
+  use_in_project: M6.3 counterfactual buys
+  local: null
+  verified: search
+
 - id: awpy
   title: awpy (Counter-Strike parsing & analytics, incl. map/nav data)
-  authors: Xenopoulos et al.
+  authors: Peter Xenopoulos et al.
   url: https://github.com/pnxenopoulos/awpy
-  use_in_project: M7.1 nav meshes (ADR on license/format)
-  verified: null
+  license: MIT
+  use_in_project: M7.1 nav meshes (ADR on format)
+  local: null
+  verified: search
+
+- id: esta_dataset
+  title: "ESTA: Esports Trajectories & Actions dataset (CS:GO)"
+  url: https://github.com/pnxenopoulos/esta
+  license: CC BY-SA 4.0
+  search_note: "1,558 pro demos (878 online, 680 LAN), 41,782 rounds; awpy 1.x format; includes WP benchmarks"
+  use_in_project: pro reference data for transfer study M3.5 (CS:GO, not CS2)
+  local: null
+  verified: search

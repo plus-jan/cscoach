@@ -4,8 +4,8 @@ install:
 	python -m pip install -e ".[dev,parse,api]"
 
 lint:
-	python -m ruff check src tests
-	python -m ruff format --check src tests
+	python -m ruff check src tests scripts
+	python -m ruff format --check src tests scripts
 
 format:
 	python -m ruff format src tests

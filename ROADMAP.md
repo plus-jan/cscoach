@@ -19,7 +19,7 @@ means `cscoach validate` exits 0 for that model.
   *synthetic.py*
 - [x] **M0.4 — Baseline WP (logistic) + GBDT WP skeleton + per-tier calibration**,
   trained end-to-end on synthetic data in tests.
-- [ ] **M0.5 — Verify research sources**: for each entry in
+- [~] **M0.5 — Verify research sources** (5/21 full-text verified — see `docs/research/papers/README.md`; remaining PDFs requested from user): for each entry in
   `docs/research/sources.yaml` confirm existence, authors, numbers; set
   `verified: true|false` and fix/annotate claims in `docs/specs`. Several arXiv IDs and
   numbers in the original synthesis are unconfirmed. **DoD**: no `unverified` entry is
@@ -70,6 +70,7 @@ means `cscoach validate` exits 0 for that model.
   **DoD**: `cscoach validate --model wp` passes gates; report in `reports/`.
 - [ ] **M3.5 — Pro-vs-amateur transfer experiment**: quantify miscalibration of a
   pro-only model on amateur tiers (confirms/refutes research claim A). ADR with result.
+  Refs: [champ_matchmaking] (naive pooling hurts), [same_player_verification_cs2] (pro data didn't help).
 - [ ] **M3.6 — Sequence model challenger (optional)**: GRU/Transformer over snapshot
   sequence or GNN over positions; adopt only if it beats GBDT on log-loss with CI
   excluding 0 and meets latency budget.
@@ -79,7 +80,7 @@ means `cscoach validate` exits 0 for that model.
 - [ ] **M4.1 — Duel extraction**: define an engagement (first damage/visibility between
   two players within window), outcome = who dies/first-kill within Δt. *features/duel.py*
   Spec: `docs/specs/03_models.md#xk`.
-- [ ] **M4.2 — Pre-duel features only**: distance, weapons, armor/HP, movement speed
+- [ ] **M4.2 — Pre-duel features only** (feature ideas: [same_player_verification_cs2] Table I): distance, weapons, armor/HP, movement speed
   (counter-strafe state), view-angle offset to opponent (crosshair placement),
   peeker/holder, flashed state, elevation, number of nearby teammates, tier.
 - [ ] **M4.3 — xK model + calibration**, grouped by match. **DoD**: passes xK gates.
@@ -112,7 +113,7 @@ means `cscoach validate` exits 0 for that model.
 
 - [ ] **M7.1 — Map geometry & nav graph** per map (evaluate `awpy` nav meshes /
   map data; ADR on source & license). *spatial/navgraph.py*
-- [ ] **M7.2 — Area control features**: team-controlled nav areas, distance-to-site
+- [ ] **M7.2 — Area control features** ([valorant_round_outcome_tactical]: tactical events add signal): team-controlled nav areas, distance-to-site
   shortest paths, add to WP features (ablation must show lift).
 - [ ] **M7.3 — Utility delay**: shortest-path delta with smoke/molly edges removed;
   seconds of delay → WPA for thrower. *spatial/utility.py*
@@ -120,7 +121,7 @@ means `cscoach validate` exits 0 for that model.
 
 ## M8 — Player-level metrics & statistical validity
 
-- [ ] **M8.1 — Hierarchical shrinkage** (empirical Bayes / beta-binomial & normal-normal)
+- [ ] **M8.1 — Hierarchical shrinkage** (+ evaluate FFA OpenSkill / meta rating from [pandaskill]) (empirical Bayes / beta-binomial & normal-normal)
   toward tier prior. *coaching/shrinkage.py* (normal-normal implemented).
 - [ ] **M8.2 — Meta-analytics report** for every player metric (stability,
   discrimination, independence vs K/D, ADR, HLTV-like rating). Metrics failing gates are
@@ -134,7 +135,7 @@ means `cscoach validate` exits 0 for that model.
 - [ ] **M9.2 — Counterfactual recourse**: for a detected mistake, compute WP under the
   minimal feasible alternative action (hold position, save, delay utility) using the
   WP/economy/spatial models; report ΔWP with CI.
-- [ ] **M9.3 — Prioritisation**: rank feedback by expected WPA gain × frequency ×
+- [ ] **M9.3 — Prioritisation** (recurring patterns, tier benchmarks — [gig_economy_esports_coaching]): rank feedback by expected WPA gain × frequency ×
   confidence; max 3 focus points per match.
 - [ ] **M9.4 — Narrative rendering** (templates; optional LLM with strict grounding:
   only engine-provided numbers). *coaching/narrative.py*
@@ -145,7 +146,7 @@ means `cscoach validate` exits 0 for that model.
 
 - [ ] **M10.1 — End-to-end pipeline** `cscoach analyze <demo.dem>` → JSON report.
 - [ ] **M10.2 — FastAPI service** + report endpoints. *api/*
-- [ ] **M10.3 — Dashboard** (WP timeline, duel map, economy chart, focus points).
+- [ ] **M10.3 — Dashboard** (coach-facing export + patch-tagged insights, [gig_economy_esports_coaching]) (WP timeline, duel map, economy chart, focus points).
 - [ ] **M10.4 — Performance**: full match analysis < 30 s on 4 cores; WP inference
   < 10 ms per snapshot batch of 1k.
 
