@@ -4,7 +4,7 @@ description: Consistency check for the cscoach knowledge base (scripts/kbcheck.p
 ---
 
 Run `python3 scripts/kbcheck.py` first. It automates items 1–4 (except the PROGRESS/deps/F-NN field
-checks) and the data-artefact part of 5, and it runs in CI (`.github/workflows/kb-check.yml`). Commit
+checks) and the data-artefact part of 5, and it is part of the local gate `scripts/check.sh` (ADR-0009; there is no remote CI). Commit
 only after it exits 0 (run it, read the result, then commit). Check the remaining items by hand.
 
 1. **Assumptions register** parses as YAML:

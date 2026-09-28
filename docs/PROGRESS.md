@@ -51,3 +51,6 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   `header.2025-09-01,2026-09-28.full` and a pilot). License decided: non-commercial only, derived work
   public under CC BY-NC-SA 4.0 with "Data provided by PureSkill.gg.", PureSkill.gg notified before the
   first release; A-38 decided · docs/adr/0008-csds-license-use.md
+- 2026-09-28 · M0.6 · Done. No remote CI: checks run locally via the new gate `scripts/check.sh` (kbcheck +
+  the four upstream suites; ADR-0009, amends ADR-0007); work branches are merged into master locally ·
+  docs/adr/0009-local-checks.md

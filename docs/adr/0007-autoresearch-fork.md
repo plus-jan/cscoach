@@ -27,7 +27,7 @@ which our evidence standard (CLAUDE.md) does not accept.
   bound of the improvement > 0, corrected for the loop budget), training matches only, sealed test
   evaluated once, bounded budget, variant ledger, persona commands = ideation only.
 - Code is now allowed in the project repository. The consistency checklist becomes a script
-  (`scripts/kbcheck.py`) run in CI. The rest of ADR-0004 (reference algorithms in docs/specs/04 §7,
+  (`scripts/kbcheck.py`) run in CI (amended by ADR-0009: checks run locally via `scripts/check.sh`). The rest of ADR-0004 (reference algorithms in docs/specs/04 §7,
   parameter values in docs/specs/06, report-back duties) stays in force.
 - Upstream sync: `scripts/sync_upstream.sh` on a work branch (merge, `.gitignore` union, refresh
   `guide/AUTORESEARCH.md` and the badge, run all checks). `README.md` is ours (`merge=ours`), and the
@@ -40,7 +40,7 @@ which our evidence standard (CLAUDE.md) does not accept.
 - Positive: one repository for plan, evidence and code; a ready loop runner for fixes, debugging and
   gated model search; upstream safety hooks (privacy-block protects the AWS credentials).
 - Negative: upstream files (docs, tests, CI) sit next to ours and must be kept apart
-  (`scripts/kbcheck.py` checks only cscoach paths); upstream CI runs on our PRs.
+  (`scripts/kbcheck.py` checks only cscoach paths); upstream CI runs on our PRs (not a gate since ADR-0009).
 - Follow-ups: M0.6 (migration, done with `scripts/migrate_to_autoresearch_fork.sh`), M2.5 (gated loop
   harness), MV.14 (simulation of the false-keep rate of the gated loop, A-42).
   `plus-jan/cscoach-template` gets a pointer to this repository and is archived.

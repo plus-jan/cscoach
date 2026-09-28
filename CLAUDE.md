@@ -35,7 +35,7 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
 | `docs/adr/` | Architecture Decision Records | before changing a decision |
 | `docs/PROGRESS.md` | Log of completed work and key numbers | after every task |
 | `.claude/skills/` | Workflows: next-task, plan-next-step, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base | as named |
-| `scripts/kbcheck.py`, `scripts/sync_upstream.sh` | Consistency check (also in CI); upstream autoresearch merge | before every commit / upstream merge |
+| `scripts/check.sh`, `scripts/kbcheck.py`, `scripts/sync_upstream.sh` | Local gate (kbcheck + upstream suites; no remote CI, ADR-0009); consistency check; upstream autoresearch merge | before every commit / upstream merge |
 | `scripts/migrate_to_autoresearch_fork.sh` | One-off migration used for M0.6 (kept for the record) | — |
 | autoresearch (in the fork) | Upstream tooling: `.claude/skills/autoresearch`, `.claude/commands/autoresearch*`, `.claude/hooks/autoresearch`, `claude-plugin/`, `guide/`; upstream `docs/*.md` describe autoresearch, not cscoach | with spec 07 |
 
@@ -112,8 +112,9 @@ list it in the papers README and ask the user for the PDF (skill `add-paper`).
   the header, never assume it.
 - Names: snake_case; derived-table columns as in `docs/specs/02_data_contracts.md`.
 - Randomness: seeded. Every stochastic step records its seed.
-- Checks: `python3 scripts/kbcheck.py` must exit 0 before committing (run it, then commit; never chain a
-  commit after a check that may fail).
+- Checks: `python3 scripts/kbcheck.py` must exit 0 before committing, and `scripts/check.sh` (the local
+  gate, ADR-0009) before merging into `master` (run it, then commit; never chain a commit after a check
+  that may fail). Everything runs on this machine; there is no remote CI.
 
 ## When blocked
 

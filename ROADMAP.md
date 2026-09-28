@@ -42,15 +42,16 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
 - [x] **M0.5 — Research-driven planning:** decision points, findings log, `plan-next-step` skill
   (ADR-0006).
-- [~] **M0.6 — Migrate to the autoresearch fork** (ADR-0007). Done: loop protocol
+- [x] **M0.6 — Migrate to the autoresearch fork** (ADR-0007). Done: loop protocol
   (docs/specs/07), `scripts/kbcheck.py` + CI, skills updated, migration script
   `scripts/migrate_to_autoresearch_fork.sh` and `scripts/sync_upstream.sh` (dry-run tested against
   upstream v2.2.2: both histories merged, kbcheck and all four upstream test suites green). Fork `plus-jan/cscoach`
   created and migrated on branch `claude/cscoach-migration` (both histories, hooks enabled, kbcheck and
   all four upstream test suites green locally). PR #1 merged (af86286); on master kbcheck and the
-  four upstream suites pass locally (2026-09-28). Open: GitHub Actions did not start any job ("account is
-  locked due to a billing issue"); tick after CI runs green.
-  **DoD:** fork contains both histories; `scripts/kbcheck.py` and upstream CI green; hooks enabled.
+  four upstream suites pass locally (2026-09-28). GitHub Actions is not used; checks run locally (ADR-0009),
+  and `scripts/check.sh` passes.
+  **DoD:** fork contains both histories; `scripts/kbcheck.py` and the upstream suites green (local gate
+  `scripts/check.sh`, ADR-0009; originally "upstream CI"); hooks enabled.
 
 ## M1 — Data access (CSDS via official libraries)
 
