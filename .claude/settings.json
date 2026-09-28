@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Bash|Glob|Grep|Read|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/node-hook-runner.sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/scout-block.cjs",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/node-hook-runner.sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/privacy-block.cjs",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/node-hook-runner.sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/dangerous-cmd-block.cjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/node-hook-runner.sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/autoresearch/iteration-context.cjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

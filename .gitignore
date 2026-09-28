@@ -37,3 +37,19 @@ node_modules/
 !.env.example
 .preprgate/
 baseline/
+
+# --- cscoach ---
+# Never commit CSDS data, PDFs or demo files (ADR-0003, data license).
+*.pdf
+*.parquet
+*.dem
+.claude/settings.local.json
+
+# cscoach skills (ADR-0007)
+!.claude/skills/next-task/
+!.claude/skills/plan-next-step/
+!.claude/skills/validate-model/
+!.claude/skills/add-model-feature/
+!.claude/skills/resolve-assumption/
+!.claude/skills/add-paper/
+!.claude/skills/check-knowledge-base/
