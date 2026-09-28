@@ -31,3 +31,10 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   decision points D1–D5 with branches, and a provisional backlog; an exploration phase E.1–E.5 is added;
   docs/FINDINGS.md, the plan-next-step skill, benchmark-mode feedback (the D2-c fallback) and assumption
   A-41 (the planned modules cover the real loss causes) · ROADMAP.md
+- 2026-09-28 · M0.6 (partial) · Adopted a fork of uditgoenka/autoresearch as the project base (ADR-0007,
+  supersedes ADR-0004). Loop protocol docs/specs/07 (gated keep rule: budget-corrected CI lower bound of
+  the improvement > 0, training matches only, sealed test once, persona commands = ideation), A-42 +
+  `loop.*` parameters, tasks M2.5 and MV.14, `scripts/kbcheck.py` + CI (it also found 7 register
+  `parameters` keys that did not match docs/specs/06; fixed). Migration dry run against upstream v2.2.2:
+  both histories merged, kbcheck and the four upstream test suites green. The fork itself still has to be
+  created by the user · docs/specs/07_autoresearch_protocol.md

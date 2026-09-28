@@ -34,7 +34,7 @@ The overriding goal is **accuracy you can prove**. A metric that is not calibrat
 | `docs/adr/` | Architecture Decision Records | before changing a decision |
 | `docs/PROGRESS.md` | Log of completed work and key numbers | after every task |
 | `.claude/skills/` | Workflows: next-task, plan-next-step, validate-model, add-model-feature, resolve-assumption, add-paper, check-knowledge-base | as named |
-| `scripts/kbcheck.py` | Automated knowledge-base consistency check (also runs in CI) | before every commit |
+| `scripts/` | `kbcheck.py` (consistency check, also in CI), `migrate_to_autoresearch_fork.sh` (M0.6), `sync_upstream.sh` | before every commit / migration / upstream merge |
 | autoresearch (in the fork) | Upstream tooling: `.claude/skills/autoresearch`, `.claude/commands/autoresearch*`, `.claude/hooks/autoresearch`, `claude-plugin/`, `guide/`; upstream `docs/*.md` describe autoresearch, not cscoach | with spec 07 |
 
 ## How to work

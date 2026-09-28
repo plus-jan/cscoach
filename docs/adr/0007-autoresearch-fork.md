@@ -29,7 +29,8 @@ which our evidence standard (CLAUDE.md) does not accept.
 - Code is now allowed in the project repository. The consistency checklist becomes a script
   (`scripts/kbcheck.py`) run in CI. The rest of ADR-0004 (reference algorithms in docs/specs/04 §7,
   parameter values in docs/specs/06, report-back duties) stays in force.
-- Upstream sync: `git merge upstream/master` on a branch. `README.md` is ours (`merge=ours`), and the
+- Upstream sync: `scripts/sync_upstream.sh` on a work branch (merge, `.gitignore` union, refresh
+  `guide/AUTORESEARCH.md` and the badge, run all checks). `README.md` is ours (`merge=ours`), and the
   upstream README is kept as `guide/AUTORESEARCH.md`. Our README carries the MIT notice and the upstream
   version badge (an upstream parity test checks it; refresh it when an upstream merge bumps the version).
 - Unchanged: ADR-0003 (CSDS is the only data source), ADR-0005 (within-match player metrics, no

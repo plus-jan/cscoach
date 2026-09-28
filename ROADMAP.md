@@ -44,7 +44,8 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   (ADR-0006).
 - [~] **M0.6 — Migrate to the autoresearch fork** (ADR-0007). Done: loop protocol
   (docs/specs/07), `scripts/kbcheck.py` + CI, skills updated, migration script
-  `scripts/migrate_to_autoresearch_fork.sh` (dry-run tested against upstream). Open: the user forks
+  `scripts/migrate_to_autoresearch_fork.sh` and `scripts/sync_upstream.sh` (dry-run tested against
+  upstream v2.2.2: both histories merged, kbcheck and all four upstream test suites green). Open: the user forks
   `uditgoenka/autoresearch` (e.g. as `plus-jan/cscoach`) and grants this project access; then run the
   script, open a PR on the fork, and point this repository's README to the fork.
   **DoD:** fork contains both histories; `scripts/kbcheck.py` and upstream CI green; hooks enabled.
