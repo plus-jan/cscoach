@@ -68,3 +68,13 @@ def test_categories_fixed_across_folds():
 def test_unknown_monotone_feature_is_an_error():
     with pytest.raises(ValueError):
         gbdt_oof(_train(), {**CFG, "monotone": {"not_a_feature": 1}})
+
+
+def test_fold_order_aligns_the_training_frame_with_oof_rows():
+    from cscoach.models.wp_gbdt_report import fold_order
+
+    train = _train()
+    out = gbdt_oof(train, CFG)
+    aligned = fold_order(train)
+    assert aligned["match_id"].tolist() == out["match_id"].tolist()
+    assert aligned["y"].tolist() == out["y"].tolist() and aligned.index.is_unique
