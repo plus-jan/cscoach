@@ -32,5 +32,5 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 
 ## Log
 
-_No findings yet: CSDS access (M1.1) is pending. The first expected entries come from M1.3/M1.4 (corpus
+_No findings yet. CSDS access is in place (M1.1, 2026-09-28); the first expected entries come from M1.3/M1.4 (corpus
 composition), MV.1 (rules and decoding) and E.1–E.4 (exploration)._

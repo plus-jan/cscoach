@@ -43,3 +43,11 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   (c3d8f62); upstream README → guide/AUTORESEARCH.md; cscoach skills tracked; safety hooks enabled in
   .claude/settings.json. Local checks: kbcheck OK; upstream tests hooks/orchestrator/regression/maintenance
   all pass. Tick after the PR is merged with CI green · docs/adr/0007-autoresearch-fork.md
+- 2026-09-28 · M0.6 (partial) · PR #1 merged into master (af86286). Local: kbcheck OK; upstream suites
+  hooks 228/228, maintenance 50/50, orchestrator 195/195, regression 65/65. GitHub Actions jobs were not
+  started (account locked due to a billing issue), so CI is not yet green · ROADMAP.md
+- 2026-09-28 · M1.1 · CSDS access confirmed: revisions 2025-09-01 to 2026-09-28 exported to
+  /media/jan/merged/cs2coach (32,379 match headers; ~4,510 matches with all channels; header tomes
+  `header.2025-09-01,2026-09-28.full` and a pilot). License decided: non-commercial only, derived work
+  public under CC BY-NC-SA 4.0 with "Data provided by PureSkill.gg.", PureSkill.gg notified before the
+  first release; A-38 decided · docs/adr/0008-csds-license-use.md

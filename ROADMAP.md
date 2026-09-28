@@ -47,14 +47,18 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
   `scripts/migrate_to_autoresearch_fork.sh` and `scripts/sync_upstream.sh` (dry-run tested against
   upstream v2.2.2: both histories merged, kbcheck and all four upstream test suites green). Fork `plus-jan/cscoach`
   created and migrated on branch `claude/cscoach-migration` (both histories, hooks enabled, kbcheck and
-  all four upstream test suites green locally). Open: PR merged with CI green; then tick.
+  all four upstream test suites green locally). PR #1 merged (af86286); on master kbcheck and the
+  four upstream suites pass locally (2026-09-28). Open: GitHub Actions did not start any job ("account is
+  locked due to a billing issue"); tick after CI runs green.
   **DoD:** fork contains both histories; `scripts/kbcheck.py` and upstream CI green; hooks enabled.
 
 ## M1 — Data access (CSDS via official libraries)
 
-- [ ] **M1.1 — Access & license.** The user subscribes to the ADX product and sets up AWS credentials.
+- [x] **M1.1 — Access & license.** The user subscribes to the ADX product and sets up AWS credentials.
   Confirm that the DSA terms fit the project [A-38] and record the decision in an ADR.
-  **DoD:** one revision exported; license ADR.
+  **DoD:** one revision exported; license ADR. Done: revisions 2025-09-01 to 2026-09-28 exported to
+  `/media/jan/merged/cs2coach` (32,379 match headers, ~4,510 with all channels; header tome built);
+  ADR-0008 (non-commercial, derived work public under CC BY-NC-SA 4.0), A-38 decided.
 - [ ] **M1.2 — Export & collection layout.** Export revisions in ≤ 1-month batches with
   `pureskillgg_dsdk` (telemetry channels only where needed, costs logged). Keep an export manifest
   (revision ids, dates, channel-set version, `ppp_version`).

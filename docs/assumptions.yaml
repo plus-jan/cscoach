@@ -418,7 +418,12 @@
     the project's intended use and distribution.
   type: policy
   source: CSDS DSA
-  status: open
+  status: decided
+  evidence: [docs/adr/0008-csds-license-use.md]
+  note: >-
+    2026-09-28: decided in ADR-0008. The owner confirmed non-commercial use only and read the DSA (matches
+    the public product-page summary). Derived work is published under CC BY-NC-SA 4.0 with the attribution;
+    PureSkill.gg is notified before the first public release.
   test: [M1.1]
   blocks: [wp_timeline, wpa, xk, economy_feedback, spatial_feedback, player_metrics, coaching_feedback]
 

@@ -53,3 +53,9 @@ baseline/
 !.claude/skills/resolve-assumption/
 !.claude/skills/add-paper/
 !.claude/skills/check-knowledge-base/
+
+# CSDS data never enters the repository (ADR-0008): raw channels, tomes, derived parquet
+csds/
+tome/
+tomes/
+*.parquet
