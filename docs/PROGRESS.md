@@ -135,4 +135,9 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   temporal (937 matches, newest builds) 0.4807 [0.4756, 0.4864], ECE 0.0036, BSS 0.072 [0.066, 0.077]. All gates pass
   (worst tier ECE 0.013 / 0.020, worst map 0.030 de_train / 0.024). Bias found: T-wiped post-plant states (1v0 ECE 0.25
   temporal) from the v30 decided_tick rule. F-14, F-15 · reports/experiments/20260928-2214_m3.4_wp_validation/report.md
+- 2026-09-28 · M3.6 · v30 decided-tick fix (F-15): a T elimination after the plant no longer decides the round;
+  23,559 v30 rounds re-decided (median +10.1 s, winners unchanged), features 21.97 M rows; audit max AUC 0.626. wp_v2
+  (735 trees, Platt a 0.963) sealed look 2 (declared new experiment): test log-loss 0.4821 [0.4783, 0.4860], ECE
+  0.0044, BSS 0.071 [0.067, 0.075]; temporal 0.4788, ECE 0.0026, BSS 0.072; all gates pass; 1v0 ECE 0.012 / 0.020
+  (v1 0.047 / 0.247). F-16 · reports/experiments/20260928-2304_m3.6_wp_v2_validation/report.md
 

@@ -1,0 +1,11 @@
+{
+  "splits_read": [
+    "calibration",
+    "train"
+  ],
+  "split_sha256": "47e2b1bab2dda2c3cbc475777b1aa595b1bce0464d11b3537b2243ea28138bc0",
+  "matches_read": {
+    "train": 6293,
+    "calibration": 897
+  }
+}

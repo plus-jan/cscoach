@@ -1,0 +1,26 @@
+[
+  {
+    "look": 1,
+    "total_looks_this_model": 1,
+    "model_sha": "9fbcd2522780",
+    "commit": "c5df013",
+    "folds": [
+      "test",
+      "temporal"
+    ],
+    "time": "2026-09-28T22:14:00",
+    "new_experiment": false
+  },
+  {
+    "look": 2,
+    "total_looks_this_model": 1,
+    "model_sha": "3c057b69f0d5",
+    "commit": "a4e1fe7",
+    "folds": [
+      "test",
+      "temporal"
+    ],
+    "time": "2026-09-28T23:04:03",
+    "new_experiment": true
+  }
+]

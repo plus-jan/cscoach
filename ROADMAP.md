@@ -159,11 +159,14 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   [0.063, 0.072]; temporal 0.4807, ECE 0.0036, BSS 0.072 — all gates pass on both folds. Known bias: v30
   decided_tick cuts defuse rounds at the T elimination (post-plant T-wiped states biased, F-15; fix proposed).
   F-14. Report `reports/experiments/20260928-2214_m3.4_wp_validation/`.
-- [ ] **M3.6 — Fix the v30 decided tick after a plant; rebuild; WP v2** (F-15; approved 2026-09-28). deps: M3.4.
+- [x] **M3.6 — Fix the v30 decided tick after a plant; rebuild; WP v2** (F-15; approved 2026-09-28). deps: M3.4.
   After a plant, eliminating the T side does not decide the round (the defuse or explosion does). Fix
   `cscoach.data.rounds.decided_ticks` test-first; rebuild rounds → snapshots → features → WP table; re-run the leakage
   audit; refit `models/wp_v2` with the unchanged M3.2/M3.3 configs; evaluate once on the sealed folds as a declared
   new experiment (look 2). **DoD:** no v30 defuse round cut at the T elimination; gates pass; 1v0 post-plant bias gone.
+  Done: 23,559 v30 rounds re-decided (no winner changed); audit passes; wp_v2 look 2: test log-loss 0.4821 [0.4783,
+  0.4860], ECE 0.0044, BSS 0.071; temporal 0.4788, ECE 0.0026 — all gates pass; 1v0 ECE 0.012 / 0.020 (was 0.047 /
+  0.247). F-16. Report `reports/experiments/20260928-2304_m3.6_wp_v2_validation/`.
 
 ## MV — Verification experiments that feed decisions
 

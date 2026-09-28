@@ -298,10 +298,28 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - evidence: `reports/experiments/20260928-2214_m3.4_wp_validation/diagnose_v30_defuse.py`, `diag_*.csv`,
   `diag_summary.json` (training matches only).
 - confidence: high (mechanism shown in data and code; `cscoach.data.rounds.decided_ticks`).
-- changes: none yet (fix proposed): for T eliminations after a plant, the deciding event is the defuse or explosion,
+- changes: fixed in M3.6 (F-16): for T eliminations after a plant, the deciding event is the defuse or explosion,
   never the last T death. Affects rounds → snapshots → features → WP table → M3.2/M3.3 fit → a new sealed look.
 - next step (needs approval): a fix task — correct the rule with a test, rebuild the derived tables, refit wp_v2 with
   the unchanged M3.2/M3.3 configs, and evaluate it once as a new experiment (look 2) — rationale: the defect is in the
   training labels of ~83% of the matches (v30) in states that matter for WPA.
 - supersedes: —
+
+### F-16 — After the decided-tick fix, WP v2 passes every gate and the wiped-side states are calibrated
+- date: 2026-09-28 · task: M3.6 · decision: —
+- question: Does fixing F-15 remove the post-plant T-wiped bias without breaking the gates (sealed look 2, declared a
+  new experiment; unchanged M3.2/M3.3 configs)?
+- result: 23,559 v30 rounds (10.7%) re-decided, winners unchanged; v30/v42 CT win rates in T-wiped post-plant states
+  now agree (kit, 10–20 s left: 0.98 / 0.98). wp_v2 on test: log-loss 0.4821 [0.4783, 0.4860], ECE 0.0044, BSS vs
+  logistic 0.071 [0.067, 0.075]; temporal: 0.4788 [0.4736, 0.4844], ECE 0.0026, BSS 0.072 [0.067, 0.078]. All gates
+  pass (worst tier 0.012 / 0.019). 1v0 ECE 0.012 / 0.020 (v1 0.047 / 0.247), 2v0 0.009 / 0.008 (v1 0.044 / 0.100).
+- evidence: `reports/experiments/20260928-2304_m3.6_wp_v2_validation/` (report.md, summary.json, strata, reliability,
+  diag_after_fix/, sealed_looks.json), fit `reports/experiments/20260928-2302_m3.6_wp_v2_fit/`, audit
+  `reports/experiments/20260928-2258_m2.4_leakage_audit_refresh/`.
+- confidence: high for aggregates and the fix; small strata ungated (semipro temporal 22 matches, ECE 0.027).
+- changes: models/wp_v2 is the current WP model; F-15 resolved; docs/data/csds_decoding.md and docs/specs/06
+  decided-tick rule updated. The M3.2/M3.3 loop decisions were made on the pre-fix table and were not re-run.
+- next step: M3 is complete → run `plan-next-step` (decision points and the next committed batch) — rationale: the WP
+  backbone meets its gates on unseen and newest-build matches.
+- supersedes: F-14
 

@@ -1,0 +1,1 @@
+{"cfg": {"method": "platt", "by": null, "isotonic_min_rows": 5000, "min_rows_per_group": 1000}, "global": {"method": "platt", "params": {"a": 0.9627362307079247, "b": 0.008532297994089773}}, "groups": {}}

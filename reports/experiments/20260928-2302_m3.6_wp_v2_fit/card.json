@@ -1,0 +1,95 @@
+{
+  "commit": "a4e1fe7",
+  "config": "configs/wp_calibration.yaml",
+  "config_sha256_12": "711be5558fcc",
+  "split_sha256": "47e2b1bab2dda2c3cbc475777b1aa595b1bce0464d11b3537b2243ea28138bc0",
+  "train": {
+    "matches": 6293,
+    "rows": 13792533,
+    "rounds": 129527
+  },
+  "calibration": {
+    "matches": 897,
+    "rows": 1972986,
+    "rounds": 18507
+  },
+  "best_iteration": 735,
+  "gbdt": {
+    "label": "y_ct_win",
+    "stratum": "tier",
+    "features": [
+      "ct_alive",
+      "t_alive",
+      "ct_hp_sum",
+      "t_hp_sum",
+      "ct_armor_sum",
+      "t_armor_sum",
+      "ct_helmets",
+      "t_helmets",
+      "ct_kits",
+      "ct_equip_value",
+      "t_equip_value",
+      "ct_primaries",
+      "t_primaries",
+      "ct_flashes",
+      "t_flashes",
+      "ct_smokes",
+      "t_smokes",
+      "ct_molotovs",
+      "t_molotovs",
+      "ct_hes",
+      "t_hes",
+      "man_advantage",
+      "bomb_planted",
+      "bomb_site",
+      "time_remaining_s",
+      "tier",
+      "platform",
+      "map_name",
+      "second_in_round"
+    ],
+    "categorical": [
+      "bomb_site",
+      "tier",
+      "platform",
+      "map_name"
+    ],
+    "monotone": {
+      "ct_alive": 1,
+      "t_alive": -1,
+      "ct_hp_sum": 1,
+      "t_hp_sum": -1,
+      "ct_equip_value": 1,
+      "t_equip_value": -1,
+      "man_advantage": 1
+    },
+    "num_boost_round": 2000,
+    "early_stopping_rounds": 100,
+    "es_fraction": 0.1,
+    "train_row_fraction": 0.25,
+    "seed": 20260928,
+    "params": {
+      "learning_rate": 0.03,
+      "num_leaves": 31,
+      "min_data_in_leaf": 200,
+      "bagging_fraction": 0.8,
+      "bagging_freq": 1,
+      "feature_fraction": 0.8,
+      "lambda_l2": 1.0,
+      "num_threads": 16
+    }
+  },
+  "calibration_cfg": {
+    "method": "platt",
+    "by": null,
+    "isotonic_min_rows": 5000,
+    "min_rows_per_group": 1000
+  },
+  "calibrators": {
+    "global": {
+      "method": "platt",
+      "rows": 1972986
+    }
+  },
+  "booster_sha256_12": "3c057b69f0d5"
+}

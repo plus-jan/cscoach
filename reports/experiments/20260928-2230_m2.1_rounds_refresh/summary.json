@@ -1,0 +1,51 @@
+{
+  "commit": "22323e0",
+  "config": "configs/rounds.yaml",
+  "config_sha256_12": "2e0a68a563ac",
+  "refresh": "20260928-2230",
+  "matches": 13484,
+  "ok_share_all": 0.99889,
+  "ok_share_seeded": 0.99888,
+  "ok_by_channel_set": {
+    "v30": {
+      "mean": 0.99926,
+      "size": 10856
+    },
+    "v42": {
+      "mean": 0.99734,
+      "size": 2628
+    }
+  },
+  "ok_by_final_state": {
+    "draw": {
+      "mean": 1.0,
+      "size": 477
+    },
+    "incomplete": {
+      "mean": 0.98783,
+      "size": 411
+    },
+    "overtime": {
+      "mean": 1.0,
+      "size": 659
+    },
+    "regulation": {
+      "mean": 0.99916,
+      "size": 11937
+    }
+  },
+  "fail_reasons": {
+    "team_scores": 10,
+    "round_count": 5
+  },
+  "rounds_total": 273081,
+  "overtime_rounds": 4525,
+  "swaps_per_match": {
+    "0": 328,
+    "1": 12312,
+    "2": 838,
+    "3": 5,
+    "4": 1
+  },
+  "dod_ge_0995": true
+}
