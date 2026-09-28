@@ -27,3 +27,14 @@ CSDS corpus**, used through the official `pureskillgg-dsdk` libraries (ADR-0003)
 **Data attribution:** analyses built on this project use data provided by PureSkill.gg (CC BY-NC-SA 4.0
 Data Subscriber Agreement: non-commercial use, attribution "Data provided by PureSkill.gg.",
 share-alike).
+
+## Built on autoresearch (NOTICE)
+
+The loop tooling (`claude-plugin/`, `.claude/skills/autoresearch`, `.claude/commands/autoresearch*`,
+`.claude/hooks/autoresearch`, `guide/`, `plugins/`, `.agents/`, `.opencode/`, the upstream scripts
+and tests, and the `docs/*.md` files at the top of `docs/`) comes from
+[uditgoenka/autoresearch](https://github.com/uditgoenka/autoresearch), © Udit Goenka, MIT License (see
+`LICENSE`). Its original README is [`guide/AUTORESEARCH.md`](guide/AUTORESEARCH.md). In this project,
+loops run only under [`docs/specs/07_autoresearch_protocol.md`](docs/specs/07_autoresearch_protocol.md).
+
+[![Version](https://img.shields.io/badge/version-2.2.2-blue.svg)](https://github.com/uditgoenka/autoresearch/releases)
