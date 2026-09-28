@@ -24,10 +24,17 @@ def events():
     }
 
 
+def deaths():
+    # player 1 dies at 1500 in round 1; its status rows stop there (as in CSDS) and resume after the round
+    return pd.DataFrame({"round": [1], "tick": [1500], "player_id_fixed": [1]})
+
+
 def status():
     rows = []
     for p in range(4):
         for t in range(900, 7001, 32):  # player_status every 32 ticks
+            if p == 1 and 1500 < t < 3020:
+                continue
             rnd = 1 if t < 4000 else 2
             rows.append({"round": rnd, "tick": t, "player_id_fixed": p, "health": 100 - (t // 1000) - p,
                          "money": 800 + t})
@@ -54,28 +61,53 @@ def test_event_on_cadence_tick_keeps_both_sources():
 
 def test_asof_join_takes_latest_row_not_after_tick():
     s = sample_ticks(rounds(), events(), tick_rate=TICK_RATE, cadence_s=1.0)
-    j = asof_join(s, status(), ["health", "money"])
+    j = asof_join(s, status(), ["health", "money"], deaths())
     assert (j["status_tick"] <= j["tick"]).all()
     row = j[(j["tick"] == 1500) & (j["player_id_fixed"] == 0)].iloc[0]
     assert row["status_tick"] == 1476 and row["money"] == 800 + 1476  # 900 + 18 * 32
-    assert (j["staleness_ticks"] >= 0).all() and j["staleness_ticks"].max() < 32
-    assert len(j) == len(s) * 4
+    alive = j["is_alive"]
+    assert (j.loc[alive, "staleness_ticks"] >= 0).all() and j.loc[alive, "staleness_ticks"].max() < 32
+    assert len(j) == len(s) * 4  # every player has a status row before the first snapshot
 
 
 def test_asof_join_flags_status_from_another_round():
     st = status()
     st = st[~((st["player_id_fixed"] == 3) & (st["round"] == 2))]  # player 3 has no rows in round 2
     s = sample_ticks(rounds(), events(), tick_rate=TICK_RATE, cadence_s=1.0)
-    j = asof_join(s, st, ["health"])
+    j = asof_join(s, st, ["health"], deaths())
     p3 = j[(j["player_id_fixed"] == 3) & (j["round"] == 2)]
     assert p3["status_other_round"].all() and p3["health"].isna().all()  # never carried across rounds
 
 
 @pytest.mark.parametrize("cut", [999, 1000, 1499, 1500, 2100, 4000, 5100, 6499, 6999])
 def test_leakage_removing_future_rows_changes_nothing(cut):
-    full = snapshots(rounds(), events(), status(), ["health", "money"], tick_rate=TICK_RATE, cadence_s=1.0)
-    rs, ev, st = truncate(rounds(), events(), status(), cut)
-    part = snapshots(rs, ev, st, ["health", "money"], tick_rate=TICK_RATE, cadence_s=1.0)
+    full = snapshots(rounds(), events(), status(), ["health", "money"], deaths(), tick_rate=TICK_RATE, cadence_s=1.0)
+    rs, ev, st, de = truncate(rounds(), events(), status(), cut, deaths())
+    part = snapshots(rs, ev, st, ["health", "money"], de, tick_rate=TICK_RATE, cadence_s=1.0)
     a = full[full["tick"] <= cut].reset_index(drop=True)
     b = part[part["tick"] <= cut].reset_index(drop=True)
     pd.testing.assert_frame_equal(a, b)
+
+
+def test_player_joining_later_has_no_rows_before_first_status():
+    st = status()
+    late = st[(st["player_id_fixed"] == 0)].assign(player_id_fixed=9)
+    late = late[late["tick"] >= 5500]  # player 9 appears mid round 2
+    st = pd.concat([st, late], ignore_index=True)
+    j = snapshots(rounds(), events(), st, ["health"], deaths(), tick_rate=TICK_RATE, cadence_s=1.0)
+    assert j.loc[j["player_id_fixed"] == 9, "tick"].min() >= 5500
+    for cut in (5000, 5499, 5500, 6000):
+        rs, ev, s2, de = truncate(rounds(), events(), st, cut, deaths())
+        part = snapshots(rs, ev, s2, ["health"], de, tick_rate=TICK_RATE, cadence_s=1.0)
+        pd.testing.assert_frame_equal(j[j["tick"] <= cut].reset_index(drop=True), part[part["tick"] <= cut].reset_index(drop=True))
+
+
+def test_dead_player_is_not_carried_forward_as_alive():
+    j = snapshots(rounds(), events(), status(), ["health"], deaths(), tick_rate=TICK_RATE, cadence_s=1.0)
+    p1 = j[(j["player_id_fixed"] == 1) & (j["round"] == 1)]
+    before, after = p1[p1["tick"] < 1500], p1[p1["tick"] >= 1500]
+    assert before["is_alive"].all() and before["health"].notna().all()
+    assert (~after["is_alive"]).all() and after["health"].isna().all()  # masked, never the stale last value
+    assert after["staleness_ticks"].isna().all()
+    r2 = j[(j["player_id_fixed"] == 1) & (j["round"] == 2)]
+    assert r2["is_alive"].all()  # a new round: alive again
