@@ -84,9 +84,11 @@ picture of the data, a calibrated WP backbone, and the experiments that decide D
 
 ## M2 — Round reconstruction & snapshots
 
-- [ ] **M2.1 — Rounds** from `round_start/round_end/round_state/tick`: phases, warmup, overtime
+- [x] **M2.1 — Rounds** from `round_start/round_end/round_state/tick`: phases, warmup, overtime
   (`pop_overtime(max_rounds_csgo=24)`), side mapping [A-15].
-  **DoD:** round winners match the final scores in `header` for ≥ 99.5% of matches.
+  **DoD:** round winners match the final scores in `header` for ≥ 99.5% of matches. Adjusted (F-02: header loser
+  score unreliable): final team scores = last `round_state` scores and header winner score. Done:
+  `cscoach.data.rounds`; 99.887% of 7,984 matches; v30 winner-side fix; F-05. Report `reports/experiments/20260928-1613_m2.1_rounds/`.
 - [ ] **M2.2 — Snapshot sampler** (event ticks + cadence [A-22]); as-of join of `player_status` ≤ tick.
   **DoD:** leakage test (removing future rows changes nothing).
 - [ ] **M2.3 — State features v1** (docs/specs/02). **DoD:** leakage denylist test; feature

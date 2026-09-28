@@ -1,0 +1,51 @@
+{
+  "commit": "70e5c05",
+  "config": "configs/rounds.yaml",
+  "config_sha256_12": "12c64a686861",
+  "scope": "canonical 5v5 matches with all channels (before the M1.5 top-up)",
+  "matches": 7984,
+  "ok_share_all": 0.99887,
+  "ok_share_seeded": 0.9988,
+  "ok_by_channel_set": {
+    "v30": {
+      "mean": 0.99921,
+      "size": 6335
+    },
+    "v42": {
+      "mean": 0.99757,
+      "size": 1649
+    }
+  },
+  "ok_by_final_state": {
+    "draw": {
+      "mean": 1.0,
+      "size": 296
+    },
+    "incomplete": {
+      "mean": 0.98953,
+      "size": 191
+    },
+    "overtime": {
+      "mean": 1.0,
+      "size": 410
+    },
+    "regulation": {
+      "mean": 0.99901,
+      "size": 7087
+    }
+  },
+  "fail_reasons": {
+    "team_scores": 5,
+    "round_count": 4
+  },
+  "rounds_total": 162102,
+  "overtime_rounds": 2822,
+  "swaps_per_match": {
+    "0": 147,
+    "1": 7311,
+    "2": 523,
+    "3": 2,
+    "4": 1
+  },
+  "dod_ge_0995": true
+}

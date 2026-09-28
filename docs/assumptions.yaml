@@ -188,8 +188,10 @@
   parameters: [rank field decoding, premier_min_rating]
   note: >-
     2026-09-28 (M1.4, F-03): rank fields decoded (rank_type 11/12/7, FACEIT level in rank_platform); the
-    type-free rule for v30 agrees with rank_type in 2,079/2,079 v42 matches with known ranks. The other codes
-    (team, win reason, weapon, hit box, site) are still open (MV.1).
+    type-free rule for v30 agrees with rank_type in 2,079/2,079 v42 matches with known ranks.
+    2026-09-28 (M2.1, F-05): team_code/winner_team_code 2 = T, 3 = CT; v30 winner side is stale in the first
+    round of every half (fixed); rounds reconcile with final scores in 99.887% of matches. Win reasons exist
+    only in v42 (v30: 8/9 = winner side). Still open: win reason, weapon, hit box, site codes (MV.1).
   blocks: [wp_timeline, xk, economy_feedback, player_metrics]
 
 - id: A-16

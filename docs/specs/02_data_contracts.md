@@ -26,10 +26,13 @@ Conventions:
 | quality_flags | derived | missing ticks, missing round_end, warmup leftovers, **abandonment** (`player_disconnect` without reconnect → 4v5 phases with money compensation [xenopoulos_pro_vs_amateur_wp]), … |
 
 ## rounds
-match_id, round, start_tick (`round_start`/`round_state`), freeze_end_tick (phase change in
-`round_state`/`tick`), end_tick (`round_end.tick`), winner_side (`round_end.winner_team_code`),
-end_reason (`win_reason_code`, mapped in MV.1), is_overtime (round > 24), is_warmup (`round_state`),
-ct_score_before / t_score_before (`round_state`, fixed values).
+match_id, round, start_tick (`round_start`; round 1: first `round_state` tick), freeze_end_tick
+(`round_state` `round_freeze_end`), end_tick (`round_end.tick`), winner_side (`round_end.winner_team_code`,
+2 = T / 3 = CT, with the v30 half-start fix, F-05), winner_team (`start_ct`/`start_t`), win_reason_code (full
+only in v42; mapping in MV.1), side_start_ct and side_swap_before (from `player_info.team_code`), is_overtime
+(`pop_overtime`, round > 24), is_warmup (`round_state`), ct_score_before / t_score_before and
+start_ct_score_before / start_t_score_before (reconstructed from winners; `round_state` scores are only a
+check because their convention differs by parser). Built by `cscoach.data.rounds`.
 
 ## snapshots → state_features
 One row per (match_id, round, tick). Ticks are chosen by the sampler (docs/specs/03, cadence A-22):

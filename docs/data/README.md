@@ -86,6 +86,9 @@ Exact column types, origins (`replay`, `calculated`, `merged`, …) and nullabil
 12. **Ranks (M1.4, F-03):** see the decoding table in the M1.4 report and docs/specs/06; per-match tiers in
    `<root>/manifest/match_tiers.parquet` (full-channel matches only; null when < 6 known ranks, never guessed).
    `header.*_starters_avg_rank` averages unranked players as 0; don't use it for tiers.
+13. **Rounds (M2.1, F-05):** `winner_team_code` 2 = T / 3 = CT, but the v30 parser reports a stale side in
+   the first round of every half (fixed in `cscoach.data.rounds`); v30 has no round end reasons (only 8/9).
+   Per-match round tables: `<root>/derived/rounds/`; reconciliation flags: `<root>/manifest/rounds_check.parquet`.
 
 ## Access procedure (for the implementing agent)
 

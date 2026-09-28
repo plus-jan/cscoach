@@ -112,4 +112,23 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - changes: A-32 note (gap analysis). No status change.
 - next step: user decision on the top-up (recommended: f = 0.35 + all FACEIT, platform-stratified); then the
   first open Part A tasks M2.1/MV.1 — rationale: E.x and M3 need rounds; the top-up can run in parallel.
+  Decided 2026-09-28: f = 0.35 + all FACEIT (248 GB, ≈ $22).
+- supersedes: —
+
+### F-05 — Round winners need a parser-specific fix; v30 has no round end reasons
+- date: 2026-09-28 · task: M2.1 · decision: —
+- question: Can round winners be reconstructed so that they reproduce the final score (M2.1 DoD)?
+- result: `team_code`/`winner_team_code` 2 = T, 3 = CT; sides per round from `player_info` (swaps at 13, 28, 34,
+  40). The v30 parser reports a stale winner side in the first round of every half (after each swap and at each
+  overtime-block start): round 13 wrong in 322/322 sampled v30 matches, rounds 14–24 right in 100 %. With the fix,
+  final team scores match `round_state` and the header winner in 99.887 % of 7,984 matches (v30 99.921 %, v42
+  99.757 %; overtime 100 %, draws 100 %). v30 `win_reason_code` only encodes the winner side (8/9); v42 has full
+  reasons. `round_state` score conventions differ by parser.
+- evidence: `reports/experiments/20260928-1613_m2.1_rounds/report.md`; config `configs/rounds.yaml`.
+- confidence: high (exact reconciliation on all full-channel canonical 5v5 matches).
+- changes: A-15 note (side/winner decoding); docs/specs/02 `rounds`; docs/data/README.md quirk 13;
+  parameters `rounds.*`. E.1 must derive "how rounds end" from bomb events/time for v30 matches, or restrict
+  that part to v42.
+- next step: finish the M1.5 top-up, refresh manifest/quality/tiers/volume, rebuild rounds for the new matches;
+  then M2.2 (snapshot sampler) and MV.1 (remaining code decoding) — rationale: both are Part A and unblock E.x/M3.
 - supersedes: —
