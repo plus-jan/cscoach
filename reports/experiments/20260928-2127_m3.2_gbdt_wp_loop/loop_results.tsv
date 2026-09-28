@@ -1,0 +1,14 @@
+# metric_direction: higher_is_better
+iteration	timestamp	commit	metric	delta	guard	guard-metric	status	description
+0	2026-09-28T20:26:57	7ccbd78	0.000000	0.0	pass	-	baseline	champion: v1 features, A-29 start values, A-27 monotone (OOF log-loss 0.4850, ECE 0.0063)
+1	2026-09-28T20:31:13+02:00	f7a231a	-0.000001	0.000087	pass	0 fails	discard	num_leaves 31 -> 63
+2	2026-09-28T20:35:53+02:00	3783f16	-0.000153	0.000024	pass	0 fails	discard	add ct_money_sum, t_money_sum
+3	2026-09-28T20:39:33+02:00	7102946	0.000017	0.000100	pass	0 fails	keep	add second_in_round
+4	2026-09-28T20:43:26+02:00	2f21615	-0.000064	0.000003	pass	0 fails	discard	min_data_in_leaf 200 -> 1000
+5	2026-09-28T20:46:49+02:00	d8b6847	-0.000026	0.000030	pass	0 fails	discard	lambda_l2 1 -> 10
+6	2026-09-28T20:51:38+02:00	9a8f32f	-0.000111	-0.000016	pass	0 fails	discard	train_row_fraction 0.25 -> 0.5
+7	2026-09-28T20:55:20+02:00	908a46c	-0.000210	-0.000055	pass	0 fails	discard	ablation: drop tier, platform
+8	2026-09-28T20:59:35+02:00	601e29e	-0.000308	-0.000095	pass	0 fails	discard	ablation: drop map_name
+9	2026-09-28T21:03:35+02:00	dfb6d22	-0.000564	-0.000459	pass	0 fails	discard	feature_fraction 0.8 -> 1.0
+10	2026-09-28T21:22:27+02:00	1ee3be8	-0.000488	-0.000196	pass	0 fails	discard	add rank prior: ct_rank_alive, t_rank_alive, rank_diff_alive (A-48)
+11	2026-09-28T21:26:24+02:00	6e1d110	-0.000104	0.000161	pass	0 fails	discard	add rank prior: rank_diff_alive only (A-48)

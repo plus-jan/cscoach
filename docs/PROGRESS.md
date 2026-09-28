@@ -119,4 +119,10 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   only, 0 plants); `wp.map_prefixes` = `de_`; WP table now 9,931 matches, 21,519,341 rows. M3.1 re-run: log-loss 0.516
   [0.514, 0.517], ECE 0.0086 on 6,293 training matches · reports/experiments/20260928-2014_a47_map_modes/report.md ·
   reports/experiments/20260928-2014_m3.1_baseline_wp_de/summary.json
+- 2026-09-28 · M3.2 · GBDT WP (monotone LightGBM, `cscoach.models.wp_gbdt`), gated loop on 6,293 training matches
+  (13.6 M rows): 11 of 15 variants, 1 kept (+ second_in_round, lower bound +0.000017); hyperparameters, money, rank
+  prior (A-48, new state columns) and tier/platform/map ablations all within ±0.0005. Champion OOF log-loss 0.4849
+  [0.4830, 0.4869] vs logistic 0.5157 (paired Δ 0.0308 [0.0298, 0.0319]); ECE 0.0061, per tier ≤ 0.0071, per map
+  ≤ 0.017; weakest: side wiped out (3v0 0.091). A-29 supported. Sealed test deferred to M3.4. F-12 ·
+  reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/report.md
 

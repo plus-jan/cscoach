@@ -142,8 +142,12 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
   Done: `cscoach.models.wp_data` (table on `de_` maps [A-47], sealed split `wp_v1`), `cscoach.models.wp_baseline`;
   logistic baseline out-of-fold log-loss 0.516 [0.514, 0.517] on 6,293 training matches (map-only 0.693); F-11.
   Report `reports/experiments/20260928-2014_m3.1_baseline_wp_de/`.
-- [ ] **M3.2 — GBDT WP** (monotone, tier/platform features, rank-prior features via ablation), with
+- [x] **M3.2 — GBDT WP** (monotone, tier/platform features, rank-prior features via ablation), with
   hyperparameters tuned by grouped CV [A-29]. Refs: [pandaskill], [xenopoulos_pro_vs_amateur_wp].
+  Done: `cscoach.models.wp_gbdt` (monotone LightGBM loop task); gated loop 11/15 variants, 1 kept
+  (+ second_in_round); OOF log-loss 0.4849 [0.4830, 0.4869] vs logistic 0.5157 (Δ 0.0308 [0.0298, 0.0319]), ECE
+  0.0061; hyperparameters flat; tier/platform/map kept; rank prior not adopted (A-48). Sealed-test look deferred to
+  M3.4 (after M3.3). F-12. Report `reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/`.
 - [ ] **M3.3 — Calibration layer** per tier/platform [A-28].
 - [ ] **M3.4 — WP validation report** (docs/specs/04 §2, incl. the temporal split by `build_num`).
   **DoD:** passes gates.

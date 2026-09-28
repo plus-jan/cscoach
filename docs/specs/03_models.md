@@ -34,6 +34,8 @@ players and the rank difference (`player_info` at round start, known before the 
 FPL (r = 0.13), especially when equipment/HP were balanced.
 Implemented as `ct_rank_alive`, `t_rank_alive`, `rank_diff_alive` in tier units (docs/specs/02, A-48); no monotone
 constraint (a direction conditional on equipment and tier is not established).
+M3.2 result: not adopted (no gain beyond state and tier, F-12). The M3.2 champion uses features v1 plus
+`second_in_round` (config `configs/wp_gbdt.yaml`).
 
 **Features v2** (spatial, M7, must win an ablation): area control share and distance to sites on
 the empirical `area_graph`, spotted counts (`is_spotted`), active smokes/mollies on key edges,

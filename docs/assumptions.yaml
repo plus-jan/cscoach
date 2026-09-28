@@ -283,6 +283,10 @@
   type: method
   source: M3.2 design choice; rank-prior idea from [xenopoulos_pro_vs_amateur_wp]
   status: open
+  note: >-
+    2026-09-28 (M3.2, F-12): the rank-prior features did not pass the gated keep rule (three features Δ −0.0002;
+    rank_diff_alive alone +0.00016, lower bound −0.0001) and are not in the WP model. Cross-scale comparability itself
+    is untested.
   test: [M3.2]
   parameters: [rank prior scale, rank_min_known_share]
   blocks: []
@@ -417,7 +421,12 @@
   statement: GBDT hyperparameters in configs are reasonable starting values; final values come from grouped CV.
   type: method
   source: initial choice, to be replaced by tuning
-  status: open
+  status: supported
+  evidence: [reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/report.md]
+  note: >-
+    2026-09-28 (M3.2, F-12): gated loop on grouped folds of 6,293 training matches; num_leaves 63, min_data_in_leaf
+    1000, lambda_l2 10, feature_fraction 1.0 and train_row_fraction 0.5 changed OOF log-loss by −0.0005 to +0.0001
+    (none kept). The start values stand.
   test: [M3.2]
   parameters: [lightgbm]
   blocks: []

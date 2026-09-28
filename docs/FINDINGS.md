@@ -228,3 +228,24 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 - next step: M3.2 GBDT WP (non-linear alive × time × bomb interactions) — rationale: the calibration misses sit in
   exactly the interactions a tree model captures.
 - supersedes: —
+
+### F-12 — A monotone GBDT cuts WP log-loss by 0.031 and fixes the linear baseline's calibration; tuning and rank priors add nothing
+- date: 2026-09-28 · task: M3.2 · decision: —
+- question: How far does a monotone GBDT improve on the M3.1 baseline, and do hyperparameters, extra state
+  features, tier/platform/map or rank priors [xenopoulos_pro_vs_amateur_wp] change it (gated keep rule, A-42)?
+- result: champion OOF log-loss 0.4849 [0.4830, 0.4869] vs logistic 0.5157 on identical rows, paired Δ 0.0308
+  [0.0298, 0.0319]; ECE 0.0061 (baseline 0.0086), late rounds 0.006 (0.037), 1v0 0.034 (0.18); per tier ≤ 0.0071,
+  per map ≤ 0.017. Loop: 11 variants, 1 kept (+ second_in_round, Δ 0.0001); all others within ±0.0005 — capacity,
+  regularisation, snapshot thinning, money, dropping tier/platform (Δ −0.00006) or map (−0.0001), and the rank prior
+  (all three features Δ −0.0002; rank difference alone +0.00016, lower bound −0.0001; freeze-end AUC 0.511). Weakest
+  cells: alive states with a side wiped out (3v0 ECE 0.091, 2v0 0.044).
+- evidence: `reports/experiments/20260928-2127_m3.2_gbdt_wp_loop/` (report.md, summary.json, strata.csv, ledgers);
+  config `configs/wp_gbdt.yaml`; split `wp_v1`, training folds only.
+- confidence: medium (out-of-fold on training matches; the sealed test is evaluated once in M3.4).
+- changes: A-29 → supported (start values stand); A-48 open, rank features built but not used. Unlike the CS:GO MM
+  result, rank priors carry no signal beyond state and tier here (CS2 matchmaking keeps teams balanced).
+- next step: M3.3 calibration layer, then M3.4 with the single sealed-test look; look at the wiped-side states (post-
+  plant with no T alive, save rounds) in M3.3/MV.7 — rationale: the model is well calibrated except in those cells,
+  and further tuning does not pay.
+- supersedes: —
+
