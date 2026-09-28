@@ -51,6 +51,9 @@ def asof_join(snaps: pd.DataFrame, status: pd.DataFrame, columns: list[str], dea
     """``player_status`` has no rows for dead players (they resume ~20 ticks after the round end), so the
     last alive row would be carried forward. A player is dead from a ``player_death`` (same round, tick ≤ t)
     until a later status row; dead players get ``is_alive = False`` and masked state columns."""
+    # the join key arrives as int in some channels and as double (nullable) in others
+    status = status.assign(player_id_fixed=status["player_id_fixed"].astype("float64"))
+    deaths = deaths.assign(player_id_fixed=deaths["player_id_fixed"].astype("float64"))
     players = status["player_id_fixed"].dropna().unique()
     grid = snaps.merge(pd.DataFrame({"player_id_fixed": players}), how="cross").sort_values("tick")
     st = (status[["tick", "round", "player_id_fixed", *columns]]
