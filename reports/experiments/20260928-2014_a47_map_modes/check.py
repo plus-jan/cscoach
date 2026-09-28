@@ -1,5 +1,5 @@
 """A-47 check: win reasons and bomb plants by map type (cs_ hostage vs de_ defusal) in the eligible WP matches.
-Run: uv run python reports/experiments/20260928-2030_a47_map_modes/check.py <report_dir>. Data provided by PureSkill.gg."""
+Run: uv run python reports/experiments/20260928-2014_a47_map_modes/check.py <report_dir>. Data provided by PureSkill.gg."""
 import json
 import subprocess
 import sys

@@ -1,0 +1,72 @@
+{
+  "commit": "5b3cd71",
+  "config": "configs/wp_baseline.yaml",
+  "config_sha256_12": "df4336abab3a",
+  "table_filter": "wp.map_prefixes [de_] (A-47)",
+  "split": "wp_v1",
+  "training_matches": 6293,
+  "training_rows": 13626911,
+  "overall": {
+    "base_rate": {
+      "rows": 13626911,
+      "matches": 6293,
+      "rounds": 129527,
+      "logloss": 0.6930147134934076,
+      "logloss_ci": [
+        0.6929104591099317,
+        0.6931324159144976
+      ],
+      "brier": 0.2499337684426358,
+      "brier_ci": [
+        0.24988164565503299,
+        0.24999261387624624
+      ],
+      "ece": 0.00272992124698405
+    },
+    "map_only": {
+      "rows": 13626911,
+      "matches": 6293,
+      "rounds": 129527,
+      "logloss": 0.6928306723183252,
+      "logloss_ci": [
+        0.6926105807420632,
+        0.6930602756294019
+      ],
+      "brier": 0.2498411205136529,
+      "brier_ci": [
+        0.2497313252943632,
+        0.24995553447381638
+      ],
+      "ece": 0.007024574427973286
+    },
+    "baseline_wp": {
+      "rows": 13626911,
+      "matches": 6293,
+      "rounds": 129527,
+      "logloss": 0.515665688383815,
+      "logloss_ci": [
+        0.5137478437184405,
+        0.5174433437496183
+      ],
+      "brier": 0.17486710308764816,
+      "brier_ci": [
+        0.17414427674963912,
+        0.17554334658368648
+      ],
+      "ece": 0.008564937496404195,
+      "ess_rounds_residual": 147045.97713017958
+    }
+  },
+  "delta_logloss_map_only_minus_baseline": {
+    "mean": 0.17716498393451013,
+    "ci": [
+      0.17535904302420072,
+      0.17906053827316332
+    ]
+  },
+  "benchmark_pro_csgo": {
+    "xgboost": 0.5353,
+    "map_only": 0.6917,
+    "source": "xenopoulos_valuing_actions_csgo"
+  }
+}

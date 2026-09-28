@@ -213,17 +213,18 @@ Literature evidence stays in `docs/research/` and is not a finding; synthetic-da
 ### F-11 — A six-feature logistic WP already beats the pro CS:GO XGBoost log-loss; map alone carries nothing
 - date: 2026-09-28 · task: M3.1 · decision: —
 - question: What do the base-rate, map-only and logistic baselines reach on CSDS (reference for M3.2)?
-- result: out-of-fold on 6,347 training matches (13.7 M rows): logistic 0.516 [0.514, 0.518] vs map-only 0.693
-  [0.693, 0.693] (Δ 0.177 [0.175, 0.179]); base rate 0.693. ECE 0.0085 overall, per tier 0.009–0.015, per platform
-  0.008–0.011, per map ≤ 0.027 (except cs_office). Poor calibration where a linear model cannot fit: alive states
-  with a side wiped out (1v0 0.18, 3v0 0.15), 5v4 0.056, late rounds 0.038, early 0.023. The pro benchmark (0.535)
-  is on a different game, tier mix and sampling, so the comparison is context only.
-- evidence: `reports/experiments/20260928-2007_m3.1_baseline_wp/` (summary.json, strata.csv); commit a19c505; config
-  `configs/wp_baseline.yaml`; split `wp_v1` (sealed folds unread).
+- result: out-of-fold on 6,293 training matches on bomb-defusal maps (13.6 M rows, 129,527 rounds): logistic 0.516
+  [0.514, 0.517] vs map-only 0.693 [0.693, 0.693] (Δ 0.177 [0.175, 0.179]); base rate 0.693. ECE 0.0086 overall,
+  per tier 0.009–0.015, per platform 0.008–0.011, per map 0.008–0.026. Poor calibration where a linear model
+  cannot fit: alive states with a side wiped out (1v0 0.18, 3v0 0.14), 5v4 0.056, late rounds 0.037, early 0.023.
+  The pro benchmark (0.535) is on a different game, tier mix and sampling, so the comparison is context only.
+  Including the 105 hostage-map matches (first run) changed log-loss by < 0.001.
+- evidence: `reports/experiments/20260928-2014_m3.1_baseline_wp_de/` (summary.json, strata.csv; commit 5b3cd71);
+  first run with hostage maps `reports/experiments/20260928-2007_m3.1_baseline_wp/`; config `configs/wp_baseline.yaml`;
+  split `wp_v1` (sealed folds unread).
 - confidence: medium (training folds only; no gates are applied at M3.1).
-- changes: none. Open data issue: `cs_office` (hostage map, 44 training matches) is in the eligible set and should
-  be excluded from bomb-defusal WP.
+- changes: A-47 added (supported): WP on `de_` maps only (`wp.map_prefixes`); the hostage maps (cs_office 85,
+  4 others 20 matches) are dropped from the WP table.
 - next step: M3.2 GBDT WP (non-linear alive × time × bomb interactions) — rationale: the calibration misses sit in
   exactly the interactions a tree model captures.
 - supersedes: —
-

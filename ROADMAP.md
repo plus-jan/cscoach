@@ -139,9 +139,9 @@ Descriptive, pre-registered where possible, with cluster-bootstrap CIs. Each res
 
 - [x] **M3.1 — Baseline WP** on CSDS; reference metrics per tier/platform/map, reported next to the pro CS:GO
   benchmark in [xenopoulos_valuing_actions_csgo] (log-loss 0.535 XGBoost / 0.692 map-only).
-  Done: `cscoach.models.wp_data` (table, sealed split `wp_v1`), `cscoach.models.wp_baseline`; logistic baseline
-  out-of-fold log-loss 0.516 [0.514, 0.518] on 6,347 training matches (map-only 0.693); F-11. Report
-  `reports/experiments/20260928-2007_m3.1_baseline_wp/`.
+  Done: `cscoach.models.wp_data` (table on `de_` maps [A-47], sealed split `wp_v1`), `cscoach.models.wp_baseline`;
+  logistic baseline out-of-fold log-loss 0.516 [0.514, 0.517] on 6,293 training matches (map-only 0.693); F-11.
+  Report `reports/experiments/20260928-2014_m3.1_baseline_wp_de/`.
 - [ ] **M3.2 — GBDT WP** (monotone, tier/platform features, rank-prior features via ablation), with
   hyperparameters tuned by grouped CV [A-29]. Refs: [pandaskill], [xenopoulos_pro_vs_amateur_wp].
 - [ ] **M3.3 — Calibration layer** per tier/platform [A-28].

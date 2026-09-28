@@ -115,3 +115,8 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   rounds): logistic log-loss 0.516 [0.514, 0.518], Brier 0.175, ECE 0.0085, ESS 148k; map-only 0.693, base rate 0.693
   (pro CS:GO: XGBoost 0.535 / map-only 0.692). ECE per tier 0.009–0.015; worst in lopsided alive states (1v0 0.18)
   and late rounds (0.038). F-11 · reports/experiments/20260928-2007_m3.1_baseline_wp/summary.json
+- 2026-09-28 · A-47 · Hostage maps out of WP: 105 of 10,036 eligible matches are on cs_ maps (hostage win reasons
+  only, 0 plants); `wp.map_prefixes` = `de_`; WP table now 9,931 matches, 21,519,341 rows. M3.1 re-run: log-loss 0.516
+  [0.514, 0.517], ECE 0.0086 on 6,293 training matches · reports/experiments/20260928-2014_a47_map_modes/report.md ·
+  reports/experiments/20260928-2014_m3.1_baseline_wp_de/summary.json
+

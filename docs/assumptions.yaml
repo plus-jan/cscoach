@@ -258,6 +258,23 @@
   parameters: [leakage_audit.auc_threshold]
   blocks: []
 
+- id: A-47
+  statement: >-
+    The WP model covers bomb-defusal maps only (`map_name` prefix `de_`); hostage maps (`cs_`) have other win
+    conditions and no bomb, so their rounds do not share the state→outcome relation.
+  type: data
+  source: CS2 game modes; checked on CSDS round win reasons and bomb plants (M3.1 follow-up)
+  status: supported
+  evidence: [reports/experiments/20260928-2014_a47_map_modes/report.md]
+  note: >-
+    2026-09-28: in the 10,036 eligible matches, 105 are on cs_ maps (cs_office 85, cs_italy 8, cs_shelter 7,
+    cs_agency 3, cs_alpine 2). Their rounds end only with hostage win reasons (codes 11, 13) or elimination/time
+    (8, 9) and have 0 bomb-planted snapshots; de_ rounds never have hostage reasons. Split wp_v1 was made before
+    the rule, so it lists these matches; they are absent from the table and so from every fold.
+  test: [M3.1]
+  parameters: [wp.map_prefixes]
+  blocks: []
+
 # ---------------------------------------------------------------- windows & thresholds (estimable from data)
 - id: A-17
   statement: A kill counts as traded if the killer dies within 5 s.
