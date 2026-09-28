@@ -88,10 +88,21 @@ def test_attach_revisions_and_sample(corpus):
             "revision_date": ["2026-08-11", "2026-08-11", "2026-08-10"],
         }
     )
-    m = attach_revisions(build_manifest(corpus), assets, seed=1, fraction=1.0).set_index("match_id")
+    cfg = {"sample_seed": 1, "full_channel_fraction": 1.0}
+    m = attach_revisions(build_manifest(corpus), assets, cfg=cfg).set_index("match_id")
     assert m.loc["m1", "revision_id"] == "r1" and m.loc["m1", "adx_revision_date"] == "2026-08-11"
     assert m.loc["m2", "revision_id"] == "r2"
     assert pd.isna(m.loc["m3", "revision_id"])  # not in the asset index → null, never guessed
     assert m["in_seeded_sample"].all()
     s = summarize_by_revision_date(m).set_index("revision_date")
     assert s.loc["2026-08-10", "revision_ids"] == "r1;r2"
+
+
+def test_attach_revisions_per_platform_inclusion(corpus):
+    from cscoach.data.manifest import attach_revisions
+
+    assets = pd.DataFrame({c: pd.Series([], dtype=str) for c in ("name", "revision_id", "revision_date")})
+    cfg = {"sample_seed": 1, "full_channel_fraction": 0.0, "full_channel_fraction_by_platform": {"faceit": 1.0}}
+    m = attach_revisions(build_manifest(corpus), assets, cfg=cfg).set_index("match_id")
+    assert m.loc["m3", "in_seeded_sample"] and m.loc["m3", "inclusion_prob"] == 1.0  # faceit
+    assert not m.loc["m1", "in_seeded_sample"] and m.loc["m1", "inclusion_prob"] == 0.0

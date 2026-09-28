@@ -45,7 +45,8 @@ the assumption ID next to each key. Changing a value = updating this table + the
 | Key | Initial value | Assumption |
 |---|---|---|
 | export.window (revision dates) | 2025-09-01 to 2026-09-27 (all live ADX revisions from the start date) | A-32 |
-| export.full_channel_fraction (seeded sample of matches exported with all channels; headers for all) | 0.15 | A-32 |
+| export.full_channel_fraction (seeded sample of matches exported with all channels; headers for all) | 0.35 (0.15 until the M1.5 top-up, F-04) | A-32 |
+| export.full_channel_fraction_by_platform (stratified override; pooled stats weight by 1/inclusion_prob) | faceit 1.0 | A-32 |
 | export.sample_seed | 20260928 | A-32 |
 
 ## Data quality (`configs/quality.yaml`, M1.3)

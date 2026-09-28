@@ -58,3 +58,20 @@ def test_plan_exports_each_name_once():
     a = pd.concat([a, a.assign(asset_id=a["asset_id"] + "-dup")], ignore_index=True)
     plan = plan_export(a, local_sizes={}, seed=3, fraction=1.0)
     assert plan["name"].is_unique and len(plan) == 4
+
+
+def test_sample_fraction_per_platform():
+    from cscoach.data.export import sample_fraction
+
+    cfg = {"full_channel_fraction": 0.35, "full_channel_fraction_by_platform": {"faceit": 1.0}}
+    assert sample_fraction("faceit", cfg) == 1.0
+    assert sample_fraction("steam", cfg) == 0.35 and sample_fraction(None, cfg) == 0.35
+    assert sample_fraction("steam", {"full_channel_fraction": 0.2}) == 0.2
+
+
+def test_plan_uses_per_match_fraction():
+    ids = [f"m{i}" for i in range(200)]
+    frac = {m: (1.0 if i < 50 else 0.0) for i, m in enumerate(ids)}  # first 50 = "faceit", all included
+    plan = plan_export(assets(ids), local_sizes={}, seed=3, fraction=0.0, match_fraction=frac)
+    full = set(plan.loc[~plan["channel"].isin(BASE_CHANNELS), "match_id"])
+    assert full == set(ids[:50])

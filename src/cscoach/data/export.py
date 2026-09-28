@@ -37,20 +37,30 @@ def in_sample(match_id: str, *, seed: int, fraction: float) -> bool:
     return h / 2**64 < fraction
 
 
+def sample_fraction(platform, cfg: dict) -> float:
+    """Inclusion probability of a match in the full-channel sample (platform-stratified, docs/specs/06)."""
+    return float((cfg.get("full_channel_fraction_by_platform") or {}).get(platform, cfg["full_channel_fraction"]))
+
+
 def match_of(name: str) -> tuple[str, str, str]:
     """``csds/YYYY/MM/DD/<match_id>/<channel>`` → (folder date, match id, channel)."""
     _, y, m, d, match_id, channel = name.split("/")
     return f"{y}-{m}-{d}", match_id, channel
 
 
-def plan_export(assets: pd.DataFrame, *, local_sizes: dict[str, int], seed: int, fraction: float) -> pd.DataFrame:
+def plan_export(
+    assets: pd.DataFrame, *, local_sizes: dict[str, int], seed: int, fraction: float,
+    match_fraction: dict[str, float] | None = None,
+) -> pd.DataFrame:
+    """``fraction`` applies to every match unless ``match_fraction`` gives a per-match value (strata)."""
     # a revision can list the same file under several asset ids; one export per name is enough
     assets = assets.drop_duplicates("name")
     parts = assets["name"].map(match_of)
     df = assets.assign(
         folder_date=[p[0] for p in parts], match_id=[p[1] for p in parts], channel=[p[2] for p in parts]
     )
-    sampled = {m: in_sample(m, seed=seed, fraction=fraction) for m in df["match_id"].unique()}
+    mf = match_fraction or {}
+    sampled = {m: in_sample(m, seed=seed, fraction=mf.get(m, fraction)) for m in df["match_id"].unique()}
     wanted = df["channel"].isin(BASE_CHANNELS) | df["match_id"].map(sampled)
     have = df["name"].map(local_sizes)
     return df[wanted & (have != df["size"])].reset_index(drop=True)
@@ -125,9 +135,11 @@ def local_sizes(root: Path, names) -> dict[str, int]:
 
 def cmd_plan(cfg, root: Path, write=True) -> pd.DataFrame:
     assets = pd.read_parquet(root / "manifest" / "adx_assets.parquet")
+    platforms = pd.read_parquet(root / "manifest" / "matches.parquet", columns=["match_id", "platform"])
+    match_fraction = {m: sample_fraction(p, cfg) for m, p in zip(platforms["match_id"], platforms["platform"])}
     plan = plan_export(
         assets, local_sizes=local_sizes(root, assets["name"]), seed=cfg["sample_seed"],
-        fraction=cfg["full_channel_fraction"],
+        fraction=cfg["full_channel_fraction"], match_fraction=match_fraction,
     )
     gb = plan["size"].sum() / 1e9
     print(

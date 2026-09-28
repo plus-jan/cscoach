@@ -5,6 +5,8 @@ bucket: cs2coach-csds-688474982708             # own export bucket (same region 
 root: /media/jan/merged/cs2coach               # local collection; never inside the repo (ADR-0008)
 start_date: "2025-09-01"                       # revision comment date, inclusive
 end_date: "2026-09-28"                         # exclusive
-full_channel_fraction: 0.15                    # A-32
+full_channel_fraction: 0.35                    # A-32 (was 0.15; M1.5/F-04 top-up)
+full_channel_fraction_by_platform:             # A-32: platform-stratified; weight by 1/inclusion_prob
+  faceit: 1.0
 sample_seed: 20260928                          # A-32
 egress_usd_per_gb: 0.09                        # S3 internet egress estimate (cost log only)

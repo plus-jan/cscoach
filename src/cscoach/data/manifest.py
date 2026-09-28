@@ -80,12 +80,13 @@ def build_manifest(root: Path, workers: int = 16) -> pd.DataFrame:
     return df
 
 
-def attach_revisions(manifest: pd.DataFrame, assets: pd.DataFrame, *, seed: int, fraction: float) -> pd.DataFrame:
-    """Add the ADX revision of each match (from the asset index) and its seeded-sample membership.
+def attach_revisions(manifest: pd.DataFrame, assets: pd.DataFrame, *, cfg: dict) -> pd.DataFrame:
+    """Add the ADX revision of each match (from the asset index), its seeded-sample membership and its
+    inclusion probability (platform-stratified; weight pooled statistics by 1 / inclusion_prob).
 
     Matches missing from the asset index get null revision fields (never guessed from the folder date).
     """
-    from cscoach.data.export import in_sample
+    from cscoach.data.export import in_sample, sample_fraction
 
     rev = (
         assets.assign(match_id=assets["name"].str.split("/").str[4])
@@ -94,7 +95,10 @@ def attach_revisions(manifest: pd.DataFrame, assets: pd.DataFrame, *, seed: int,
         .rename(columns={"revision_date": "adx_revision_date"})
     )
     out = manifest.join(rev, on="match_id")
-    out["in_seeded_sample"] = [in_sample(m, seed=seed, fraction=fraction) for m in out["match_id"]]
+    out["inclusion_prob"] = [sample_fraction(p, cfg) for p in out["platform"]]
+    out["in_seeded_sample"] = [
+        in_sample(m, seed=cfg["sample_seed"], fraction=f) for m, f in zip(out["match_id"], out["inclusion_prob"])
+    ]
     return out
 
 
@@ -137,9 +141,7 @@ def main(argv=None) -> int:
 
         cfg = yaml.safe_load(args.config.read_text())
         assets = pd.read_parquet(assets_path, columns=["name", "revision_id", "revision_date"])
-        manifest = attach_revisions(
-            manifest, assets, seed=cfg["sample_seed"], fraction=cfg["full_channel_fraction"]
-        )
+        manifest = attach_revisions(manifest, assets, cfg=cfg)
     args.matches_out.parent.mkdir(parents=True, exist_ok=True)
     manifest.to_parquet(args.matches_out, index=False)
     summary = summarize_by_revision_date(manifest)
