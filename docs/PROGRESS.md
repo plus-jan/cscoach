@@ -11,3 +11,7 @@ Append one line per completed task: `YYYY-MM-DD · task-id · what changed · ke
   docs/specs/06_parameters.md
 - 2026-09-28 · M0.4 · CSDS made the sole data source; corpus, libraries and constraints documented
   (no cross-match identity, CC BY-NC-SA DSA, channel-set change) · docs/data/, ADR-0003/0005
+- 2026-09-28 · M0.2 (partial) · Batch 2: TAR², Contextual xT, MLMove, X-Ego added; Same-Player updated to v2
+  (headline AUC 0.926/0.956; domain-matched training matters). New cross-paper findings: outcome-level
+  validation of spatial features, WPA telescoping test, CSDS capture-frequency caveat, and a
+  re-identification ban · docs/research/papers/README.md

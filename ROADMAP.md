@@ -15,7 +15,7 @@ they are open.
 ## M0 — Knowledge base (this repository)
 
 - [x] **M0.1 — Specs, roadmap, agent manual, skills.**
-- [~] **M0.2 — Research sources verified** (5/22 full texts; see `docs/research/papers/README.md`).
+- [~] **M0.2 — Research sources verified** (9 papers + CSDS spec verified; see `docs/research/papers/README.md`).
   Remaining PDFs are requested from the user.
 - [x] **M0.3 — Assumptions register** (`docs/assumptions.yaml`) + parameter spec (`docs/specs/06`).
 - [x] **M0.4 — CSDS corpus documented** (`docs/data/`, ADR-0003/0005).
@@ -54,8 +54,8 @@ they are open.
   deps: M2.1. Refs: [A-13, A-14, A-15, A-16, A-39].
   Reconcile the economy engine against `player_status.money` per `build_num`/platform (target ≥ 99% of
   player-rounds). Measure round/bomb/freeze timers from phase durations. Decode `team_code`,
-  `win_reason_code`, `weapon_code`, `hit_box_code` and `site_code`. Check the tick rate and the
-  staleness of as-of merges. Compare the v30 and v42 channel sets.
+  `win_reason_code`, `weapon_code`, `hit_box_code` and `site_code`. Check the tick rate, the staleness of as-of merges, and **tick coverage and gaps per match** (independent
+  report of possible drops: [learning_to_move_like_pros]). Compare the v30 and v42 channel sets.
   **DoD:** decoding tables committed to `docs/data/`; parameters and statuses updated.
 - [ ] **MV.2 — Tier label validity & corpus composition.**
   deps: M1.4. Refs: [A-11, A-12, A-15, A-34].
@@ -129,7 +129,8 @@ they are open.
 
 - [ ] **M5.1 — Event WPA** [A-18].
 - [ ] **M5.2 — Attribution rules** incl. trades [A-17] and eco adjustment [A-23].
-- [ ] **M5.3 — Shapley credit.** **DoD:** tests for efficiency, symmetry and the null player.
+- [ ] **M5.3 — Shapley credit.** **DoD:** tests for efficiency, symmetry and the null player, plus the
+  WPA telescoping test (docs/specs/04 §7). Refs: [tar2_credit_assignment].
 - [ ] **M5.4 — xK × WPA decision matrix** [A-05].
 
 ## M6 — Economy
@@ -141,7 +142,8 @@ they are open.
 ## M7 — Spatial analytics (CSDS-only)
 
 - [ ] **M7.1 — Empirical area graph** per map from `place_name` + `player_vector` [A-37].
-- [ ] **M7.2 — Area-control features** (must win an ablation). Refs: [valorant_round_outcome_tactical].
+- [ ] **M7.2 — Area-control features** (must win an ablation on WP *outcome* log-loss). Refs:
+  [valorant_round_outcome_tactical], [contextual_xt_spatial] (transition gains ≠ outcome gains).
 - [ ] **M7.3 — Utility delay** from `grenade_*`/`molotov_*` on the area graph.
 - [ ] **M7.4 — Off-ball/spatial credit.** Refs: [dynamic_xt].
 
@@ -153,7 +155,7 @@ they are open.
 
 ## M9 — Coaching engine
 
-- [ ] **M9.1 — Mistake detectors** (docs/specs/05).
+- [ ] **M9.1 — Mistake detectors** (docs/specs/05); region-based definitions as in [learning_to_move_like_pros].
 - [ ] **M9.2 — Counterfactual recourse** (limited to the types MV.10 allows) [A-04].
 - [ ] **M9.3 — Prioritisation** [A-30]. Refs: [gig_economy_esports_coaching].
 - [ ] **M9.4 — Narrative rendering + grounding check** [A-31].

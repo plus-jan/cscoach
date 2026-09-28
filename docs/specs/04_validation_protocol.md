@@ -111,6 +111,10 @@ rows. Use isotonic regression (clip to [1e−6, 1 − 1e−6]) if the rows ≥ `
 **Shapley credit.** Exact for ≤ 7 contributors, otherwise Monte-Carlo over permutations (seeded).
 Tests: efficiency (Σφ = v(all) − v(∅)), symmetry, null player.
 
+**WPA telescoping (potential property).** Over a round, Σ event WPA (CT perspective, with contiguous
+before/after states) = outcome − WP at freeze end [tar2_credit_assignment]. A test fails if gaps between
+events are not covered, e.g. by "drift" terms that account for time passing without events.
+
 **Grounding check for text.** Extract all numbers from the text (regex `-?\d+(?:[.,]\d+)?`, with the
 thousands separator removed). Every number must appear in the payload's allowed set, including round
 numbers and ticks. This checks presence only (A-31).

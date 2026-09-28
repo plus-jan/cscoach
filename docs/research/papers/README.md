@@ -22,49 +22,62 @@ synthesis, and where the paper is used in this project.
 
 ## Index
 
-| id | Paper | Game | Verified | Questions | Used in |
-|---|---|---|---|---|---|
-| [same_player_verification_cs2](same_player_verification_cs2.md) | Same-Player Verification for Account Consistency in CS2 (Zhang 2026) | CS2 | ✅ | A, C | M4.2 duel features, M3.5, player habits |
-| [valorant_round_outcome_tactical](valorant_round_outcome_tactical.md) | Round Outcome Prediction in VALORANT (Hayakawa et al. 2025) | VALORANT | ✅ | B, G | M7.2 event features (weak evidence) |
-| [champ_matchmaking](champ_matchmaking.md) | CHAMP cross-domain matchmaking (Wang et al. 2026) | MOBA | ✅ | B, C | ADR-0002 tier conditioning, per-tier reporting |
-| [gig_economy_esports_coaching](gig_economy_esports_coaching.md) | Understanding Game Coaching on Gig Platforms (Lee & Savage 2026) | many | ✅ | C, I | specs/05 feedback design, M9, M10.3 |
-| [pandaskill](pandaskill.md) | PandaSkill (De Bois et al. 2025) | LoL | ✅ | D | M8 player ratings, monotone GBDT, ECE |
+| id | Paper | Game / data | Questions | Used in |
+|---|---|---|---|---|
+| [same_player_verification_cs2](same_player_verification_cs2.md) | Account Consistency from Gameplay Traces: Same-Player Verification in CS2 (Zhang 2026, **v2**) | CS2 amateur + pro | A, C, E | M4.2 xK features, A-20, A-29, ADR-0005 ethics |
+| [learning_to_move_like_pros](learning_to_move_like_pros.md) | Learning to Move Like Professional CS Players (Durst et al. 2024) | CS:GO pro, dust2 | G, I | CSDS quality caveat (A-16/A-40), M9.1 region detectors, MV.12/13 |
+| [x_ego_cs](x_ego_cs.md) | X-Ego (Wang, Hans, Ustun 2025) | CS2 pro video, Mirage | G, J | named-area positions (A-37); data out of scope |
+| [valorant_round_outcome_tactical](valorant_round_outcome_tactical.md) | Round Outcome Prediction in VALORANT (Hayakawa et al. 2025) | VALORANT | B, G | M7.2 event features (weak evidence) |
+| [champ_matchmaking](champ_matchmaking.md) | CHAMP cross-domain matchmaking (Wang et al. 2026) | MOBA | B, C | ADR-0002 tier conditioning, per-tier reporting |
+| [pandaskill](pandaskill.md) | PandaSkill (De Bois et al. 2025) | LoL pro | D | M8, monotone GBDT, ECE |
+| [tar2_credit_assignment](tar2_credit_assignment.md) | TAR² temporal-agent reward redistribution (Kapoor et al. 2025) | MARL sims | D | M5.3/MV.11: WPA telescoping test; negative credit needed |
+| [contextual_xt_spatial](contextual_xt_spatial.md) | Contextual Expected Threat (Everett et al. 2022) | football | D, G | M7.2/M7.4: judge spatial features on outcome |
+| [gig_economy_esports_coaching](gig_economy_esports_coaching.md) | Understanding Game Coaching on Gig Platforms (Lee & Savage 2026) | interviews | C, I | specs/05, M9, M10.3 |
+
+All listed papers are full-text verified (`verified: true` in `../sources.yaml`).
 
 **Still missing (full text needed, see `../sources.yaml` for URLs):** **xenopoulos_pro_vs_amateur_wp**
-(highest priority: direct test of A-01, used earlier PureSkill data), franks_meta_analytics,
+(highest priority: direct test of A-01; it used earlier PureSkill data), franks_meta_analytics,
 brill_yurko_wp_difficulty, xenopoulos_valuing_actions_csgo, xenopoulos_optimal_economy,
-learning_to_move_like_pros, x_ego_cs, tar2_credit_assignment, play_like_champions,
-contextual_xt_spatial, dynamic_xt, hltv_rating_3.
+play_like_champions, dynamic_xt, hltv_rating_3 (HLTV article, save as PDF).
 
 ## By research question
 
 - **A. WP in Counter-Strike:** same_player_verification_cs2 (features only); *missing:* xenopoulos_pro_vs_amateur_wp, xenopoulos_valuing_actions_csgo
 - **B. WP in other games:** valorant_round_outcome_tactical, champ_matchmaking
-- **C. Skill tiers:** champ_matchmaking (conditioning lesson), same_player_verification_cs2 (pro data doesn't transfer to amateurs)
-- **D. Action valuation / credit:** pandaskill; *missing:* hltv_rating_3, tar2_credit_assignment, contextual_xt_spatial, dynamic_xt
+- **C. Skill tiers:** champ_matchmaking (conditioning lesson), same_player_verification_cs2 (domain-matched training matters, Table 9)
+- **D. Action valuation / credit:** pandaskill, tar2_credit_assignment, contextual_xt_spatial; *missing:* hltv_rating_3, dynamic_xt, xenopoulos_valuing_actions_csgo
 - **E. Duels (xK):** same_player_verification_cs2 (mechanics features)
 - **F. Economy:** *missing:* xenopoulos_optimal_economy, hltv_rating_3
-- **G. Spatial:** valorant_round_outcome_tactical; *missing:* learning_to_move_like_pros, x_ego_cs, dynamic_xt
-- **H. Statistical validity:** pandaskill (ECE practice); *missing:* franks_meta_analytics, brill_yurko_wp_difficulty
-- **I. Coaching:** gig_economy_esports_coaching; *missing:* play_like_champions
+- **G. Spatial:** learning_to_move_like_pros, x_ego_cs, contextual_xt_spatial, valorant_round_outcome_tactical; *missing:* dynamic_xt
+- **H. Statistical validity:** pandaskill (ECE practice), same_player_verification_cs2 (cluster bootstrap CIs); *missing:* franks_meta_analytics, brill_yurko_wp_difficulty
+- **I. Coaching:** gig_economy_esports_coaching, learning_to_move_like_pros (region-based mistake metrics); *missing:* play_like_champions
 
 ## Cross-paper takeaways (so far)
 
-1. **Calibration is rarely reported.** VALORANT and CHAMP report accuracy (CHAMP also RMSE); only
-   PandaSkill reports ECE. Our gates in `docs/specs/06_parameters.md` go beyond the literature. Don't relax them
-   to match the papers.
-2. **Pooling across skill groups needs explicit conditioning.** Without it, performance can fall below a
-   single-group model. Pro data did not help an amateur CS2 model [champ_matchmaking,
-   same_player_verification_cs2]. This supports ADR-0002.
-3. **Low-level mechanics carry strong player-specific signal** (crosshair control, counter-strafe timing,
-   firing rhythm) that outcome stats miss (AUC 0.599 vs 0.831) [same_player_verification_cs2]. This is the
-   basis for the execution side of xK.
-4. **Monotone GBDTs are the practical default** at esports data scale [pandaskill,
+1. **Calibration is rarely reported.** Only PandaSkill reports ECE. VALORANT and CHAMP report accuracy
+   (CHAMP adds RMSE), and xT reports log-likelihood without CIs. Our gates in `docs/specs/06_parameters.md`
+   go beyond the literature; don't relax them to match the papers.
+2. **Skill/domain groups need explicit conditioning or matched training.** Naive pooling can do worse
+   than a single-group model [champ_matchmaking]. Mixing amateur and pro data reduced pro performance
+   [same_player_verification_cs2, Table 9]. This supports ADR-0002 while MV.3 is open.
+3. **Low-level mechanics carry strong player-specific signal** that outcome stats miss (AUC 0.572 → 0.855,
+   v2) [same_player_verification_cs2]. This is the basis for the execution side of xK.
+   **Ethics:** the same signal can re-identify players, which the CSDS DSA forbids (ADR-0005).
+4. **Tree models on engineered features are the practical default** at this data scale [pandaskill,
    same_player_verification_cs2].
-5. **Coaching value comes from individual, recurring-pattern diagnosis with visible evidence**, not
-   generic tips [gig_economy_esports_coaching].
-6. **Most evaluations leak or under-report uncertainty:** random or person-disjoint splits that are not
-   match-disjoint, and 100-round test sets. Treat reported numbers as optimistic.
+5. **Gains on intermediate targets don't guarantee gains on the outcome:** xT transitions improved 19.2%,
+   but goal probability only ~0.4% [contextual_xt_spatial]. Judge every feature on WP log-loss with CIs.
+6. **Positions are best described as named areas:** callout regions for mistakes, teamwork and
+   location prediction [learning_to_move_like_pros, x_ego_cs]. This is the basis for our `place_name`
+   area graph (A-37).
+7. **WP is a potential function:** WPA telescopes over a round, the property that credit-redistribution
+   theory relies on [tar2_credit_assignment]. Our credit must also allow negative values.
+8. **Most evaluations leak or under-report uncertainty:** splits by round or by person rather than by
+   match, and 100-round test sets. Treat reported numbers as optimistic.
+9. **CSDS data quality:** an independent group notes that PureSkill.gg data has no guarantee on capture
+   frequency and may drop data [learning_to_move_like_pros]. Measure it before building sub-second
+   features (MV.1).
 
 Licenses: see each file's front matter. Only the coaching paper is confirmed CC BY. Keep this repository
 private unless redistribution rights are confirmed for the others.

@@ -19,6 +19,11 @@ are forbidden by the DSA.
 - Longitudinal coaching and the prospective effect study (M11) need a consented data route with identity
   → a separate ADR is required before any such work.
 
+- **Never attempt to re-link players across matches**, including indirectly through behavioural
+  fingerprints. [same_player_verification_cs2] shows that low-level mechanics identify players with AUC
+  ≈ 0.93–0.98, so such linking is technically feasible and explicitly out of bounds. Features may
+  describe behaviour within a match; they must not be used to match aliases across matches.
+
 ## Consequences
 Cross-match player ratings (e.g. the OpenSkill-style ratings from [pandaskill]) are out of scope. The
 within-lobby "free-for-all" ranking idea still applies within a match.

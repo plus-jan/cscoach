@@ -1,418 +1,494 @@
 ---
 id: same_player_verification_cs2
-title: Same-Player Verification for Account Consistency in Counter-Strike 2
-authors: null
+title: 'Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike
+  2'
+authors: Xuchen Zhang
 year: 2026
-venue: arXiv preprint (submitted to IEEE)
+venue: arXiv preprint (v2)
 url: https://arxiv.org/abs/2608.24893
-arxiv_version: 2608.24893v1
-license: unknown — check before redistributing
-pdf_sha256: b9b41a1e68f6ac6e
+arxiv_version: 2608.24893v2
+license: arXiv — not verified for redistribution
+pdf_sha256: a9196750be3498bb
 converted: '2026-09-28'
 converter: pymupdf4llm
+previous_version: 2608.24893v1 (replaced)
 ---
 
-# Same-Player Verification for Account Consistency in Counter-Strike 2
+# Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2
 
 > Auto-converted from PDF. Tables, equations and figure text may be garbled — check the original PDF before quoting numbers.
 
 <!-- cscoach-notes:start -->
 ## cscoach notes (hand-written — preserved on re-conversion)
 
-**Author:** Xuchen Zhang (independent researcher). arXiv preprint, submitted to IEEE. Dataset/code **not** released.
-Equations were lost in PDF conversion (Eq. 1–10); read the PDF for formulas.
+**Author:** Xuchen Zhang (independent researcher). arXiv 2608.24893 **v2** (v1 was titled *Same-Player
+Verification for Account Consistency in Counter-Strike 2*). This file contains the **v2 full text**; the v1
+numbers are listed below for traceability. The raw demos and identity ledgers are not released; the
+authors mention consent to release de-identified derived features.
 
-- **Relevance:** high for *feature engineering* (M4.2 xK, execution-vs-decision split, player fingerprints),
-  low for tier modelling (it does not model rank).
-- **Verified claims:**
-  - 1,330 CS2 demos, 13,300 demo-player observations, Perfect World Arena university guild, **12 amateur
-    tiers C … Diamond S+**; 2,380 manually confirmed observations from 64 people; 663,590 pairs (1:9 neg).
-  - Headline: **mean ROC AUC 0.931** over 6 person-disjoint splits; recall 0.722 @95% precision.
-    **0.955 is the single analysis split** (Table IV), LightGBM > XGBoost (0.951) ≫ MLP (0.854).
-  - History aggregation: AUC 0.971 (K=3), 0.980 (K=5), **0.986 (K=10)** (Table VI).
-  - Outcome stats only (K/D, ADR, HS%, first kill/death): **AUC 0.599** vs behavioural features 0.831 (Table III).
-  - Removing aim/crosshair family: −0.074 AUC; low-level (aim+mechanics+combat) alone ≈ full model.
-  - Adding HLTV pro demos did **not** help (distribution shift pro ↔ amateur, §IV-E3).
-- **Corrections vs. synthesis:**
-  - "ROC AUC 0.955" → headline is **0.931** (0.955 = best split).
-  - "These mechanical differences correlate strongly with rank" — **not tested in the paper**. It verifies
-    identity, not skill tier. Do not cite it for tier separation.
-  - "12 tiers" and dataset name "Perfect World Arena Consistency Dataset" — the paper gives no dataset name
-    and releases no data (synthesis §4 lists it as a public dataset: **wrong**).
+- **Relevance:** high for **feature engineering** (xK mechanics, execution vs. decision) and as a
+  **data-ethics warning** for CSDS. Low for tier modelling (it does not model rank).
+- **Verified claims (v2):**
+  - Two datasets:
+    - Perfect (DPER): 3,570 demos, 35,700 demo-player observations; a university guild on Perfect World
+      Arena; 12 amateur tiers from C to Diamond S+; manually confirmed identities.
+    - Professional (DPRO): 539 HLTV demos, 5,390 observations, 130 pro players.
+  - A stricter split: 6 folds with a person-first / demo-ownership ledger. Natural person, SteamID,
+    alias, observation, demo and content overlap between train and test are all zero (§4.1).
+  - Headline mean ROC AUC **0.926 (DPER)** and **0.956 (DPRO)**. Player-cluster bootstrap 95% CIs:
+    [0.915, 0.950] and [0.948, 0.965] (§5.1). Excluding same-demo negatives: 0.920 / 0.944.
+  - Representation ladder (Table 3):
+    - outcome-only stats: 0.572 / 0.712;
+    - behavioural features: 0.855 / 0.874;
+    - adding explicit pairwise comparison features: **0.926 / 0.956**;
+    - the sequence embedding adds little (+0.004 / +0.000).
+  - Model family (Table 4): LightGBM ≥ XGBoost (−0.008 / −0.005) ≫ FastMLP (−0.067 / −0.073).
+  - Features (Table 1 and §3; 252 per player-demo):
+    - speed drop in the 250 ms before each shot;
+    - crosshair correction switches around firing;
+    - reloads per 100 shots;
+    - seconds to first shot;
+    - force-buy rate;
+    - deaths in the first 20 s.
+    Removing the aim/crosshair family costs −0.087 / −0.076 AUC (Table 5).
+  - History aggregation (mean LLR): DPER AUC 0.923 (K=1) → **0.982 (K=10)**; DPRO 0.914 → 0.975 (K=5).
+    It degrades as history gets contaminated.
+  - Time gap: AUC 0.985 same-day → 0.885 at 31–90 days (DPER). Behaviour drifts over weeks.
+  - **Cross-domain training (Table 9):** Pro-only training on the pro test reaches 0.955. Mixing in
+    amateur data *lowers* it to 0.948; amateur-only reaches 0.912. On the amateur test, adding pro data
+    gives +0.003. Domain-matched training matters.
+  - External zero-shot test on 5E (weak SteamID labels): AUC 0.966.
+- **v1 → v2 changes:** v1 reported mean AUC 0.931 on 1,330 demos / 13,300 observations (0.955 on one
+  split), K=10 → 0.986, and a person-disjoint but not match-disjoint split. v2 enlarges the data,
+  tightens the split and adds CIs. Cite **v2** numbers.
+- **Corrections vs. synthesis:** "ROC AUC 0.955" is neither the v1 nor the v2 headline. The paper
+  **does not** test correlation with rank; it verifies identity. "Perfect World Arena Consistency
+  Dataset" is **not a public dataset**.
 - **Use in project:**
-  - Feature ideas (Table I): speed drop in the 250 ms before each shot (counter-strafe), crosshair correction
-    switches around firing, reloads per 100 shots, seconds to first shot, force-buy rate, deaths in first 20 s.
-    → xK features (docs/specs/03#xk, M4.2; in CSDS: `player_inputs`, `player_vector.speed_2d`/`ang_vel`/`inaccuracy`, `weapon_fire`), player-habit metrics (M8/M9).
-  - Supports design choice: tree models (LightGBM) on engineered features beat MLPs at this data scale.
-  - Evidence that pro data does not transfer to amateurs (supports ADR-0002, M3.5).
-- **Caveats:** split is person-disjoint but **not match-disjoint** (§V-A); pairwise CIs too narrow, they
-  report player-clustered bootstrap only as a diagnostic — same issue our ADR-0001 addresses.
+  - xK/mechanics features derivable from CSDS (`player_inputs`, `player_vector.speed_2d`/`ang_vel`/
+    `inaccuracy`/`recoil_index`, `weapon_fire`, `player_status.money`) → docs/specs/03#xk, M4.2, A-20.
+  - Tree models on engineered features beat neural models at this scale → default GBDT (A-29).
+  - Evidence that domain/skill-matched training matters (Table 9) → indirect support for A-01 / ADR-0002.
+  - **Ethics/DSA (ADR-0005): these fingerprints can re-link players across matches. Doing that on CSDS
+    would defeat its per-match anonymisation and is forbidden. Never build cross-match identity linking
+    from behavioural features.**
+- **Caveats:** the pairwise evaluation distribution is sampled (1:9 negatives), so precision-type
+  metrics depend on that ratio. Label noise comes from undisclosed account sharing.
 <!-- cscoach-notes:end -->
 
 ## Full text
 
-# Same-Player Verification for Account Consistency in Counter-Strike 2 
+# **Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2** 
+
+Xuchen Zhang Independent Researcher China 
+
+tigerlovezj@outlook.com 
+
+## **Abstract** 
+
+In competitive first-person shooter (FPS) games such as CounterStrike 2 (CS2), account-integrity review often asks whether an account’s recent behavior remains consistent with its historical operator. This consistency question arises in cases such as temporary substitution, rank boosting, and high-skill players using lower-ranked accounts, where manual review requires comparing a current match against multiple historical matches. We formulate this review task as same-player verification: we encode the behavioral trajectory of a single player in a match replay (demo) as a demo-player behavioral fingerprint, and train a model to judge whether two behavioral observations come from the same real player. Using CS2-specific domain knowledge, the fingerprints cover crosshair control, movement-stop-fire coordination, economy/buy, combat/engagement, and temporal rhythm. We construct strict six-fold evaluations on the Perfect dataset (DPER; 3,570 demos and 35,700 demo-player observations) and the Professional dataset (DPRO; 539 demos and 5,390 demo-player observations). The final pairwise model reaches ROC AUCs of 0.926 and 0.956, respectively. Feature analysis shows that the strongest identity signals come from aiming/crosshair and other low-level mechanical behaviors, indicating that stable mechanics are more informative for this verification task than single-match performance outcomes. On fixed eligible query cohorts, aggregating pairwise evidence between a current demo and multiple historical demos raises account-history AUC on Perfect from 0.923 at _𝐾_ = 1 to 0.982 at _𝐾_ = 10, and on Professional from 0.914 at _𝐾_ = 1 to 0.975 at _𝐾_ = 5. These results show that CS2 demo behavior can support supervised same-player verification and account-level identity-consistency modeling through multi-demo history aggregation. 
+
+## **Keywords** 
+
+same-player verification, account consistency, behavioral biometrics, game telemetry, Counter-Strike 2 
+
+## **1 Introduction** 
+
+## **1.1 Problem Background** 
+
+Counter-Strike 2 is one of the most active competitive FPS games [1, 2]. 
+
+Beyond anti-cheat, operator consistency within an account history is a distinct fairness concern in competitive FPS platforms. Account sharing, rank boosting, temporary player substitution, and high-skill players using another person’s lower-ranked account can make current operator behavior inconsistent with the account’s historical behavior, undermining matchmaking fairness, player trust, and tournament credibility. To handle such cases, platforms and tournament organizers also need to judge whether the operator’s 
+
+behavior in the current match is still consistent with the account’s past behavioral patterns. 
+
+Existing platform mechanisms address admission, reporting, and case review, while account-history consistency requires a different comparison: current behavior against multiple historical matches. Identity verification suits account admission, tournament registration, or high-risk checkpoints, but is hard to trigger frequently across everyday matches; player reports are low-cost but noisy; and manual demo review can inspect single-match segments but cannot systematically compare the current match against multiple historical matches in shooting habits, mechanical habits, economy decisions, and round rhythm. As a result, existing workflows struggle to turn account-history consistency review into a routine workflow. 
+
+CS2 demos provide structured telemetry for modeling finegrained player operations and decisions across rounds. Viewed more generally, this is a longitudinal user-activity modeling problem over structured platform telemetry, with open-set consistency verification as its target. This paper uses these structured behavioral trajectories to build demo-player behavioral fingerprints and judge the consistency of player behavior across matches. 
+
+## **1.2 Task and Approach Overview** 
+
+We model account-history consistency review as open-set sameplayer verification. Here, open-set means that test-time players need not appear in training; the model does not identify who the current operator is, but learns a reusable comparison function that judges whether two segments of demo-player behavior come from the same real player. In account-history review, this function evaluates behavioral consistency between the current match and historical matches and forms account-level identity-consistency evidence. 
+
+We model operation and decision patterns at a lower level than K/D (kill/death ratio), ADR (average damage per round), headshot rate, or rank, such as crosshair micro-adjustment, firing rhythm, movement-stop-fire coordination, and buying preference. Buying preference can be adjusted intentionally, while low-level operations and action-timing coordination such as crosshair control, firing rhythm, and movement-stop-fire coordination are less directly controllable and may be harder to imitate consistently across rounds. 
+
+The per-demo-player fingerprint has two parts: aggregate behavioral fingerprint features constructed from game understanding, characterizing stable behaviors such as crosshair, movement, economy, combat, and timing; and Transformer-derived sequence embeddings used as complementary behavioral representations for action order, state switching, and low-level mechanics from round events and combat windows. The pairwise model uses both 
 
 Xuchen Zhang 
 
-Independent Researcher Email: tigerlovezj@outlook.com 
+representations, and account-history review aggregates current-vshistory scores into an account-level consistency signal. 
 
-**_Abstract_ —In competitive first-person shooter (FPS) games such as Counter-Strike 2 (CS2), account-integrity review often asks whether an account’s recent behavior remains consistent with its historical operator. This consistency question arises in cases such as temporary substitution, rank boosting, and high-skill players using lower-ranked accounts, where manual review requires comparing a current match against multiple historical matches. We formulate this review task as same-player verification: we encode the behavioral trajectory of a single player in a match replay (demo) as a demo-player behavioral fingerprint, and train a model to judge whether two behavioral observations come from the same real player. Grounded in CS2 game understanding, the fingerprints cover crosshair control, movement-stop-fire coordination, economy/buy, combat/engagement, and temporal rhythm. From 1,330 CS2 demos we extract 13,300 demo-player observations, and sample 663,590 same/different pairs from an 88.4M candidate-pair space for supervised training and evaluation. The final pairwise model reaches an average ROC AUC of 0.931 and achieves 0.722 different-player recall at 95% precision. Feature analysis shows that the strongest identity signals come from lowlevel operations, especially crosshair control, firing rhythm, and movement-stop-fire coordination, indicating that stable low-level mechanical habits are more informative for this verification task than single-match performance outcomes. In the account-history aggregation evaluation, increasing history depth raises AUC from the K=1 single-pair baseline of 0.931 to 0.986 at K=10. These results show that CS2 demo behavior can support supervised same-player verification and account-level identity-consistency modeling through multi-demo history aggregation.** 
-
-## I. INTRODUCTION 
-
-## _A. Problem Background_ 
-
-Counter-Strike 2 is one of the most active competitive FPS games [1], [2]. 
-
-Beyond anti-cheat, operator consistency within an account history is a distinct fairness concern in competitive FPS platforms. Account sharing, rank boosting, temporary player substitution, and high-skill players using another person’s lower-ranked account can make current operator behavior inconsistent with the account’s historical behavior, undermining matchmaking fairness, player trust, and tournament credibility. To handle such cases, platforms and tournament organizers also need to judge whether the operator’s behavior in the current match is still consistent with the account’s past behavioral patterns. 
-
-This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. 
-
-Existing platform mechanisms address admission, reporting, and case review, while account-history consistency requires a different comparison: current behavior against multiple historical matches. Identity verification suits account admission, tournament registration, or high-risk checkpoints, but is hard to trigger frequently across everyday matches; player reports are low-cost but noisy; and manual demo review can inspect single-match segments but cannot systematically compare the current match against multiple historical matches in shooting habits, mechanics habits, economy decisions, and round rhythm. As a result, existing workflows struggle to turn account-history consistency review into a routine workflow. 
-
-CS2 demos provide structured telemetry for modeling finegrained player operations and decisions across rounds. This paper uses these structured behavioral trajectories to build demo-player behavioral fingerprints and judge the consistency of player behavior across matches. 
-
-## _B. Paper Idea_ 
-
-We model account-history consistency review as open-set same-player verification. Here, open-set means that test-time players need not appear in training; the model does not identify who the current operator is, but learns a reusable comparison function that judges whether two segments of demo-player behavior come from the same real player. In account-history review, this function evaluates behavioral consistency between the current match and historical matches and forms accountlevel identity-consistency evidence. 
-
-We model operation and decision patterns at a lower level than K/D (kill/death ratio), ADR (average damage per round), headshot rate, or rank, such as crosshair micro-adjustment, firing rhythm, movement-stop-fire coordination, and buying preference. Buying preference can be adjusted intentionally, while low-level operations and action-timing coordination such as crosshair control, firing rhythm, and movement-stopfire coordination are less directly controllable and may be harder to imitate consistently across rounds. 
-
-The per-demo-player fingerprint has two parts: aggregate behavioral fingerprint features constructed from game understanding, characterizing stable behaviors such as crosshair, movement, economy, combat, and timing; and Transformerderived sequence embeddings used as complementary behavioral representations for action order, state switching, and lowlevel mechanics from round events and combat windows. The 
-
-pairwise model uses both representations, and account-history review aggregates current-vs-history scores into an accountlevel consistency signal. 
-
-## _C. Results Overview_ 
-
-On the main evaluation set of 1,330 CS2 demos and 13,300 demo-player observations, we sample 663,590 same/different pairs from an 88.4M candidate-pair space for supervised training and evaluation. The final pairwise model reaches ROC AUC 0.931 and achieves 0.722 different-player recall at 95% precision. Feature analysis shows that the identity signal is strongest in crosshair control and combat micro-operations, including view/crosshair micro-adjustment, firing rhythm, and movement-stop-fire coordination. Account-history aggregation raises AUC from the K=1 single-pair baseline of 0.931 to 0.986 at K=10. 
-
-## _D. Contributions_ 
+## **1.3 Contributions** 
 
 This paper makes the following contributions: 
 
 - **A supervised formulation for FPS account-history consistency.** We formulate account-history consistency review as a same-player verification task that a model can learn. 
 
-- **Behavioral findings from CS2 fingerprints.** We find that player identity signals come mainly from lowlevel operations such as crosshair control, firing rhythm, and movement-stop-fire coordination; sequence modeling adds complementary evidence about action order. 
+- **Behavioral findings from CS2 fingerprints.** We find that player identity signals come mainly from aiming/crosshair and other low-level mechanical behaviors; sequence modeling captures complementary action-order information, with dataset-dependent gains. 
 
-- **A verification-and-aggregation model with practical account-integrity value.** We evaluate the formulation across person-disjoint splits and account-history aggregation settings, showing that the method scales from singlepair verification to multi-demo account-history consistency modeling. 
+- **Verification and aggregation under person-disjoint evaluation.** We evaluate the formulation across persondisjoint splits and account-history aggregation settings, extending single-pair verification to multi-demo accounthistory consistency modeling. 
 
-## II. RELATED WORK 
-
-## _A. Account Identity Verification and Fairness Mechanisms on Competitive Platforms_ 
-
-Competitive platforms have already incorporated account integrity into fairness governance. Both operator inconsistency behind an account and one person using multiple accounts to bypass platform rules can undermine matchmaking fairness and tournament credibility. Existing esports research discusses boosting—“finding a stronger player to play on an account to improve its rank or results”—and the fairness risk from inconsistency between an account’s displayed skill and the real operator’s ability [3]; broader research on online-game cheating shows that platform governance often needs to combine multiple signals such as accounts, behavior, and social relations [4]. 
-
-Mainstream platforms combine anti-cheat, identity verification, reporting, and manual review to manage account-integrity risks [5], [6]. These mechanisms support admission control, user reports, and case review, but they do not directly provide a systematic comparison between current behavior and multiple historical matches. This paper formalizes that horizontal comparison as CS2 demo-based same-player verification. 
-
-_B. Counter-Strike and FPS Player Behavioral Identity Modeling_ 
-
-The closest game-domain work studies Counter-Strike / CS2 player identity and fair-play. Existing work uses behavioral features to identify known professional players or distinguish known player pairs [7], and related CoG work studies ingame behavioral biometrics for fair play [8]. These studies show that CS/CS2 demo telemetry contains identity-related signals, especially in aiming, shooting, movement state, and game context. 
-
-Our setting is different: platform review often asks whether a current demo remains consistent with an account’s historical demos when the current operator may be unknown or unseen during training. We therefore use manually confirmed sameplayer histories, focus on stable CS2 habits such as crosshair control, firing rhythm, movement-stop-fire coordination, state switching, buying rhythm, and risk preference, and evaluate with unseen-player splits plus current-vs-history aggregation. This moves the target from fixed-identity recognition to account-history consistency. 
+histories, focus on stable CS2 habits such as crosshair control, firing rhythm, movement-stop-fire coordination, state switching, buying rhythm, and risk preference, and evaluate with unseen-player splits plus current-vs-history aggregation. This moves the target from fixed-identity recognition to account-history consistency. 
 
 Another related direction studies FPS fair-play risk and skill/rating discrepancy. GUARD uses mouse/keyboard dynamics, in-game actions, and expert knowledge to infer a player’s skill group, then compares it with the account rating to identify smurfing / rank-boosting risk [9]. FPS security research also detects passive aimbots through inconsistency between shooting performance and broader skillfulness [10]. These methods can flag cases where operator ability clearly mismatches account rank, or where shooting performance is inconsistent with broader skillfulness. Account borrowing, temporary substitution, or short-term boosting can also happen without an obvious ability jump. We therefore evaluate behavioral consistency between the current demo and accounthistory demos, directly comparing whether behavior before and after still follows the same player’s operational habits. 
 
-## _C. Broader Game Behavior and Behavioral Biometrics_ 
+## **2 Related Work** 
+
+## **2.1 Account Identity Verification and Fairness Mechanisms on Competitive Platforms** 
+
+Competitive platforms have already incorporated account integrity into fairness governance. Both operator inconsistency behind an account and one person using multiple accounts to bypass platform rules can undermine matchmaking fairness and tournament credibility. Existing esports research discusses boosting—“finding a stronger player to play on an account to improve its rank or results”—and the fairness risk from inconsistency between an account’s displayed skill and the real operator’s ability [3]; broader research on online-game cheating shows that platform governance often needs to combine multiple signals such as accounts, behavior, and social relations [4]. 
+
+Mainstream platforms combine anti-cheat, identity verification, reporting, and manual review to manage account-integrity risks [5, 6]. These mechanisms support admission control, user reports, and case review, but they do not directly provide a systematic comparison between current behavior and multiple historical matches. This paper formalizes that longitudinal current-vs-history comparison as CS2 demo-based same-player verification. 
+
+## **2.2 Counter-Strike and FPS Player Behavioral Identity Modeling** 
+
+The closest game-domain work studies Counter-Strike / CS2 player identity and fair-play. Existing work uses behavioral features to identify known professional players or distinguish known player pairs [7], and related CoG work studies in-game behavioral biometrics for fair play [8]. These studies show that CS/CS2 demo telemetry contains identity-related signals, especially in aiming, shooting, movement state, and game context. 
+
+Our setting is different: platform review often asks whether a current demo remains consistent with an account’s historical demos when the current operator may be unknown or unseen during training. We therefore use manually confirmed same-player 
+
+## **2.3 Broader Game Behavior and Behavioral Biometrics** 
 
 Beyond FPS games, replay and telemetry have also been used for player identity and style modeling. Dota 2 work takes whether two matches were completed by the same player as the target and models it with mouse, game statistics, and strategy information [11]. RTS (real-time strategy) replay identification shows that build order, unit control, resource management, and operation rhythm can identify player style or identity [12]. 
 
-Behavioral biometrics research shows that identity signals can come from how a person acts—mouse trajectories, touchscreen habits, interaction rhythms, and motion patterns [13], [14]; VR head/hand motion, mouse dynamics in simple cognitive games, and active-user identification under shared accounts report similar findings [15]–[17]. These studies provide background evidence that behavioral telemetry can carry identity signal, but their settings differ from natural CS2 account-history review. This paper focuses on the CS2 account-history consistency setting, where identity evidence comes from FPS-specific motor, timing, and tactical behavior. 
+Behavioral biometrics research shows that identity signals can come from how a person acts—mouse trajectories, touchscreen habits, interaction rhythms, and motion patterns [13, 14]; VR head/hand motion, mouse dynamics in simple cognitive games, and active-user identification under shared accounts report similar findings [15–17]. These studies provide background evidence that behavioral telemetry can carry identity signal, but their settings differ from natural CS2 account-history review. This paper focuses on the CS2 account-history consistency setting, where identity evidence comes from FPS-specific motor, timing, and tactical behavior. 
 
-## _D. Positioning of This Paper_ 
+## **2.4 Positioning of This Paper** 
 
-The above lines of work are complementary to this paper. Platform mechanisms provide admission control, reporting, and manual review entry points; Counter-Strike / FPS behavior studies show that in-game behavior contains identity signal; broader behavioral biometrics shows that identity evidence can emerge from how people act. We instantiate these ideas in CS2 account-history consistency review: using manually confirmed account histories to construct pairwise labels, learning sameplayer verification for unseen players, and identifying crosshair control, movement-stop-fire coordination, and combat microoperations as the behavioral signals that most strongly support this judgment. 
+The above lines of work are complementary to this paper. Platform mechanisms provide admission control, reporting, and manual review entry points; Counter-Strike / FPS behavior studies show that in-game behavior contains identity signal; broader behavioral biometrics shows that identity evidence can emerge from how people act. We instantiate these ideas in CS2 account-history consistency review: using manually confirmed account histories to construct pairwise labels, learning same-player verification for unseen players, and identifying crosshair control, movement-stop-fire coordination, and combat micro-operations as the behavioral signals that most strongly support this judgment. 
 
-## III. METHOD 
+Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2 
 
-## _A. Problem Definition_ 
+## **3 Method** 
 
-We call a parsable behavioral record left by one player in one CS2 match demo a **demo-player observation** ; a standard CS2 match demo usually contains 10 players and therefore produces 10 demo-player observations. A demo records structured replay / telemetry from the game engine, including positions, view angles, weapons, events, and round states. 
+## **3.1 Problem Definition** 
+
+We call a parsable behavioral record left by one player in one CS2 match demo a **demo-player observation** ; a standard CS2 match demo usually contains 10 players and therefore produces 10 demoplayer observations. A demo records structured replay / telemetry from the game engine, including positions, view angles, weapons, events, and round states. 
 
 We decompose the account-history consistency problem into two levels. 
 
-**Pairwise verification primitive.** The input is a pair of demo-player observations, where each observation represents the behavioral trajectory left by one player in one CS2 match demo. The verification model outputs an identity-consistency score, where higher scores indicate stronger evidence that the two observations come from the same real player. 
+**Pairwise verification primitive.** The input is a pair of demoplayer observations, where each observation represents the behavioral trajectory left by one player in one CS2 match demo. The verification model outputs an identity-consistency score, where higher scores indicate stronger evidence that the two observations come from the same real player. 
 
-**Account-history aggregation.** Given a current observation under review and _K_ historical observations from the account, we compute _K_ pairwise scores and aggregate them into an account-level consistency signal. 
+**Account-history aggregation.** Given a current observation under review and _𝐾_ historical observations from the account, we compute _𝐾_ pairwise scores and aggregate them into an accountlevel consistency signal. 
 
-Formally, let _xi_<sup>beh</sup> denote the game-understanding-based aggregate behavioral fingerprint of the _i_ -th demo-player observation, whose construction is described in Section III-B; let _xi_<sup>seq</sup> denote the combat-window sequence representation produced by the sequence encoder in Section III-C. We take their concatenation 
+Formally, let _𝑥𝑖_<sup>beh</sup> denote the game-understanding-based aggregate behavioral fingerprint of the _𝑖_ -th demo-player observation, whose construction is described in Section 3.2; let _𝑥𝑖_<sup>seq</sup> denote the combat-window sequence representation produced by the sequence encoder in Section 3.3. We take their concatenation 
 
-where _gθ_ is the pairwise comparator to be learned and _θ_ denotes model parameters; _sij_ is the identity-consistency score. During training, _yij_ supervises _gθ_ . A higher score indicates stronger same-player consistency, and different-player retrieval uses the low-score side. 
+as the complete behavioral fingerprint. Let _𝑝𝑖_ denote the realplayer label to which this observation belongs. Player labels are used only to construct training and evaluation samples; at test time, the model does not need to identify who _𝑝𝑖_ is. For any pair of observations, we define the pair label: 
 
-In this paper, _cij_ only encodes map relation, such as samemap versus cross-map; it does not include demo IDs, match IDs, teammate/opponent identities, or other shared match identifiers. 
+where _𝑦𝑖𝑗_ = 1 denotes a same-player pair and _𝑦𝑖𝑗_ = 0 denotes a different-player pair. The model receives the endpoint fingerprints, the explicit comparison features compare( _𝑥𝑖,𝑥 𝑗_ ) defined in Section 3.4, and the pair-level context _𝑐𝑖𝑗_ , and outputs a consistency score: 
 
-_B. Game-Understanding-Based Behavioral Fingerprint Features_ 
+where _𝑔𝜃_ is the pairwise comparator to be learned and _𝜃_ denotes model parameters; _𝑠𝑖𝑗_ is the identity-consistency score. During training, _𝑦𝑖𝑗_ supervises _𝑔𝜃_ . A higher score indicates stronger sameplayer consistency, and different-player retrieval uses the low-score side. 
 
-This section describes the construction of _xi_<sup>beh</sup> : from each demo-player observation we extract behavioral fingerprints based on CS2 game understanding to summarize the player’s operation and decision habits in one match. 
+In this paper, _𝑐𝑖𝑗_ only encodes map relation, such as same-map versus cross-map; it does not include demo IDs, match IDs, teammate/opponent identities, or other shared match identifiers. 
 
-From the demo record we recover the player’s within-round position, view angle, movement state, weapon state, firing, damage, utility, and buy events, and express these behaviors at demo-player granularity as _xi_<sup>beh</sup> : a summary of behavioral frequency, time intervals, distribution shapes, and conditional relations that characterizes how a player moves, aims, fires, switches states, buys equipment, and uses utility across maps and round phases. In implementation, we extract 252 perdemo-player behavioral fingerprint features and organize them into eight sub-representations: 
+## **3.2 Game-Understanding-Based Behavioral Fingerprint Features** 
 
-Taking mechanics/state as an example, this feature type records not “how many duels were won” but how the player’s body state changes before firing. In CS2, stable shooting usually requires counter-strafing; some players fire only after completely stopping, while others fire early while moving. Aggregating such micro-transition habits over the full demoplayer observation expresses a player’s long-formed operation style. 
+This section describes the construction of _𝑥𝑖_<sup>beh</sup> : from each demoplayer observation we extract behavioral fingerprints based on CS2 game understanding to summarize the player’s operation and decision habits in one match. 
 
-## _C. Sequential Behavioral Representation_ 
+From the demo record we recover the player’s within-round position, view angle, movement state, weapon state, firing, damage, utility, and buy events, and express these behaviors at demoplayer granularity as _𝑥𝑖_<sup>beh</sup> : a summary of behavioral frequency, time intervals, distribution shapes, and conditional relations that characterizes how a player moves, aims, fires, switches states, buys equipment, and uses utility across maps and round phases. In implementation, we extract 245 per-demo-player behavioral fingerprint features and organize them into eight sub-representations: 
 
-as the complete behavioral fingerprint. Let _pi_ denote the real-player label to which this observation belongs. Player labels are used only to construct training and evaluation samples; at test time, the model does not need to identify who _pi_ is. For any pair of observations, we define the pair label: 
+Taking mechanics/state as an example, this feature type records not “how many duels were won” but how the player’s body state changes before firing. In CS2, stable shooting usually requires counter-strafing; some players fire only after completely stopping, while others fire early while moving. Aggregating such microtransition habits over the full demo-player observation expresses a player’s long-term mechanical style. 
 
-where _yij_ = 1 denotes a same-player pair and _yij_ = 0 denotes a different-player pair. The model receives the endpoint fingerprints, the explicit comparison features compare( _xi, x j_ ) defined in Section III-D, and the pair-level context _cij_ , and outputs a consistency score: 
+## **3.3 Sequential Behavioral Representation** 
 
-The behavioral fingerprint features in Section III-B efficiently summarize behavioral distributions that repeatedly appear in one match. However, similar firing counts, movement speeds, or utility counts can come from completely different round developments. For example, around the same combat, counter-strafing first and then micro-adjusting and firing, versus firing early while moving and then counterstrafing and micro-adjusting, reflect different movement-stopfire coordination but may look almost identical in the features above; likewise, after throwing a utility item, immediately pushing, waiting for a teammate to trade, or only delaying tempo represent different utility-combat coordination. 
+The behavioral fingerprint features in Section 3.2 efficiently summarize behavioral distributions that repeatedly appear in one match. However, similar firing counts, movement speeds, or utility counts can come from completely different round developments. For example, around the same combat, counter-strafing first and then microadjusting and firing, versus firing early while moving and then counter-strafing and micro-adjusting, reflect different movementstop-fire coordination but may look almost identical in the features above; likewise, after throwing a utility item, immediately pushing, waiting for a teammate to trade, or only delaying tempo represent different utility-combat coordination. 
 
-We therefore encode action sequences, but not all ticks of the entire demo. A CS2 demo contains many rounds, and 
+We therefore encode action sequences, but not all ticks of the entire demo. A CS2 demo contains many rounds, and large portions of a demo may contain weak identity signal; player identity is more concentrated in short operations around firing, taking damage, dealing damage, kills, and the moments before death. We thus extract local windows centered on combat events from each demo-player observation: around firing, dealing/taking damage, kills, and death events, we crop fixed-length tick sequences, with death-related evidence concentrated before the event. Each window is a 32 × 16 continuous numerical tensor whose channels are relative time, yaw/pitch velocities, yaw/pitch deltas, speed, horizontal velocity in two axes, displacement, tick interval, health, duck amount, walking and scoped indicators, shots fired, and a center-band indicator. The final sequence encoder retains valid tokens with shots_fired _>_ 0; if an otherwise available observation has no selected firing token, it falls back to the base valid-token mask. 
 
-TABLE I 
+Let _𝑤𝑖𝑚_ denote the _𝑚_ -th combat window in observation _𝑖_ . The sequence encoder _𝐸𝜓_ maps each window to a window embedding _ℎ𝑖𝑚_ , and an aggregation function aggregate _𝜔_ summarizes them into a demo-player-level sequence embedding: 
 
-GAME-UNDERSTANDING-BASED BEHAVIORAL FINGERPRINT FEATURE FAMILIES AND QUANTIFICATION EXAMPLES. 
+Xuchen Zhang 
 
-|behavioral<br>layer|symbol|feature family|behavior captured|concrete quantification example|
+**Table 1: Game-understanding-based behavioral fingerprint feature families and quantification examples.** 
+
+|behavioral layer|symbol|feature family|behavior captured|concrete quantification example|
 |---|---|---|---|---|
-|low-level|_x_<sup>beh-aim</sup><br>_i_|aiming/crosshair|view control, correction, recoil, aiming<br>stability|left-right crosshair correction switches around firing|
-|low-level|_x_<sup>beh-mech</sup><br>_i_|mechanics/state|counter-strafe, walk/crouch/scope, state<br>switch|speed drop in the 250ms before each shot|
-|low-level|_x_<sup>beh-combat</sup><br>_i_<br>|combat/engagement|shooting discipline, reload rhythm, fire output|reloads per 100 weapon fires|
-|rhythm-space|_x_<sup>beh-move</sup><br>_i_|movement/positioning|opening route, position, map-space<br>preference|concentration of frequent opening positions|
-|rhythm-space|_x_<sup>beh-util</sup><br>_i_<br>|utility usage|utility timing, type choice, follow-up|damage within 5 seconds after utility release|
-|rhythm-space|_x_<sup>beh-time</sup><br>_i_|timing/rhythm|first contact, firing interval, push/wait rhythm|seconds from round start to first weapon fire|
-|tactical|_x_<sup>beh-econ</sup><br>_i_|economy/buy|buy choice and risk under economic pressure|force-buy rate under insufficient economy|
-|tactical|_x_<sup>beh-ctx</sup><br>_i_|context|early risk, man advantage/disadvantage, role<br>context|deaths in the first 20 seconds of a round|
+|low-level<br>low-level<br>low-level|_𝑥_<sup>beh-aim</sup><br>_𝑖_<br>_𝑥_<sup>beh-mech</sup><br>_𝑖_<br>_𝑥_<sup>beh-combat</sup><br>_𝑖_<br>|aiming/crosshair<br>mechanics/state<br>combat/engagement|view control, correction, recoil, aiming stability<br>counter-strafe, walk/crouch/scope, state switch<br>shooting discipline, reload rhythm, fire output|left-right crosshair correction switches around firing<br>speed drop in the 250ms before each shot<br>reloads per 100 weapon fires|
+|rhythm-space<br>rhythm-space<br>rhythm-space|_𝑥_<sup>beh-move</sup><br>_𝑖_<br>_𝑥_<sup>beh-util</sup><br>_𝑖_<br>_𝑥_<sup>beh-time</sup><br>_𝑖_<br>|movement/positioning<br>utility usage<br>timing/rhythm|opening route, position, map-space preference<br>utility timing, type choice, follow-up<br>first contact, firing interval, push/wait rhythm|concentration of frequent opening positions<br>damage within 5 seconds after utility release<br>seconds from round start to first weapon fire|
+|tactical|_𝑥_<sup>beh-econ</sup><br>_𝑖_<br>|economy/buy|buy choice and risk under economic pressure|force-buy rate under insufficient economy|
+|tactical|_𝑥_<sup>beh-ctx</sup><br>_𝑖_|context|early risk, man advantage/disadvantage, role<br>context|deaths in the first 20 seconds of a round|
 
-large portions of a demo may contain weak identity signal; player identity is more concentrated in short operations around firing, taking damage, dealing damage, kills, and the moments before death. We thus extract local windows centered on combat events from each demo-player observation: around firing, dealing/taking damage, kills, and death events, we crop fixed-length tick sequences, with death-related evidence concentrated before the event. Each window is a 32 _×_ 16 continuous numerical tensor, where the 16 states include relative time, horizontal/vertical view-angle changes, aiming-change magnitude, movement speed and speed change, weapon speed modifier, crouch/walk/scope states, firing change, health, and before/during/after event position markers. 
+where _𝑀𝑖_ is the number of available combat windows. We use a two-layer, four-head Transformer with hidden size 96 and dropout 0.15. Learned attention pooling, masked mean, and masked standard deviation are concatenated and projected to a 192-dimensional observation embedding. The encoder minimizes identity crossentropy plus 0.35 supervised contrastive loss (temperature 0.12), using at most 24 windows during training and 64 during evaluation. 
 
-Let _wim_ denote the _m_ -th combat window in observation _i_ . The sequence encoder _Eψ_ maps each window to a window embedding _him_ , and an aggregation function aggregate _ω_ summarizes them into a demo-player-level sequence embedding: 
+## **3.4 Pairwise Comparison Representation** 
 
-where _Mi_ is the number of available combat windows in this observation; during training, each observation samples at most 24 windows. In our experiments, _Eψ_ is implemented as a Transformer encoder. 
+After obtaining _𝑥𝑖_<sup>beh</sup> and _𝑥𝑖_<sup>seq</sup> , we concatenate them into the complete fingerprint _𝑥𝑖_ = [ _𝑥𝑖_<sup>beh</sup> _,𝑥𝑖_<sup>seq</sup> ]. If two raw fingerprints are simply concatenated and fed to the model, the model must infer both feature differences and endpoint levels from limited samples. We therefore add a set of symmetric comparison features that explicitly express relations such as absolute and relative differences between two demo-players on the same behavioral dimensions. 
 
-## _D. Pairwise Comparison Representation_ 
+Specifically, given two raw fingerprints _𝑥𝑖_ and _𝑥 𝑗_ , we construct explicit comparison features compare( _𝑥𝑖,𝑥 𝑗_ ) by concatenating behavior and sequence comparison blocks. For each scalar behavioral feature _𝑘_ , the behavioral comparison block contains: 
 
-After obtaining _xi_<sup>beh</sup> and _xi_<sup>seq</sup> , we concatenate them into the complete fingerprint _xi_ = [ _xi_<sup>beh</sup> _, xi_<sup>seq</sup> ]. If two raw fingerprints are simply concatenated and fed to the model, the model must infer both feature differences and endpoint levels from limited samples. We therefore add a set of symmetric comparison features that explicitly express relations such as absolute and relative differences between two demo-players on the same behavioral dimensions. 
+where _𝜖_ ensures numerical stability and 1[·] is the indicator function (1 when the bracketed condition holds, 0 otherwise); ⊕ denotes exclusive OR. For the sequence embeddings, the comparison block contains the elementwise absolute difference, elementwise product, Euclidean distance, and cosine similarity: 
 
-Specifically, given two raw fingerprints _xi_ and _x j_ , we construct explicit comparison features compare( _xi, x j_ ). For each scalar feature _k_ , the comparison block contains: 
+## **3.5 Account-History Aggregation** 
 
-where _ε_ ensures numerical stability and **1** [ _·_ ] is the indicator function (1 when the bracketed condition holds, 0 otherwise); _⊕_ denotes exclusive OR. 
+Actual account-consistency checks usually compare not just two demos, but one current demo under review against multiple historical demos of the account. Based on the _𝑠𝑖𝑗_ defined in Section 
 
-## _E. Account-History Aggregation_ 
+3.1, we compare the current observation _𝑥𝑞_ with each of the account’s _𝐾_ historical observations _𝐻_ = { _𝑥ℎ_ 1 _, . . . ,𝑥ℎ𝐾_ }, obtaining _𝐾_ scores that describe the consistency between current behavior and account-history behavior: 
 
-Actual account-consistency checks usually compare not just two demos, but one current demo under review against multiple historical demos of the account. Based on the _sij_ defined in Section III-A, we compare the current observation _xq_ with each of the account’s _K_ historical observations _H_ = _{xh_ 1 _,..., xhK }_ , obtaining _K_ scores that describe the consistency between current behavior and account-history behavior: 
+Multi-demo aggregation converts _𝐾_ pairwise scores into an account-level consistency score. The most direct approach aggregates raw scores, such as the raw-score mean: 
 
-Multi-demo aggregation converts _K_ pairwise scores into an account-level consistency score. The most direct approach aggregates raw scores, such as the raw-score mean: 
+We also evaluate an empirical LLR-style score transformation as an interpretable evidence scale for adding multiple pairwise scores. Based on the same / different score distributions on the training side, each pair score _𝑠_ is mapped to an evidence value _ℓ_ ( _𝑠_ ): 
 
-We also evaluate an empirical LLR-style score transformation as an interpretable evidence scale for adding multiple pairwise scores. Based on the same / different score distributions on the training side, each pair score _s_ is mapped to an evidence value _ℓ_ ( _s_ ): 
+where _𝑏_ ( _𝑠_ ) is one of 20 fixed equal-width bins on [0 _,_ 1] and _𝛼_ = 1. The bin distributions are estimated only from frozen foldlocal validation predictions. Intuitively, _ℓ_ ( _𝑠_ ) is positive when a score bin is more common among same-player pairs and negative when it is more common among different-player pairs. We then average the evidence over the _𝐾_ historical observations: 
 
-where _b_ ( _s_ ) denotes the discrete bin to which the score belongs and _α_ is a smoothing term. Intuitively, _ℓ_ ( _s_ ) measures 
+## **3.6 Overall Workflow** 
 
-Fig. 1. Method overview: per-demo-player fingerprinting, pairwise scoring, and current-vs-history aggregation. 
+Fig. 1 shows the main data flow at inference time: each demo-player observation is first encoded as a fingerprint, two fingerprints are compared to obtain _𝑠𝑖𝑗_ , and multiple current-vs-history scores are then aggregated into an account-level consistency score. Training mainly supervises the pairwise comparator _𝑔𝜃_ . 
 
-how common a score bin is in the training-side same-player distribution relative to the different-player distribution: _ℓ_ ( _s_ ) _>_ 0 if the interval appears more often in same-player pairs, and _ℓ_ ( _s_ ) _<_ 0 if it appears more often in different-player pairs. We then average the evidence over the _K_ historical observations to obtain the account-level score: 
+## **4 Experiments** 
 
-## _F. Overall Workflow_ 
+## **4.1 Dataset and Evaluation Setup** 
 
-Fig. 1 shows the main data flow at inference time: each demo-player observation is first encoded as a fingerprint, two fingerprints are compared to obtain _si j_ , and multiple currentvs-history scores are then aggregated into an account-level consistency score. Training mainly supervises the pairwise comparator _gθ_ . 
+**Perfect dataset and manual confirmation.** The Perfect dataset, DPER, uses active users from a university CS player guild on Perfect World Arena [20] as the collection entry point. We downloaded 
 
-## IV. EXPERIMENTS 
+Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2 
 
-## _A. Dataset and Evaluation Setup_ 
+**Figure 1: Method overview: per-demo-player fingerprinting, pairwise scoring, and current-vs-history aggregation.** 
 
-**Main data source and manual confirmation.** The main dataset uses active users from a university CS player guild on Perfect World Arena as the collection entry point. We downloaded their available CS2 match demos within a specified time window, forming 1,330 demos and 13,300 demo-player observations. The guild players cover 12 amateur competitive tiers from C to Diamond S and above. To obtain credible sameplayer positives, we contacted almost all active users in the guild and asked them to confirm whether the account was used only by themselves within the window, whether multiple accounts existed, and whether those accounts were all operated by the same real player. Observations with clear account borrowing, non-self play, uncertainty, or account-sharing risk do not enter same-player positives. 
+their available CS2 match demos within a specified time window, forming 3,570 demos and 35,700 demo-player observations. The guild players cover 12 amateur competitive tiers from C to Diamond S and above. To obtain credible same-player positives, we contacted active users in the guild and asked them to confirm whether the account was used only by themselves within the window, whether multiple accounts existed, and whether those accounts were all operated by the same real player. Observations with clear account borrowing, non-self play, uncertainty, or account-sharing risk do not enter same-player positives. 
 
-**Supplemental professional identity source.** In addition to the main dataset, we downloaded public professional match demos from HLTV match/demo pages and built an extension 
+**Positive construction.** The 4,495 manually confirmed demoplayer observations come from 107 confirmed persons and are used to construct same-player positives. For each confirmed person with _𝑛𝑝_ available observations, we enumerate<sup>�</sup><sup>_𝑛_</sup> 2<sup>_𝑝_</sup> � same-player combinations; across the six test folds, 171,713 same-player pairs are formed. 
 
-dataset for professional players. This set contains 227 professional match demos and 2,270 professional match demoplayer observations, among which 631 target professional player observations correspond to 50 professional players. Professional identities come from public tournament records, providing externally verifiable high-level identity sequences and higher skill coverage; Section IV-E3 separately reports the expansion experiment after adding professional player demos to the training side. 
+**Negative sampling.** Different-player pairs are sampled between observations with different person ids; observations manually confirmed to belong to the same real player or the same account group are first assigned to the same person id so they are not sampled as negatives. To cover negatives of different difficulty, the initial candidate quota assigns 25% to same-demo pairs, 25% to same-rank pairs, and 50% to other randomly sampled different-player pairs; if a stratum lacks sufficient legal capacity, its shortfall is deterministically reassigned to the random stratum. The 35,700 observations theoretically form<sup>�35700</sup> 2 � = 637 _._ 2M possible pairs, the vast majority different-player. We keep all 171,713 same-player pairs in the six test folds and sample different-player pairs at an overall 1:9 ratio, obtaining 1,717,130 pairwise samples. 
 
-**Positive construction.** The 2,380 manually confirmed demo-player observations come from 64 confirmed persons and are used to construct same-player positives. For each confirmed person with _np_ available observations, we enumerate � _n_ 2 _p_ � same-player combinations; in total, 66,359 same-player pairs are formed. 
+**Professional dataset.** In addition to DPER, we downloaded public professional match demos from HLTV match/demo pages [21] and built the Professional dataset, DPRO. This set contains 539 professional match demos and 5,390 demo-player observations, among which 1,330 target professional-player observations correspond to 130 professional players. Professional identities come from public tournament records, providing externally verifiable longitudinal player records and coverage of elite play. 
 
-**Negative sampling.** Different-player pairs are sampled between observations with different person ids; observations manually confirmed to belong to the same real player or the same account group are first assigned to the same person id so they are not sampled as negatives. The 13,300 observations theoretically form �133002 � = 88 _._ 4M possible pairs, the vast majority different-player. We keep all 66,359 same-player pairs and randomly sample different-player pairs at 1:9, obtaining 663,590 pairwise samples. Precision, AP, and recall at fixed precision are therefore reported on this sampled evaluation distribution; deployment thresholds should be recalibrated on platform-specific data. 
+**Positive and negative construction.** In DPRO, the 1,330 target observations used for positive construction come from 130 professional players; for each player _𝑝_ with _𝑛𝑝_ available observations, we likewise enumerate<sup>�</sup><sup>_𝑛_</sup> 2<sup>_𝑝_</sup> � same-player combinations, yielding 10,769 same-player pairs across the six test folds. The 5,390 observations theoretically form<sup>�5390</sup> 2 � = 14 _._ 5M possible pairs, the vast majority different-player. Different-player pairs use the same initial stratification targets and capacity-shortfall reassignment rule. We retain all 10,769 same-player pairs in the six test folds and sample different-player pairs at an overall 1:9 ratio, yielding 107,690 pairwise samples. Across both datasets, only confirmed/target observations generate same-player positives; remaining roster observations enter only as different-player candidates under the frozen SteamID/alias mapping. Unlinked SteamIDs are treated as distinct identity units, so undisclosed cross-account ownership can create false-negative labels. For both datasets, AP is reported on the sampled evaluation distribution; deployment thresholds should be recalibrated on platform-specific data. 
 
-**Split protocol.** To prevent the same real player from appearing on both training and test sides and causing identity leakage, we split train/test by person id; pairs crossing the training and test sides are discarded. 
+**Dataset use.** We evaluate representation levels, model comparison, feature sensitivity, history aggregation, and cross-time and cross-map robustness on both DPER and DPRO, and further examine cross-dataset training. We additionally collect 513 demos and 5,130 demo-player observations from an independent player guild on the 5E platform [22], forming the 5E dataset D5E. We use D5E as a cross-platform external test set with weak account labels to evaluate zero-shot generalization of models trained on Perfect. 
 
-**Map factor.** CS2 competitive matches concentrate on a small active-duty competitive map pool of roughly seven maps, including Dust2 and Mirage. Maps affect default routes, combat distances, and utility combinations; still, the same player is likely to retain stable habits such as crosshair control, firing rhythm, movement-stop-fire coordination, and risk preference across maps. We therefore verify both same-map and cross- 
+**Split protocol.** Both datasets first form six folds by the known real-player identity ledger and then assign each demo to one side. Under this ledger, natural-person, SteamID, alias, observation, demo, and content overlaps between training and test are zero; undisclosed cross-account ownership remains possible label noise. Pairs crossing the two sides are discarded. Training and validation pairs follow the same legal constraints and 1:9 same-to-different ratio as the test pairs. Within each outer fold, sequence encoders and pairwise scorers fit only training-side identities; validation selects checkpoints and iteration counts, and the test fold is used only for final scoring. Pair endpoints use ascending frozen endpoint index as the canonical order. 
 
-TABLE II 
+Xuchen Zhang 
 
-EVALUATION SETS AND METRICS USED IN THE EXPERIMENTS. 
+**Map factor.** CS2 competitive matches concentrate on a small active-duty competitive map pool, including Dust2 and Mirage. Maps affect default routes, combat distances, and utility combinations; still, the same player is likely to retain stable habits such as crosshair control, firing rhythm, movement-stop-fire coordination, and risk preference across maps. We therefore verify both same-map and cross-map pairs. 
 
-|symbol|purpose|construction|size|metrics|
-|---|---|---|---|---|
-|_T_ <sup>(1:6)</sup><br>_pair_<br>|main pairwise verification<br>and high-precision<br>inconsistency retrieval|6 person-disjoint test splits, train/test<br>person overlap is 0<br>|each split<br>_N_=25_,_510–58_,_088 pairs|mean AUC, same-AP, F1, @95P recall|
-|_T_ <sup>(1)</sup><br>_pair_|model family, PR curve,<br>and feature-sensitivity<br>analysis|the first test split in _T_ <sup>(1:6)</sup><br>_pair_|_N_=36_,_594 pairs = 14,028<br>same + 22,566 different|AUC / AP / F1 / @95P, PR curve,<br>sensitivity AUC|
-|_Tpro_<br>|impact of<br>professional-player demo<br>expansion training set|construct professional same/different<br>training pairs from HLTV public<br>professional match demos<br>|_N_=29_,_060 pairs = 2,906<br>same + 26,154 different|∆AUC, ∆@95P recall|
-|_T_ <sup>(1:6)</sup><br>_hist_<br>(_K_)<br>|account-level aggregation<br>of current demo against<br>multiple historical demos|for each split in _T_ <sup>(1:6)</sup><br>_pair_ <sup>, construct</sup><br>groups of one current observation and<br>_K_ history observations<br>|6-split mean: K=3<br>_N_=2_,_668, K=5 _N_=2_,_652,<br>K=10 _N_=2_,_354 groups|account AUC, @95P recall|
-|_T_ <sup>(1)</sup><br>_time_<br>|recent-vs-history<br>cross-time comparison|retain pairs in _T_ <sup>(1)</sup><br>_pair_ <sup>with archive</sup><br>timestamp gap > 15 days<br>|_N_=6_,_857 pairs = 2,546<br>same + 4,311 different|AUC, AP, F1, @95P recall|
-|_T_ <sup>(1)</sup><br>_map_|same-map and cross-map<br>robustness|split _T_ <sup>(1)</sup><br>_pair_ <sup>by map relation</sup>|same-map _N_=9_,_798 pairs;<br>cross-map _N_=26_,_796 pairs|AUC, AP, @95P recall|
+**Evaluation sets.** Table 2 gives the evaluation views used in this paper. The E1–E5 representation ladder and headline finalmodel results use the sequence-common surfaces TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>)and</sup> TPRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>),whereallrepresentationlevelsshareidenticalpair</sup> IDs, labels, and order. The full pair surfaces TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>)and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>)</sup> are used for non-sequence analyses; TPER<sup>(1)</sup> _,𝑝𝑎𝑖𝑟_<sup>is used only as the</sup> Perfect grouped-feature analysis split, whereas the corresponding Professional analysis uses all six folds. TPER<sup>(1:6</sup> _,ℎ𝑖𝑠𝑡_<sup>)(</sup><sup>_𝐾_) and T</sup> PRO<sup>(1:6</sup> _,ℎ𝑖𝑠𝑡_<sup>)(</sup><sup>_𝐾_)</sup> test whether aggregating the current demo with _𝐾_ historical demos forms more stable account-level evidence; TPER<sup>(1:6</sup> _,𝑡𝑖𝑚𝑒_<sup>)and T</sup> PRO<sup>(1:6</sup> _,𝑡𝑖𝑚𝑒_<sup>)</sup> measure degradation over longer time spans; and TPER<sup>(1:6</sup> _,𝑚𝑎𝑝_<sup>)and</sup> TPRO<sup>(1:6</sup> _,𝑚𝑎𝑝_<sup>)examine robustness in cross-map comparison.</sup> 
 
-TABLE III 
+Compared with E2, E4 combines _𝑥_<sup>beh</sup> and _𝑥_<sup>seq</sup> : on DPER, AUC improves by 0.004 on average (+0.005/+0.002/+0.006/0.011/+0.004/+0.018); on DPRO, AUC changes by 0.000 on average (-0.017/+0.005/-0.005/-0.002/+0.007/+0.014). Overall, the two representations provide complementary information: behavioral fingerprints summarize operation and decision distributions that recur across rounds, while sequence embeddings preserve action order in combat windows. This complementarity yields a small improvement on DPER but no consistent gain on DPRO. This may reflect the smaller Professional training set and redundancy between the transferred sequence representation and existing behavioral statistics. 
 
-REPRESENTATION LADDER ON _T_<sup>(1:6)</sup> _pair_<sup>.</sup> 
+The largest gain comes from explicit pairwise comparison. After adding explicit pairwise comparison features, E5 improves over E4 on DPER by 0.066 AUC on average (+0.049/+0.096/+0.079/+0.045/+0.036/+0.093); on DPRO, the gain is 0.082 AUC (+0.089/+0.077/+0.068/+0.078/+0.055/+0.123). With explicit comparison features, the model directly uses absolute and relative differences on the same behavioral dimensions, reducing the need to learn symmetric difference relations from limited samples. 
 
-|experiment|input representation|mean AUC|mean AP|mean F1|mean recall @95%P|
+In pairwise tables, AP (Average Precision) uses same-player as the positive class. On the 5E weak-label surface, AP analogously uses same-account as the positive class. 
+
+Reported means and deltas are calculated from unrounded fold scores. 
+
+## **4.2 Behavioral Representations and Model Comparison** 
+
+_4.2.1 Representation Levels: Which Information Brings Gains._ Table 3 uses the averages over TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>)andT</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>)asthe</sup> main pairwise results for the two datasets. The main DPRO results use a sequence encoder trained and frozen on the larger DPER, avoiding a sequence representation determined only by the smaller Professional training set. On each split, the same LightGBM pairwise model [18] compares how much same-player consistency signal different input representations provide. E1 uses _𝑥_<sup>out</sup> , i.e., outcome/performance-only features, including result-based statistics such as K/D (kill/death ratio), damage, score (game scoreboard score), headshot rate, and first kill / first death. E5 corresponds to the full pairwise input in Eq. (3) in Section 3.1. 
+
+E1, using only result-based statistics, is a weak baseline, with AUCs of 0.572 and 0.712 on DPER and DPRO, respectively. Using the CS2-understanding-based _𝑥_<sup>beh</sup> in E2 yields AUCs of 0.855 and 0.874 on TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>)and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>), respectively, showing that crosshair</sup> control, movement-stop-fire coordination, combat rhythm, economy/buy, and round timing contain strong player-identity signals. E3, using the sequence representation _𝑥_<sup>seq</sup> alone, reaches AUCs of 0.719 and 0.749 on the two surfaces, indicating that action order in combat windows carries identity information but does not alone cover behaviors that recur across rounds. The main DPRO configuration uses the encoder pretrained and frozen on DPER; an alternative trained only on DPRO training data yields a nearly identical E3 AUC of 0.747 versus 0.749. 
+
+_4.2.2 Model Comparison._ **Sequence feature comparison.** The _𝑥_<sup>seq</sup> in Eq. (5) in Section 3.3 is produced by a separately trained Transformer sequence encoder. The reported configuration uses continuous numerical combat-window sequences focused on shooting interactions. This encoder is trained with player identity labels, models action order around combat windows, and aggregates multiple windows into a demo-player-level sequence representation, which then enters the final pairwise input together with the gameunderstanding-based _𝑥_<sup>beh</sup> . 
+
+**Pairwise model comparison.** Table 4 compares final-layer pairwise models on frozen outer-test predictions from TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>)</sup> and TPRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<sup>); no tuning follows these comparisons. Within each</sup> dataset, all models use exactly the same frozen E5 input representation, _𝑥_<sup>beh</sup> + _𝑥_<sup>seq</sup> + compare( _𝑥𝑖,𝑥 𝑗_ ) + _𝑐𝑖𝑗_ . We compare LightGBM [18], XGBoost [19], FastMLP, and a rank-average ensemble. LightGBM is used as the final pairwise scorer and obtains the highest six-fold mean AUC on both datasets. XGBoost and rank averaging remain close, while FastMLP is consistently weaker. Our final implementation therefore uses game-understandingbased behavioral fingerprints, Transformer-derived sequence representations, explicit comparison features, and a LightGBM pairwise scorer. 
+
+**Implementation details.** The sequence encoder is trained for 12 epochs with AdamW (learning rate 2 × 10<sup>−4</sup> , weight decay 0.02) and gradient-norm clipping at 1.0. The LightGBM scorer uses 63 leaves, learning rate 0.04, feature fraction 0.78, bagging fraction 0.85, and minimum child size 160; it trains for at most 450 rounds with validation-side early stopping after 40 rounds. ChatGPT/Codex assisted code drafting, figure preparation, and language editing; all outputs were reviewed and verified by the author. A de-identified research code package is planned for public release. 
+
+Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2 
+
+**Table 2: Evaluation sets and metrics used in the experiments.** 
+
+|symbol||purpose|construction|size|metrics|
 |---|---|---|---|---|---|
-|E1|_x_<sup>out</sup><br>_i_<br>_,x_<sup>out</sup><br>_j _<sup>_,cij_</sup>|0.599|0.447|0.543|0.002|
-|E2|_x_<sup>beh</sup><br>_i_<br>_,x_<sup>beh</sup><br>_j_<br>_,cij_|0.831|0.727|0.689|0.358|
-|E3|_x_<sup>seq</sup><br>_i_<br>_,x_<sup>seq</sup><br>_j _<sup>_,cij_</sup>|0.723|0.575|0.605|0.110|
-|E4|_x_<sup>beh</sup><br>_i_<br>_,x_<sup>seq</sup><br>_i_<br>_,x_<sup>beh</sup><br>_j_<br>_,x_<sup>seq</sup><br>_j _<sup>_,cij_</sup>|0.842|0.738|0.699|0.411|
-|E5|_x_<sup>beh</sup><br>_i_<br>_,x_<sup>seq</sup><br>_i_<br>_,x_<sup>beh</sup><br>_j_<br>_,x_<sup>seq</sup><br>_j _<sup>_,_compare(</sup><sup>_xi,x j_)</sup><sup>_,cij_</sup>|**0.931**|**0.894**|**0.806**|**0.722**|
+|T <sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>||full Perfect pair surface|six person-first/demo-ownership folds;<br>known-identity, SteamID, alias, observation, demo,<br>and content overlap is zero|total_𝑁_=1_,_717_,_130= 171,713 same +<br>1,545,417 different|mean AUC, same-AP|
+|T <sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>||full Professional pair surface|the same strict six-fold protocol<br>|total_𝑁_=107_,_690= 10,769 same + 96,921<br>different|mean AUC, same-AP|
+|T <sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br><br>||Perfect grouped feature sensitivity|first test fold of T <sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_|_𝑁_=286_,_170= 28,617 same + 257,553<br>different|sensitivity AUC|
+|T <sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟,𝑠_<br><br>|_𝑒𝑞_<sup>/ T (1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟,𝑠𝑒𝑞_<br>|E1–E5 ladder and headline final<br>model|identical sequence-common pair IDs, labels, and<br>order within each dataset|Perfect: 1,518,330 pairs; Professional:<br>107,690 pairs|E1–E5 mean AUC / same-AP|
+|T <sup>(1:6)</sup><br>PER_,ℎ𝑖𝑠𝑡_<sup>(</sup><br><br>|<sup>_𝐾_) / T (1:6)</sup><br>PRO_,ℎ𝑖𝑠𝑡_<sup>(</sup><sup>_𝐾_)</sup><br>|strict-prior history aggregation|current observation with_𝐾_earlier history<br>observations|Perfect:_𝐾_=1_,_3_,_5_,_10; Professional:<br>_𝐾_=1_,_3_,_5|account mean-LLR AUC|
+|T <sup>(1:6)</sup><br>PER_,𝑡𝑖𝑚𝑒_<br><br>|<sup>/ T (1:6)</sup><br>PRO_,𝑡𝑖𝑚𝑒_<br>|cross-time comparison|same day, 1–7, 8–30, 31–90, and_>_ 90days|available buckets in frozen six-fold<br>predictions|AUC|
+|T <sup>(1:6)</sup><br>PER_,𝑚𝑎𝑝_<sup>/</sup>|<sup>T (1:6)</sup><br>PRO_,𝑚𝑎𝑝_|map robustness|split frozen predictions by map relation|Perfect: 462,043 same-map + 1,056,287<br>cross-map; Professional: 38,295 + 69,395|AUC, same-AP|
+|T5E<br>||cross-platform weak-account test|exact SteamID as weak same-account label|_𝑁_=55_,_840= 5,584 same + 50,256<br>different|AUC|
+|T<sup>disjoint</sup><br>5E||exact-SteamID-disjoint sensitivity|exclude one SteamID overlapping the source|_𝑁_=55_,_676= 5,583 same + 50,093<br>different|AUC|
 
-## map pairs. 
+**Table 3: Representation ladder on the two sequence-common evaluation surfaces.** 
 
-**Evaluation sets.** Table II gives the evaluation views used in this paper. The main pairwise conclusions use the six-split average of _Tpair_<sup>(1:6);</sup><sup>_T_</sup> _pair_<sup>(1),astheanalysissplit,carriesmodel-</sup> family, curve, and feature-sensitivity analysis. _Tpro_ tests the impact of adding professional-player demos to the training side; _Thist_<sup>(1:6)</sup> ( _K_ ) tests whether aggregating the current demo with _K_ historical demos forms more stable account-level evidence; _Ttime_<sup>(1)detectseffectdecayoverlongertimespans;</sup> _Tmap_<sup>(1)examinesrobustnessincross-mapcomparison.</sup> 
+**Table 5: Behavioral feature sensitivity (explicit comparison fixed; sequence excluded).** 
 
-AP (Average Precision) summarizes the discrete area under the precision-recall curve; recall at 95% precision indicates how many true inconsistent pairs or account-history groups can be recovered under a high-confidence threshold. 
-
-## _B. Behavioral Representations and Model Selection_ 
-
-_1) Representation Levels: Which Information Brings Gains:_ Table III uses the average over _Tpair_<sup>(1:6)</sup> as the main pairwise result. On each split, the same LightGBM pairwise model [18] compares how much same-player consistency signal different input representations provide. E1 uses _x_<sup>out</sup> , i.e., outcome/performance-only features, including result-based statistics such as K/D (kill/death ratio), damage, score (game scoreboard score), headshot rate, and first kill / first death. E5 corresponds to the full pairwise input in Eq. (3) in Section III-A. 
-
-E1, using only result-based statistics, is a weak baseline at AUC 0.599. Switching to _x_<sup>beh</sup> in E2 raises AUC to 0.831, showing that behavioral dimensions such as crosshair control, movement-stop-fire coordination, combat rhythm, economy/buy, and round timing are closer to player identity than performance outcomes. E3, using the sequence representation _x_<sup>seq</sup> alone, reaches AUC 0.723, indicating that action order in combat windows carries identity information; but its information density is lower than E2 and it cannot alone cover the operation and decision habits that recur across rounds. 
-
-Compared with E2, E4 combines _x_<sup>beh</sup> and _x_<sup>seq</sup> , improving AUC by 0.011 on average (+0.018/0.004/+0.014/+0.005/+0.035/-0.005) and @95% precision recall by 0.053 on average (+0.071/0.008/+0.090/+0.039/+0.140/-0.013). The two are complementary: behavioral fingerprints summarize operation and decision distributions that recur across rounds, while sequence embeddings preserve action order in combat windows. 
-
-The final jump comes from explicit pairwise comparison. Compared with E4, E5 improves AUC by 0.089 on average (+0.102/+0.097/+0.069/+0.104/+0.078/+0.085) and @95% precision recall by 0.310 on average (+0.389/+0.372/+0.224/+0.359/+0.248/+0.271). With explicit comparison features, the model directly uses absolute and relative differences on the same behavioral dimensions. 
-
-TABLE IV 
-
-MODEL-FAMILY CHECK FOR THE INPUT IN EQ. (3) ON _Tpair_<sup>(1).</sup> 
-
-|input representation|model|training note|ROC AUC|same-player AP|best F1|different recall @95%P|
-|---|---|---|---|---|---|---|
-|_x_<sup>beh </sup>+_x_<sup>seq </sup>+compare(_xi,x j_)+_cij_|LightGBM|final representation|**0.955**|**0.936**|**0.855**|**0.816**|
-|same as above|XGBoost|model-family check|0.951|0.930|0.845|0.795|
-|same as above|fast MLP|controlled diagnostic|0.854|0.787|0.727|0.270|
-|same as above|rank-avg ensemble|rank-score average|0.944|0.918|0.832|0.762|
-
-When sample size is limited and behavioral features are heterogeneous, explicit comparison features spare the model from learning symmetric difference relations on its own. 
-
-_2) Model Selection and High-Precision Inconsistency Retrieval:_ **Sequence feature model selection.** The _x_<sup>seq</sup> in Eq. (5) in Section III-C is produced by a separately trained Transformer sequence encoder. We compared discrete token sequences, continuous numerical combat-window sequences, and different window-aggregation and pair-readout methods; on the current data, the continuous numerical combat-window Transformer is the most stable, and other routes do not exceed it. This encoder is trained with player identity labels, models action order around combat windows, and aggregates multiple windows into a demo-player-level sequence representation, which then enters the final pairwise input together with the game-understanding-based _x_<sup>beh</sup> . 
-
-**Pairwise model selection.** Table IV compares the finallayer pairwise model on _Tpair_<sup>(1).Allmodelsusethesameinput</sup> representation _x_<sup>beh</sup> + _x_<sup>seq</sup> + compare( _xi, x j_ )+ _ci j_ . We compare tree-based pairwise models (LightGBM [18], XGBoost [19]), a neural pairwise model (fast MLP; we also tried several MLP variants and projection-then-distance-comparison NN schemes, but did not find stronger results), and a rank-average ensemble (averaging the ranking scores of multiple models). 
-
-LightGBM is strongest on _Tpair_<sup>(1),withXGBoostclose</sup> behind. Fast MLP is clearly weaker, indicating that at the current data scale tree-based models more stably use continuous statistics, sparse indicators, map information, and explicit differences. Because the ranking-quality gap between NN and tree models is relatively large, the rank-average ensemble does not exceed the single strongest model. 
-
-Here _T_<sup>(1)</sup> _pair_<sup>is the analysis split; its AUC 0.955 is higher than</sup> the six-split mean AUC 0.931 reported as the main pairwise result. 
-
-Our final implementation therefore uses gameunderstanding-based behavioral fingerprints, Transformerderived sequence representation, and a LightGBM pairwise scorer. 
-
-After the model-family comparison, Fig. 2 shows the different-player retrieval precision-recall curve on _Tpair_<sup>(1),il-</sup> lustrating the threshold tradeoff in the high-precision region. The LightGBM final representation reaches best F1 0.855; at 95% precision it still recalls about 0.816 of different-player pairs. In other words, under a low false-positive budget the model still discovers a large share of true behavior-inconsistent 
-
-Fig. 2. Different-player retrieval precision-recall curves on _Tpair_<sup>(1).</sup> 
-
-comparisons, making it useful for account-history consistency review. 
-
-_C. Feature-Family Sensitivity: Which Behaviors Carry Identity Signal_ 
-
-Table V reports both the eight-feature-family sensitivity on _Tpair_<sup>(1:6)</sup> and the feature-layer analysis after merging by behavioral mechanism on _T_<sup>(1)</sup> _pair_<sup>, summarizing the features that</sup> most support the behavioral findings. 
-
-TABLE V 
-
-KEY FEATURE-FAMILY AND LAYER SENSITIVITY. 
-
-|setting|evaluation|ROC AUC (∆vs<br>same-setting full)|
-|---|---|---|
-|full _x_<sup>beh</sup>|_T_ <sup>(1:6)</sup><br>_pair_<br>|**0.929 (0)**|
-|remove _{x_<sup>beh-aim</sup>_}_ aiming/crosshair|_T_ <sup>(1:6)</sup><br>_pair_<br>|**0.855 (-0.074)**|
-|only _{x_<sup>beh-aim</sup>_}_ aiming/crosshair|_T_ <sup>(1:6)</sup><br>_pair_<br>|**0.883 (-0.047)**|
-|remove _{x_<sup>beh-mech</sup>_}_ mechanics/state|_T_ <sup>(1:6)</sup><br>_pair_<br>|0.914 (-0.016)|
-|full _x_<sup>beh</sup>|_T_ <sup>(1)</sup><br>_pair_<br>|**0.953 (0)**|
-|only _{x_<sup>beh-aim</sup>_,x_<sup>beh-mech</sup>_,x_<sup>beh-combat</sup>_}_ low-level<br>|_T_ <sup>(1)</sup><br>_pair_|**0.946 (-0.007)**|
-|operations<br>remove _{x_<sup>beh-aim</sup>_,x_<sup>beh-mech</sup>_,x_<sup>beh-combat</sup>_}_|_T_ <sup>(1)</sup><br>_pair_|**0.779 (-0.175)**|
-|low-level operations<br>remove _{x_<sup>beh-move</sup>_,x_<sup>beh-util</sup>_,x_<sup>beh-time</sup>_}_ rhythm<br>|_T_ <sup>(1)</sup><br>_pair_|0.952 (-0.001)|
-|and space<br>remove _{x_<sup>beh-econ</sup>_,x_<sup>beh-ctx</sup>_}_ tactics and context|_T_ <sup>(1)</sup><br>_pair_|0.950 (-0.004)|
-
-Table V shows that aiming/crosshair is the strongest identity signal. The 6-split average AUC of the full _x_<sup>beh</sup> is 0.929; removing aiming/crosshair lowers AUC by 0.074 on average (-0.099/-0.059/-0.061/-0.084/-0.067/-0.073). Using only the 
-
-TABLE VI 
-
-ACCOUNT-HISTORY AGGREGATION AS HISTORY DEPTH _K_ CHANGES. 
-
-|symbol|K|mean LLR AUC (∆vs K=1)|split AUCs (rounded)|different recall @95%P (∆vs K=1)|
+|data|exp.|input|AUC|same-AP|
 |---|---|---|---|---|
-|_T_ <sup>(1:6)</sup><br>_pair_<br>|1|**0.931 (baseline)**|0.955/0.928/0.921/0.946/0.902/0.934|**0.722 (baseline)**|
-|_T_ <sup>(1:6)</sup><br>_hist_<br>(3)<br>|3|0.971 (+0.040)|0.986/0.969/0.945/0.986/0.968/0.972|0.961 (+0.239)|
-|_T_ <sup>(1:6)</sup><br>_hist_<br>(5)<br>|5|0.980 (+0.049)|0.989/0.981/0.966/0.990/0.976/0.979|0.985 (+0.263)|
-|_T_ <sup>(1:6)</sup><br>_hist_<br>(10)|10|**0.986 (+0.055)**|0.990/0.984/0.979/0.995/0.979/0.992|**0.988 (+0.266)**|
+|DPER|E1|outcome|0.572|0.130|
+|DPER|E2|behavior|0.855|0.452|
+|DPER|E3|sequence|0.719|0.227|
+|DPER|E4|behavior + sequence|0.859|0.454|
+|DPER|E5|+ explicit compare|**0.926**|**0.703**|
+|DPRO|E1|outcome|0.712|0.210|
+|DPRO|E2|behavior|0.874|0.464|
+|DPRO|E3|sequence|0.749|0.254|
+|DPRO|E4|behavior + sequence|0.874|0.480|
+|DPRO|E5|+ explicit compare|**0.956**|**0.775**|
 
-aiming/crosshair family still reaches AUC 0.883, only 0.047 below the full representation and clearly stronger than other single families; mechanics/state is the second tier. 
+**Table 4: Six-fold mean AUC for pairwise model families on the two frozen E5 evaluation surfaces.** 
 
-Merging the eight feature types by behavioral mechanism concentrates the conclusion: on _T_<sup>(1)</sup> _pair_<sup>,usingonlyaim-</sup> ing/crosshair, mechanics/state, and combat/engagement lowers AUC by only 0.007, while removing these three lowers AUC by 0.175. This agrees with the eight-family results: CS2 player identity signals come mainly from crosshair control, combat micro-operations, and movement-stop-fire coordination, while rhythm, space, buying, and context preferences provide supplementary information. 
+|dataset|model|AUC|Δvs. LightGBM|
+|---|---|---|---|
+|DPER|LightGBM|**0.926**|–|
+|DPER<br>|XGBoost|0.918|-0.008|
+|DPER|FastMLP|0.858|-0.067|
+|DPER<br>|rank-average|0.918|-0.008|
+|DPRO|LightGBM|**0.956**|–|
+|DPRO|XGBoost|0.950|-0.005|
+|DPRO|FastMLP|0.883|-0.073|
+|DPRO|rank-average|0.946|-0.010|
 
-_D. Account-History Aggregation: From Pairwise Scores to Multi-Demo History Comparison_ 
+|data|setting|eval.|AUC (Δ)|
+|---|---|---|---|
+|DPER|full_𝑥_<sup>beh</sup>|T<sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.919 (0)|
+|DPER|remove aiming/crosshair|T<sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.833 (-0.087)|
+|DPER|only aiming/crosshair|T<sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.890 (-0.029)|
+|DPER|remove mechanics/state|T<sup>(1:6)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.908 (-0.012)|
+|DPRO|full_𝑥_<sup>beh</sup>|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.955 (0)|
+|DPRO|remove aiming/crosshair|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.880 (-0.076)|
+|DPRO|only aiming/crosshair|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.915 (-0.041)|
+|DPRO|remove mechanics/state|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_|0.950 (-0.006)|
+|DPER|full_𝑥_<sup>beh</sup>|T<sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.916 (0)|
+|DPER|only low-level operations|T<sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.915 (-0.001)|
+|DPER|remove low-level operations|T<sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.738 (-0.179)|
+|DPER|remove rhythm/space|T<sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.914 (-0.002)|
+|DPER|remove tactics/context|T<sup>(1)</sup><br>PER_,𝑝𝑎𝑖𝑟_<br>|0.914 (-0.002)|
+|DPRO|full_𝑥_<sup>beh</sup>|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.955 (0)|
+|DPRO|only low-level operations|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.947 (-0.009)|
+|DPRO|remove low-level operations|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.842 (-0.113)|
+|DPRO|remove rhythm/space|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_<br>|0.953 (-0.003)|
+|DPRO|remove tactics/context|T<sup>(1:6)</sup><br>PRO_,𝑝𝑎𝑖𝑟_|0.952 (-0.003)|
 
-Account-history review compares a current demo against multiple historical demos. Table VI reports account-history aggregation on _Thist_<sup>(1:6)</sup> ( _K_ ): each group is constructed within the held-out side of a person-disjoint split, using one current observation and _K_ historical observations; the group label follows whether the current observation comes from the same person as the historical reference. The mean LLR in Eq. (10) in Section III-E then aggregates the _K_ pairwise scores into an account-level consistency score. 
+## **4.3 Feature-Family Sensitivity: Which Behaviors Carry Identity Signal** 
 
-The median time gap is 18.96 days, p90 is 24.68 days, and the maximum is 31.07 days. 
+Table 5 reports feature-family sensitivity on TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>)and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>),</sup> together with feature-layer analysis by behavioral mechanism on TPER<sup>(1)</sup> _,𝑝𝑎𝑖𝑟_<sup>and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>), summarizing the features that most support</sup> the behavioral findings. Every setting in Table 5 fixes the same explicit comparison input and changes only the behavioral feature families retained in _𝑥_<sup>beh</sup> . 
 
-Table VII shows that _Ttime_<sup>(1)isharderthan</sup><sup>_T_</sup> _pair_<sup>(1),withAUC</sup> about 0.008 lower. This is consistent with intuition: over longer gaps, the same player’s state, map pool, and play style may change, yet the model retains strong cross-time recognition under the high-precision threshold. 
+Table 5 shows that aiming/crosshair is the strongest identity signal. On DPER, the six-fold average AUC of the full _𝑥_<sup>beh</sup> is 0.919, and removing aiming/crosshair lowers it by 0.087 on average (-0.114/0.090/-0.098/-0.053/-0.068/-0.096); on DPRO, the corresponding AUC is 0.955 and the average decrease is 0.076 (-0.082/-0.068/-0.046/0.063/-0.062/-0.134). Using only aiming/crosshair reaches AUCs of 
 
-_2) Cross-Map Robustness:_ Same-map pairs usually have higher recognition accuracy; cross-map pairs are closer to real account-history review, because same-map samples are usually fewer in account history, and longer time spans further increase recognition difficulty. 
+0.890 and 0.915, respectively; among the reported removals, mechanics/state provides the next-largest contribution. 
 
-Table VIII shows that the map factor affects judgment difficulty: same-map AUC is about 0.020 higher than _Tpair_<sup>(1),</sup> and cross-map AUC about 0.008 lower. Same-map comparison provides relatively stronger evidence, while cross-map comparison is harder but remains usable. 
+Merging the eight feature types by behavioral mechanism concentrates the conclusion: on TPER<sup>(1)</sup> _,𝑝𝑎𝑖𝑟_<sup>and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>), using only aim-</sup> ing/crosshair, mechanics/state, and combat/engagement lowers AUC by only 0.001 and 0.009, respectively, while removing these three lowers AUC by 0.179 and 0.113. The two datasets yield the same conclusion: CS2 player identity signals come mainly from crosshair control, combat micro-operations, and movement-stopfire coordination, while rhythm, space, buying, and context preferences provide supplementary information. 
 
-Multi-demo history comparison provides a more stable account-level signal than a single pairwise score: a particular match may shift because of map, teammates, weapons, opponents, or the player’s state that day, but multiple historical demos provide a more stable behavioral reference. Compared with K=1, mean LLR AUC rises from 0.931 to 0.971 at K=3 and 0.986 at K=10. Raw-score mean gives very similar AUC, so the main gain comes from accumulating multiple pairwise evidence rather than from a specific aggregation formula. In practical terms, under a high-confidence threshold maintaining 95% precision, K=5 and K=10 already recall about 98.5% and 98.8% of true behavior-inconsistent account-history groups, showing that multi-demo comparison can substantially reduce misses caused by single-match fluctuation. 
+Xuchen Zhang 
 
-_E. Cross-Time, Cross-Map, and Data Expansion Experiments_ 
+**Table 6: Account-history aggregation as history depth** _𝐾_ **changes.** 
 
-_1) Time Gap and Cross-Window Evaluation:_ Actual review often occurs with larger time gaps: a platform or tournament organizer obtains a recent suspicious demo and compares it with earlier historical demos of the account. This setting is harder than random pairs, because player state, map pool, version, settings, and play style may all change over time. 
+|data|_𝐾_|mean-LLR AUC|six-fold AUCs|
+|---|---|---|---|
+|DPER<br>|1|0.923 (baseline)|0.935/0.918/0.878/0.940/0.949/0.918|
+|DPER<br>|3|0.966 (+0.043)|0.976/0.960/0.938/0.962/0.985/0.974|
+|DPER|5|0.975 (+0.052)|0.981/0.967/0.955/0.975/0.989/0.983|
+|DPER|10|0.982 (+0.058)|0.986/0.975/0.966/0.982/0.992/0.987|
+|DPRO<br>|1|0.914|0.893/0.941/0.922/0.919/0.906/0.905|
+|DPRO<br>|3|0.966|0.970/0.969/0.962/0.967/0.968/0.959<br>|
+|DPRO|5|0.975|0.974/0.983/0.969/0.980/0.978/0.968|
+|DPRO|10|not estimable|no eligible_𝐾_=10queries in any fold|
 
-TABLE VII COMPARISON BETWEEN _Ttime_<sup>(1)AND</sup><sup>_T_</sup> _pair_<sup>(1).</sup> 
+**Table 7: Time-gap sensitivity on the two datasets.** 
 
-|evaluation set|pairs|AUC|AP|best F1|different recall @95% precision|
+|data|time gap|pairs|AUC|
+|---|---|---|---|
+|DPER|same day|187,171|0.985|
+|DPER|1–7 days|321,023|0.944|
+|DPER|8–30 days|345,533|0.927|
+|DPER|31–90 days|220,265|0.885|
+|DPER|_>_90days|444,338|0.894|
+|DPRO|same day|29,626|0.989|
+|DPRO|1–7 days|45,126|0.949|
+|DPRO|8–30 days|32,938|0.924|
+|DPRO|≥31days|0|–|
+
+## **4.4 Account-History Aggregation: From Pairwise Scores to Multi-Demo History Comparison** 
+
+Account-history review compares a current demo against multiple historical demos. Table 6 reports account-history aggregation on TPER<sup>(1:6</sup> _,ℎ𝑖𝑠𝑡_<sup>)(</sup><sup>_𝐾_)and T</sup> PRO<sup>(1:6</sup> _,ℎ𝑖𝑠𝑡_<sup>)(</sup><sup>_𝐾_). Each eligible query forms one posi-</sup> tive group from _𝐾_ strictly earlier observations of the same identity/account key and four negative groups, each formed from one different identity candidate; deterministic, score-blind nested prefixes are fixed by each dataset contract. The mean LLR in Eq. (10) aggregates each group’s _𝐾_ scores. 
+
+Multi-demo history comparison provides a more stable accountlevel signal than a single pairwise score. To keep _𝐾_ comparisons paired, all Perfect rows use the same fixed _𝐾_ = 10-eligible cohort (3,782 query-fold instances), while Professional _𝐾_ = 1 _,_ 3 _,_ 5 use the same fixed _𝐾_ = 5-eligible cohort (446 query-fold instances). On DPER, mean-LLR AUC rises from 0.923 at _𝐾_ = 1 to 0.966 at _𝐾_ = 3 and 0.982 at _𝐾_ = 10; on DPRO, the corresponding _𝐾_ = 1 _,_ 3 _,_ 5 values are 0.914, 0.966, and 0.975. No Professional fold has an eligible _𝐾_ = 10 query. These fixed history-group cohorts differ from the pair surface in Table 3; on Perfect, raw-score mean gives very similar AUC, indicating that the main gain comes from accumulating multiple evidence items. 
+
+## **4.5 Cross-Time, Cross-Map, and Data Expansion Experiments** 
+
+_4.5.1 Time-Gap Sensitivity._ Actual review often occurs with larger time gaps: a platform or tournament organizer obtains a recent suspicious demo and compares it with earlier historical demos of the account. This setting is harder than random pairs, because player state, map pool, version, settings, and play style may all change over time. 
+
+DPER observations span April 14 to August 19, 2026, forming same-day, 1–7-day, 8–30-day, 31–90-day, and over-90-day comparisons; the available DPRO comparisons cover same-day, 1–7-day, and 8–30-day gaps. 
+
+**Table 8: Same-map vs cross-map sensitivity on the two datasets.** 
+
+|data|relation|pairs|same/diff.|AUC/Δ|same-AP/Δ|
 |---|---|---|---|---|---|
-|_T_ <sup>(1)</sup><br>_pair_<br>|36,594|**0.955**|**0.936**|**0.855**|**0.816**|
-|_T_ <sup>(1)</sup><br>_time_|6,857|0.947|0.921|0.838|0.771|
+|DPER|all|1,518,330|153,790/1,364,540|0.926/–|0.703/–|
+|DPER|same|462,043|41,862/420,181|0.951/+0.026|0.769/+0.066|
+|DPER <br>|cross<br>|1,056,287|111,928/944,359|0.914/-0.012|0.676/-0.027|
+|DPRO <br>|all<br>|107,690|10,769/96,921<br>|0.956/–<br>|0.775/–<br>|
+|DPRO <br>|same<br>|38,295|1,823/36,472|0.980/+0.024|0.808/+0.034|
+|DPRO|cross|69,395|8,946/60,449|0.942/-0.014|0.768/-0.007|
 
-TABLE VIII SAME-MAP VS CROSS-MAP SENSITIVITY ON _Tmap_<sup>(1).</sup> 
+**Table 9: Cross-dataset training under a separate frozen augmentation protocol (** Δ **relative to** DPER **-only training within each test block).** 
 
-|evaluation set / map relation|pairs|same|different|AUC (∆vs all)|AP (∆vs all)|different recall @95%P<br>(∆vs all)|
-|---|---|---|---|---|---|---|
-|_T_ <sup>(1)</sup><br>_pair_ <sup>all pairs</sup><br>|36,594|14,028|22,566|**0.955**|**0.936**|**0.816**|
-|_T_ <sup>(1)</sup><br>_map_ <sup>same-map</sup><br>|9,798|3,623|6,175|**0.975 (+0.020)**|**0.963 (+0.027)**|**0.916 (+0.100)**|
-|_T_ <sup>(1)</sup><br>_map_ <sup>cross-map</sup>|26,796|10,405|16,391|0.947 (-0.008)|0.925 (-0.011)|0.773 (-0.043)|
+|test|training data|AUC|Δvs. block baseline|
+|---|---|---|---|
+|DPER|DPER|0.911|baseline|
+|DPER|DPER + DPRO|0.914|+0.003|
+|DPRO|DPER|0.912|baseline|
+|DPRO|DPRO|**0.955**|+0.043|
+|DPRO|DPER + DPRO|0.948|+0.036|
 
-_3) Training Expansion Experiment with Public Professional Demos:_ We test whether introducing public professional match identity sequences in _Tpro_ can improve training coverage and model performance. 
+Table 7 shows that longer time gaps are generally harder: AUC on DPER declines from 0.985 for same-day comparisons to 0.885 for 31–90 days and is 0.894 beyond 90 days; on DPRO, it declines from 0.989 for same-day comparisons to 0.924 for 8–30 days. This is consistent with intuition: over longer gaps, the same player’s state, map pool, and play style may change, yet the model retains useful cross-time recognition. 
 
-The results do not support the conclusion that adding professional demos stably improves the main model. After adding professional positives and negatives, LightGBM AUC / @95% precision recall change by -0.005 / -0.019, respectively; the corresponding changes for XGBoost are 0.000 / +0.005. When adding only professional positives, LightGBM is basically flat (-0.002 / 0.000), while XGBoost has a small improvement (+0.002 / +0.008). One likely explanation is distribution shift: team roles, tactical execution, match intensity, and player behavior stability in professional matches all differ from the current platform matches. Assessing professional-demo augmentation therefore requires larger high-skill samples closer to the target platform distribution. 
+_4.5.2 Cross-Map Robustness._ Cross-map comparisons are common in account-history review and remove some map-specific contextual similarity. 
 
-## V. DISCUSSION AND LIMITATIONS 
+Table 8 shows that on DPER, same-map AUC is 0.026 above the all-pair result and cross-map AUC is 0.012 below it; on DPRO, the differences are +0.024 and -0.014. Because sampled same-demo negatives are necessarily same-map, part of the same-map advantage reflects pair construction. Cross-map AUCs remain 0.914 and 0.942. 
 
-## _A. Evaluation Boundaries_ 
+_4.5.3 Cross-Dataset Training Between Perfect and Professional._ We examine the effect of training-data source on TPER<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>)and T</sup> PRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>).</sup> 
 
-Our primary split is person-disjoint, so the test players are unseen during training. The protocol targets unseen-player consistency, but it is not match-disjoint: different players from the same demo may appear on different sides. The model input is restricted to per-player fingerprints and a same-map/cross-map flag; it excludes demo IDs, match IDs, teammate/opponent identities, and shared-match identifiers. As an additional sanity check, removing same-demo pairs within _T_<sup>(1)</sup> _pair_<sup>changesAUCfrom0.955to0.952andAPfrom0.936</sup> to 0.937. This check targets same-demo co-occurrence within the test set rather than full match-disjoint evaluation, and the reported protocol should be interpreted as person-disjoint and observation-disjoint evaluation. 
+Table 9 uses a separate frozen cross-dataset augmentation protocol; its DPER-only baseline uses a different training-pair construction from the within-dataset ablation baseline in Table 5. On TPRO<sup>(1:6</sup> _,𝑝𝑎𝑖𝑟_<sup>), Professional-only training reaches AUC 0.955, 0.043</sup> above the 0.912 from Perfect-only training; mixed training reaches 0.948. On the Perfect test surface, adding Professional training data changes AUC from 0.911 to 0.914. The lower mixed-versusProfessional-only result may reflect differences between the two data domains in team roles, match intensity, and behavior distributions. 
 
-Pairwise construction makes players with more observations contribute more pairs, so pair-level uncertainty can be too narrow. We therefore report player-clustered bootstrap as a diagnostic; it gives wider intervals but does not change the core conclusions. 
+_4.5.4 External Test on 5E._ D5E uses exact SteamID as a weak sameaccount label, so the result cannot be directly interpreted as samenatural-person verification. The behavior-and-explicit-comparison model trained on DPER reaches zero-shot AUC 0.966 on the full fixed test surface T5E (55,840 pairs), providing evidence of crossplatform transfer under weak same-account labels. After excluding one SteamID that overlaps the training source, T5E<sup>disjoint</sup> retains 55,676 pairs (99.7%) and the AUC remains 0.966. 
 
-## _B. Data and Label Boundaries_ 
+Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2 
 
-The labels remain a source of uncertainty. Same-player labels mainly come from manually confirmed account histories and public professional identities; different-player labels come from identity mappings and negative-sampling rules. Some different-player negatives may be noisy if two accounts are operated by the same real player but not captured in the identity mapping. Account sharing, multi-account use, and temporary substitution can contaminate both types of labels, so deployment needs to retain human confirmation, label audit, and new-evidence feedback, and cannot treat a one-time dataset as permanent truth. 
+## **5 Discussion and Limitations** 
 
-## _C. Practical Deployment: Historical Reference Quality, Runtime Cost, and Responsible Use_ 
+## **5.1 Evaluation Boundaries** 
 
-Account-history aggregation depends on a practical premise: the historical demos used for comparison should mainly come from the same real player. If the history has already mixed multiple operators, the aggregation score between the current demo and this history set will be contaminated. The deployment workflow should therefore first perform a history self-consistency audit: compute history-history pairwise scores within the same account history and judge whether this history set can serve as a reference. 
+Our primary splits are formed by the constructed identity ledger and assign each demo to one side. Under this ledger, known naturalperson, SteamID, alias, observation, demo, and content overlaps between training and test are zero. The model input is restricted to per-player fingerprints and a same-map/cross-map flag; it excludes demo IDs, match IDs, teammate/opponent identities, and sharedmatch identifiers. Undisclosed cross-account ownership may still violate true person disjointness and is treated as residual label noise. 
 
-Runtime cost also determines deployment form. The current runtime benchmark shows that demo parsing and feature extraction are the main offline costs; on a small representative subset, parsing and feature extraction are at the level of seconds per demo, but the exact throughput depends on demo length, parallelism, and I/O conditions. Once fingerprints / sequence embeddings are available, pairwise scoring and account-history aggregation are lightweight: about 24k pairs per second on Apple M4. 
+Using 1,000 player-cluster bootstrap replicates, the final model has 95% AUC confidence intervals of [0.915, 0.950] on DPER and [0.948, 0.965] on DPRO, indicating that the results are not driven by a few high-contribution players. 
+
+After excluding different-player pairs drawn from the same demo, E5 AUC remains 0.920 on Perfect and 0.944 on Professional, indicating that performance is not driven by same-match negatives. 
+
+## **5.2 Data and Label Boundaries** 
+
+In DPER, same-player labels come from players’ manual confirmation of account histories, account sharing, and multi-account ownership; undisclosed borrowing, temporary substitution, or account sharing may still introduce label noise. The results therefore depend on the completeness of the manual confirmations, and deployment should retain identity audits and feedback from new evidence. 
+
+## **5.3 Practical Deployment: Runtime Cost and Responsible Use** 
+
+Once fingerprints and embeddings are available, pairwise scoring and history aggregation process about 24k pairs/s on Apple M4; demo parsing and feature extraction remain the dominant offline cost. 
 
 In deployment, a new demo can be compared with historical observations to prioritize cases where current behavior is clearly inconsistent with the account history. 
 
-## VI. CONCLUSION AND FUTURE WORK 
+On DPER, retrieved account histories may include observations from another operator. On the _𝐾_ = 5 subset for which eligible third-player replacements can be constructed, 3,674/3,782 queries (97.1%) are retained. Replacing one, two, or three of the five positive histories with different-player observations lowers mean-LLR AUC from 0.975 to 0.963, 0.941, and 0.894, respectively. 
 
-This paper starts from account-history consistency review on competitive FPS platforms and formalizes “whether the current match is still behaviorally consistent with the account history” as open-set same-player verification. We use CS2 demos to design per-demo-player behavioral fingerprints and learn pairwise same-player consistency. 
+## **6 Conclusion and Future Work** 
 
-Experiments show that this formulation supports accurate pairwise verification with lightweight scoring after fingerprint extraction: the game-understanding-based behavioral fingerprint + Transformer sequence model + pairwise model reaches an average ROC AUC of 0.931 and achieves 0.722 differentplayer recall at 95% precision. Feature analysis further shows that the identity signal comes mainly from low-level operations, especially crosshair control, firing rhythm, and movement-stop-fire coordination; stable play habits such as state switching, buying rhythm, and round positioning/rhythm provide supplementary information. These low-level operations are less directly controllable than outcome statistics and may be harder to imitate consistently. After aggregating multiple historical demos, mean LLR account-history aggregation raises AUC from 0.931 at K=1 to 0.986 at K=10, providing an account-history behavioral analysis method for platform and tournament review. 
+We formulate account-history consistency review on competitive FPS platforms as open-set same-player verification, using CS2 demos to design per-demo-player behavioral fingerprints and learn pairwise consistency. 
 
-Future work should expand data scale and time span, adapt the feature design to other competitive FPS games such as Valorant, PUBG / Apex Legends, and Rainbow Six Siege, extend post-match demo-level verification toward streaming partialmatch verification, and evaluate human-machine collaboration in platform or tournament review workflows. 
+Experiments show strong discrimination: on the sequencecommon Perfect and Professional evaluation surfaces, the full model reaches ROC AUCs of 0.926 and 0.956. Identity signal comes mainly from aiming/crosshair and other low-level mechanical behaviors. On fixed eligible query cohorts, mean-LLR account-history AUC rises from 0.923 at _𝐾_ = 1 to 0.982 at _𝐾_ = 10 on Perfect and from 0.914 at _𝐾_ = 1 to 0.975 at _𝐾_ = 5 on Professional. 
 
-## AI USE DISCLOSURE 
+Future work will study longer-term drift, partial-match verification, and human-in-the-loop review. 
 
-Generative AI tools were used for language editing and formatting assistance; all technical claims, experimental results, figures, tables, citations, and final text were manually verified by the author. 
+## **7 Ethical Considerations** 
 
-## REFERENCES 
+This work is intended to provide identity-consistency evidence for prioritizing account-history review, rather than to determine player identity or impose automated sanctions. False positives may subject legitimate players to unwarranted suspicion, while sparse histories, hardware or setting changes, and atypical play styles may affect model scores. Any operational use should therefore combine multiple sources of evidence with human review, appeals, threshold calibration, and continuing audits, and should not treat a single model score as grounds for enforcement. 
+
+The gameplay demos analyzed in this study were publicly accessible. For the manually confirmed Perfect subset, participating players were informed that their demos and identity confirmations would be used for model training and research, and they consented to this research use and to the release of de-identified derived features. 
+
+Game demos contain fine-grained behavioral trajectories, and learned fingerprints could be repurposed for unwanted tracking or profiling. The model inputs exclude real names, SteamIDs, demo IDs, match IDs, and other direct identifiers; we report aggregate results, and the de-identified research artifact excludes raw demos, identity mappings, and identity ledgers. Storage, access, and subsequent sharing of manually confirmed information, public professionalmatch records, and derived representations should follow dataminimization principles and the scope of the original authorization. 
+
+The evaluated data cover particular platforms, player communities, and professional matches, and do not establish equal performance across regions, skill levels, hardware environments, or long-term behavioral drift. Deliberate imitation or behavior modification may also evade review, and this work does not establish robustness under real adversarial conditions. Deployment should monitor error rates across populations and use cases and constrain the system’s purpose accordingly. 
+
+## **References** 
 
 - [1] Valve, “Counter-Strike 2,” Steam Store. [Online]. Available: https://store. steampowered.com/app/730/CounterStrike_2/ 
 
-- [2] SteamDB, “Counter-Strike 2 Steam Charts.” [Online]. Available: https: //steamdb.info/app/730/charts/ 
+- [2] SteamDB, “Counter-Strike 2 Steam Charts.” [Online]. Available: https://steamdb. info/app/730/charts/ 
 
-- [3] E. Conroy, M. Kowal, A. J. Toth, and M. J. Campbell, “Boosting: Rank and skill deception in esports,” _Entertainment Computing_ , 2021. 
+- [3] E. Conroy, M. Kowal, A. J. Toth, and M. J. Campbell, “Boosting: Rank and skill deception in esports,” _Entertainment Computing_ , vol. 36, Art. no. 100393, 2021, doi: 10.1016/j.entcom.2020.100393. 
 
-- [4] J. Blackburn, N. Kourtellis, J. Skvoretz, M. Ripeanu, and A. Iamnitchi, “Cheating in online games: A social network perspective,” _ACM Trans. Internet Technol._ , 2014. 
+- [4] J. Blackburn, N. Kourtellis, J. Skvoretz, M. Ripeanu, and A. Iamnitchi, “Cheating in online games: A social network perspective,” _ACM Trans. Internet Technol._ , vol. 13, no. 3, Art. no. 9, pp. 1–25, 2014, doi: 10.1145/2602570. 
 
-- [5] FACEIT, “FACEIT Banning Policy.” [Online]. Available: https://support. faceit.com/ 
+- [5] FACEIT, “FACEIT Banning Policy.” [Online]. Available: https://support.faceit. com/ 
 
-- [6] FACEIT, “The Verification Process.” [Online]. Available: https://support. faceit.com/ 
+- [6] FACEIT, “The Verification Process.” [Online]. Available: https://support.faceit. com/ 
 
 - [7] F. Zimmer _et al._ , “Player behavior analysis for predicting player identity within pairs in esports tournaments: A case study of Counter-Strike using binary Random Forest classifier,” in _Proc. HICSS_ , 2025, doi: 10.24251/HICSS.2025.513. 
 
@@ -422,7 +498,9 @@ Generative AI tools were used for language editing and formatting assistance; al
 
 - [10] D. Liu, X. Gao, M. Zhang, H. Wang, and A. Stavrou, “Detecting passive cheats in online games via performance-skillfulness inconsistency,” in _Proc. DSN_ , 2017. 
 
-- [11] S. Yuen, J. D. Thomson, and O. Don, “Automatic player identification in Dota 2,” arXiv, 2020. 
+Xuchen Zhang 
+
+- [11] S. Yuen, J. D. Thomson, and O. Don, “Automatic player identification in Dota 2,” arXiv:2008.12401 [cs.AI], 2020. 
 
 - [12] S. Liu, C. Ballinger, and S. J. Louis, “Player identification from RTS game replays,” in _Proc. CATA_ , 2013. 
 
@@ -432,10 +510,16 @@ Generative AI tools were used for language editing and formatting assistance; al
 
 - [15] V. Nair _et al._ , “Unique identification of 50,000+ virtual reality users from head and hand motion data,” in _Proc. USENIX Security_ , 2023. 
 
-- [16] M. Mohamed and N. Saxena, “Gametrics: Towards attack-resilient behavioral authentication with simple cognitive games,” in _Proc. ACSAC_ , 2016, pp. 277–288. 
+   - [17] C. Lesaege, F. Schnitzler, A. Lambert, and J.-R. Vigouroux, “Time-aware user identification with topic models,” in _Proc. IEEE ICDM_ , 2016, pp. 997–1002. 
 
-- [17] C. Lesaege, F. Schnitzler, A. Lambert, and J.-R. Vigouroux, “Time-aware user identification with topic models,” in _Proc. IEEE ICDM_ , 2016, pp. 997–1002. 
+   - [18] G. Ke _et al._ , “LightGBM: A highly efficient gradient boosting decision tree,” in _Advances in Neural Information Processing Systems_ , 2017. 
 
-- [18] G. Ke _et al._ , “LightGBM: A highly efficient gradient boosting decision tree,” in _Advances in Neural Information Processing Systems_ , 2017. 
+   - [19] T. Chen and C. Guestrin, “XGBoost: A scalable tree boosting system,” in _Proc. ACM SIGKDD_ , 2016, pp. 785–794. 
 
-- [19] T. Chen and C. Guestrin, “XGBoost: A scalable tree boosting system,” in _Proc. ACM SIGKDD_ , 2016, pp. 785–794.
+   - [20] Perfect World Esports, “Perfect World Esports,” [Online]. Available: https://www. pwesports.cn/. Accessed: Aug. 25, 2026. 
+
+   - [21] HLTV.org, “Counter-Strike matches and demos,” [Online]. Available: https:// www.hltv.org/matches. Accessed: Aug. 25, 2026. 
+
+   - [22] 5EPlay, “5E CS2 platform,” [Online]. Available: https://csgo.5eplay.com/Home. Accessed: Aug. 25, 2026. 
+
+- [16] M. Mohamed and N. Saxena, “Gametrics: Towards attack-resilient behavioral authentication with simple cognitive games,” in _Proc. ACSAC_ , 2016, pp. 277–288.

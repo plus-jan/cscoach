@@ -22,7 +22,7 @@
     model fitted on one tier/platform is miscalibrated on others; WP must be tier/platform-conditioned
     and recalibrated per stratum.
   type: research
-  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking], [same_player_verification_cs2]; direct but unread [xenopoulos_pro_vs_amateur_wp]
+  source: research_synthesis_de A/C (unverified); indirect [champ_matchmaking] (§5.3), [same_player_verification_cs2] (v2 Table 9); direct but unread [xenopoulos_pro_vs_amateur_wp]
   status: open
   test: [MV.3]
   parameters: [WP features (v1), calibration]
@@ -185,7 +185,7 @@
     header.tick_rate is correct per match and CSDS `second`/tick alignment (incl. as-of merged
     positions on events) is accurate enough for sub-second features (duels, counter-strafe).
   type: data
-  source: CSDS spec (merged columns use as-of merge to nearest earlier tick)
+  source: CSDS spec (merged columns use as-of merge to nearest earlier tick); [learning_to_move_like_pros] §5 notes PureSkill.gg data has no capture-frequency guarantee and may drop data
   status: open
   test: [MV.1]
   parameters: [tick rate]
@@ -253,7 +253,7 @@
 - id: A-23
   statement: Fixed kill-credit split 0.70/0.15/0.15 (killer/assister/flash-assister) is a fair approximation.
   type: method
-  source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]
+  source: initial choice; HLTV Round Swing uses a different split [hltv_rating_3]; learned redistribution [tar2_credit_assignment] forces non-negative credit (unsuitable as-is)
   status: open
   test: [MV.11]
   parameters: [attribution]
@@ -394,7 +394,7 @@
     telemetry is an adequate substitute for a nav mesh for rotation, trade-distance and utility-delay
     estimates.
   type: method
-  source: ADR-0003 (no external data)
+  source: ADR-0003 (no external data); named-area modelling used by [learning_to_move_like_pros], [x_ego_cs]
   status: open
   test: [MV.13]
   parameters: [area graph: node definition / edge weight]
@@ -426,7 +426,7 @@
     Missing ticks/events are rare and non-disruptive (per CSDS docs); matches failing quality checks can
     be dropped without biasing tiers/maps.
   type: data
-  source: CSDS datasheet
+  source: CSDS datasheet; challenged by [learning_to_move_like_pros] §5 (no capture-frequency guarantee)
   status: open
-  test: [M1.3]
+  test: [M1.3, MV.1]
   blocks: []

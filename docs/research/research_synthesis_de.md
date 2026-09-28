@@ -5,7 +5,10 @@
 > Englische, umsetzungsorientierte Ableitungen stehen in `docs/specs/`.
 >
 > **Bekannte Fehler (geprüft gegen Volltexte, siehe `papers/*.md` → cscoach notes):**
-> - Same-Player Verification: Hauptergebnis AUC **0,931** (0,955 = ein einzelner Split); Korrelation mit Rang wird **nicht** untersucht; Datensatz ist **nicht** öffentlich.
+> - Same-Player Verification (v2): Hauptergebnis AUC **0,926** (Amateure, 3.570 Demos) bzw. **0,956** (Profis); v1 meldete 0,931 (0,955 = ein einzelner Split). Korrelation mit Rang wird **nicht** untersucht; Datensatz ist **nicht** öffentlich.
+> - Contextual xT: 19,2 % gilt nur für Ballübergänge; für die Torwahrscheinlichkeit (xT-Wert) nur ~0,4 % Verbesserung, ohne Konfidenzintervalle.
+> - MLMove: <0,5 ms ist amortisiert (7–8 ms pro Anfrage); CS:GO-Profidaten auf de_dust2. X-Ego: nur de_mirage, Videodaten, Split nach Runden.
+> - TAR²: „Shapley-Werte“ werden per Attention approximiert; Gutschriften sind nicht-negativ.
 > - VALORANT: 21.229 (nicht 29.506) Runden genutzt; Evaluation nur auf 100 Runden, nur Accuracy.
 > - CHAMP: Vorhersage **vor** dem Match (Matchmaking), nicht Echtzeit-WP; "Kill-Crushing" ist ein MOBA-Matchmaking-Maß, keine CS-Rang-Erkenntnis.
 > - Coaching-Studie heißt *Understanding Game Coaching on Gig Platforms*; "Kaltstart" bezieht sich auf Kundengewinnung der Coaches.

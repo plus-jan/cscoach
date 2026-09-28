@@ -81,7 +81,9 @@ vectors, and simulate next-round money for both outcomes. Expected value over th
 No external nav mesh (ADR-0003). The empirical `area_graph` (docs/specs/02) is built from
 `place_name` + observed transitions (A-37). Utility delay = the shortest transit time with
 smoke/molotov-covered areas removed, minus the time without. It is converted to WPA through the WP
-model's sensitivity to time and position features. Refs: [dynamic_xt], [contextual_xt_spatial] (pending).
+model's sensitivity to time and position features. Refs: [contextual_xt_spatial] (a TAx-style "control above expected"; transition gains did not carry
+over to the outcome), [learning_to_move_like_pros] (region-based positioning metrics),
+[x_ego_cs] (named areas), [dynamic_xt] (pending).
 
 ## Player-level aggregation (within match) {#player}
 

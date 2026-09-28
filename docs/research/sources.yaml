@@ -12,19 +12,20 @@
 # kept for reference only and must not be used for features.
 
 - id: same_player_verification_cs2
-  title: Same-Player Verification for Account Consistency in Counter-Strike 2
-  note_title_v2: "v2 retitled: Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2"
+  title: "Account Consistency from Gameplay Traces: Same-Player Verification in Counter-Strike 2"
+  note_title_v1: "v1 title: Same-Player Verification for Account Consistency in Counter-Strike 2"
+  authors: Xuchen Zhang
   year: 2026
-  venue: arXiv preprint (submitted to IEEE)
+  venue: arXiv preprint (v2)
   arxiv: "2608.24893"
   url: https://arxiv.org/abs/2608.24893
-  questions: [A, C]
+  questions: [A, C, E]
   claim: "Tree models on mechanical fingerprints reach ROC AUC 0.955; 1,330 demos, 13,300 obs, tiers C..Diamond (Perfect World Arena)"
-  use_in_project: execution-vs-decision features (M4.2), tier differences (M3.5), player fingerprint features
+  verified_claim: "v2: mean AUC 0.926 (3,570 amateur demos, 12 tiers) / 0.956 (539 pro demos), cluster-bootstrap CIs; aim/crosshair strongest; K=10 history 0.982; domain-matched training matters (Table 9). Identity verification only — no rank analysis; data not public."
+  use_in_project: xK/mechanics features (M4.2, A-20), GBDT default (A-29), indirect A-01; ethics — no cross-match re-identification (ADR-0005)
+  license: arXiv — not verified for redistribution
   local: docs/research/papers/same_player_verification_cs2.md
   verified: true
-  license: arXiv (submitted to IEEE) — not verified for redistribution
-  verified_claim: "Mean ROC AUC 0.931 (6 person-disjoint splits; 0.955 = single analysis split); 0.986 with K=10 history demos. Identity verification only — does NOT test rank/tier separation. Data not released."
 
 - id: valorant_round_outcome_tactical
   title: Round Outcome Prediction in VALORANT Using Tactical Features from Video Analysis
@@ -89,27 +90,33 @@
 
 - id: contextual_xt_spatial
   title: Contextual Expected Threat using Spatial Event Data
-  authors: Gregory Everett et al.
+  authors: Greg Everett, Ryan Beal, Tim Matthews, Tim Norman, Gopal Ramchurn
   year: 2022
   venue: StatsBomb Conference 2022
   url: https://statsbomb.com/wp-content/uploads/2022/09/Gregory-Everett-et-al-%E2%80%93-Contextual-Expected-Threat-xT-using-Spatial-Event-Data.pdf
   questions: [D, G]
   claim: "CNN spatial xT: 19.2% log-loss reduction on ball transitions"
-  search_note: "Introduces 'Threat Above Expected' (TAx); EPL 2021/22"
-  local: null
-  verified: search
+  verified_claim: "19.2% better log-likelihood on ball TRANSITIONS (−5.137→−4.151, temporal holdout season); on goal probability (xT value) only −0.08796→−0.08759 (~0.4%); no CIs; TAx metric for positioning."
+  use_in_project: M7.2/M7.4 — spatial features must win on outcome log-loss; 'control above expected' concept
+  license: conference paper — not verified for redistribution
+  local: docs/research/papers/contextual_xt_spatial.md
+  verified: true
 
 - id: tar2_credit_assignment
-  title: "TAR^2: Temporal-Agent Reward Redistribution for Optimal Policy Preservation in Multi-Agent RL"
+  title: "TAR²: Temporal-Agent Reward Redistribution for Optimal Policy Preservation in Multi-Agent Reinforcement Learning"
+  authors: Aditya Kapoor, Kale-ab Tessera, Mayank Baranwal, Harshad Khadilkar, Stefano Albrecht, Mingfei Sun
   year: 2025
   venue: arXiv preprint
   arxiv: "2502.04864"
   url: https://arxiv.org/abs/2502.04864
+  code: https://github.com/AdityaKapoor74/MARL_Agent_Temporal_Credit_Assignment
   questions: [D]
   claim: "Transformer + Shapley-based temporal/agent reward redistribution"
-  use_in_project: M5.3 Shapley credit
-  local: null
-  verified: search
+  verified_claim: "Redistributes episodic team reward into non-negative per-agent/per-step fractions via dual attention (Shapley-attention approximation); proven equivalent to potential-based shaping; evaluated on SMACLite/GRF learning curves only."
+  use_in_project: M5.3/MV.11 — theory hook (WP as potential ⇒ WPA telescopes); not adopted as credit method (non-negative weights)
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/tar2_credit_assignment.md
+  verified: true
 
 - id: xk_budapest_major_reddit
   title: xK analysis / Deep Dive into Budapest Major 2025
@@ -138,14 +145,16 @@
   title: Learning to Move Like Professional Counter-Strike Players
   authors: David Durst et al.
   year: 2024
-  venue: SCA 2024 / Computer Graphics Forum
+  venue: SCA 2024 / Computer Graphics Forum 43(8)
   arxiv: "2408.13934"
   url: https://arxiv.org/abs/2408.13934
   questions: [G, I]
   claim: "Transformer behaviour cloning (MLMove), <0.5 ms/step, 123 h pro data"
-  search_note: "CS:GO Retakes on Dust II; CSKnow dataset"
-  local: null
-  verified: search
+  verified_claim: "CSKnow: 123 h @16 Hz, de_dust2 pro post-plant; 0.5 ms amortised (7-8 ms/query); human TrueSkill 16-59% more human-like; EMD occupancy 8.2 vs 14.7/15.2; region-based mistake/teamwork metrics; states PureSkill.gg data lacks capture-frequency guarantees."
+  use_in_project: CSDS quality caveat (A-16, A-40, MV.1); region-based detectors (M9.1); EMD comparisons (MV.12, MV.13)
+  license: arXiv / Eurographics-Wiley — not verified for redistribution
+  local: docs/research/papers/learning_to_move_like_pros.md
+  verified: true
 
 - id: x_ego_cs
   title: "X-Ego: Acquiring Team-Level Tactical Situational Awareness via Cross-Egocentric Contrastive Video Representation Learning"
@@ -156,8 +165,11 @@
   code: https://github.com/HATS-ICT/x-ego (MIT)
   questions: [G, J]
   claim: "124 h, 45 pro matches, CS2, cross-egocentric contrastive learning; dataset released"
-  local: null
-  verified: search
+  verified_claim: "45 FACEIT top-100 matches, de_mirage only, 1,011 rounds, video; location nowcasting over 23 named areas; round-level split; subset accuracy ~12-18%, CECL +1.45 pts mean."
+  status_in_project: out_of_scope as data (video, external — ADR-0003); concept of named-area positions used (A-37)
+  license: arXiv — not verified for redistribution
+  local: docs/research/papers/x_ego_cs.md
+  verified: true
 
 - id: franks_meta_analytics
   title: "Meta-Analytics: Tools for Understanding the Statistical Properties of Sports Metrics"
